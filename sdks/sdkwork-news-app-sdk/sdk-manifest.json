@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 34,
+  "ownerOnlyOperationCount": 37,
   "operations": [
     {
       "method": "GET",
@@ -53,6 +53,11 @@
     },
     {
       "method": "GET",
+      "operationId": "corrections.list",
+      "path": "/app/v3/api/news/corrections"
+    },
+    {
+      "method": "GET",
       "operationId": "digests.list",
       "path": "/app/v3/api/news/digests"
     },
@@ -60,6 +65,11 @@
       "method": "POST",
       "operationId": "events.create",
       "path": "/app/v3/api/news/events"
+    },
+    {
+      "method": "GET",
+      "operationId": "factChecks.list",
+      "path": "/app/v3/api/news/fact_checks"
     },
     {
       "method": "POST",
@@ -190,6 +200,11 @@
       "method": "GET",
       "operationId": "trending.list",
       "path": "/app/v3/api/news/trending"
+    },
+    {
+      "method": "GET",
+      "operationId": "trust.item.retrieve",
+      "path": "/app/v3/api/news/items/{itemId}/trust"
     }
   ],
   "managedBy": "tools/news_sdk_generator_runner.mjs"

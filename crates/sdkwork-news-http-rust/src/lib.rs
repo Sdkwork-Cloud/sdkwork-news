@@ -135,6 +135,21 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "alerts.breaking.list",
         ),
         route(HttpMethod::Get, "/app/v3/api/news/digests", "digests.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/items/{itemId}/trust",
+            "trust.item.retrieve",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/fact_checks",
+            "factChecks.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/corrections",
+            "corrections.list",
+        ),
     ]
 }
 
@@ -177,6 +192,21 @@ pub fn open_routes() -> Vec<NewsHttpRoute> {
             "alerts.breaking.list",
         ),
         route(HttpMethod::Get, "/open/v3/api/news/digests", "digests.list"),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/items/{itemId}/trust",
+            "trust.item.retrieve",
+        ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/fact_checks",
+            "factChecks.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/corrections",
+            "corrections.list",
+        ),
     ]
 }
 
@@ -521,6 +551,66 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             HttpMethod::Post,
             "/backend/v3/api/news/digests/{digestId}/items",
             "digests.items.attach",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/trust/sources",
+            "trust.sources.management.list",
+        ),
+        route(
+            HttpMethod::Put,
+            "/backend/v3/api/news/trust/sources",
+            "trust.sources.upsert",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/trust/items/{itemId}",
+            "trust.items.retrieve",
+        ),
+        route(
+            HttpMethod::Put,
+            "/backend/v3/api/news/trust/items/{itemId}",
+            "trust.items.upsert",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/fact_checks",
+            "factChecks.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/fact_checks",
+            "factChecks.create",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/fact_checks/{factCheckId}/publish",
+            "factChecks.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/fact_checks/{factCheckId}/archive",
+            "factChecks.archive",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/corrections",
+            "corrections.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/corrections",
+            "corrections.create",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/corrections/{correctionId}/publish",
+            "corrections.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/corrections/{correctionId}/archive",
+            "corrections.archive",
         ),
     ]
 }

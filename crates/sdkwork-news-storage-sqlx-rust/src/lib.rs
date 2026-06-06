@@ -350,6 +350,102 @@ pub struct NewsStoredDigestItem {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsSourceTrustProfile {
+    pub id: String,
+    pub tenant_id: String,
+    pub source_id: String,
+    pub trust_score: i64,
+    pub trust_tier: String,
+    pub credibility_status: String,
+    pub fact_check_rating: Option<String>,
+    pub correction_count: i64,
+    pub reviewer_user_id: Option<String>,
+    pub notes: Option<String>,
+    pub reviewed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredSourceTrustProfile {
+    pub source_id: String,
+    pub trust_score: i64,
+    pub trust_tier: String,
+    pub credibility_status: String,
+    pub fact_check_rating: Option<String>,
+    pub correction_count: i64,
+    pub reviewed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsFactCheck {
+    pub id: String,
+    pub tenant_id: String,
+    pub item_id: Option<String>,
+    pub claim: String,
+    pub verdict: String,
+    pub summary: String,
+    pub evidence_url: Option<String>,
+    pub reviewer_user_id: Option<String>,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredFactCheck {
+    pub id: String,
+    pub item_id: Option<String>,
+    pub claim: String,
+    pub verdict: String,
+    pub summary: String,
+    pub evidence_url: Option<String>,
+    pub published_at: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsCorrectionNotice {
+    pub id: String,
+    pub tenant_id: String,
+    pub item_id: String,
+    pub correction_type: String,
+    pub title: String,
+    pub body: String,
+    pub actor_user_id: Option<String>,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredCorrectionNotice {
+    pub id: String,
+    pub item_id: String,
+    pub correction_type: String,
+    pub title: String,
+    pub body: String,
+    pub published_at: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsItemTrustSnapshot {
+    pub id: String,
+    pub tenant_id: String,
+    pub item_id: String,
+    pub trust_score: i64,
+    pub source_trust_score: Option<i64>,
+    pub fact_check_verdict: Option<String>,
+    pub correction_count: i64,
+    pub risk_level: String,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredItemTrustSnapshot {
+    pub item_id: String,
+    pub trust_score: i64,
+    pub source_trust_score: Option<i64>,
+    pub fact_check_verdict: Option<String>,
+    pub correction_count: i64,
+    pub risk_level: String,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NewsStoredItem {
     pub id: String,
     pub tenant_id: String,
@@ -399,6 +495,9 @@ impl SqliteNewsStore {
             .execute(&self.pool)
             .await?;
         sqlx::raw_sql(news_alert_digest_migration_sql())
+            .execute(&self.pool)
+            .await?;
+        sqlx::raw_sql(news_trust_correction_migration_sql())
             .execute(&self.pool)
             .await?;
         Ok(())
@@ -1563,6 +1662,328 @@ impl SqliteNewsStore {
             .collect())
     }
 
+    pub async fn upsert_source_trust_profile(
+        &self,
+        input: NewNewsSourceTrustProfile,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_source_trust_profile
+                (id, tenant_id, source_id, trust_score, trust_tier, credibility_status,
+                 fact_check_rating, correction_count, reviewer_user_id, notes, reviewed_at,
+                 updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            ON CONFLICT (tenant_id, source_id)
+            DO UPDATE SET trust_score = excluded.trust_score,
+                          trust_tier = excluded.trust_tier,
+                          credibility_status = excluded.credibility_status,
+                          fact_check_rating = excluded.fact_check_rating,
+                          correction_count = excluded.correction_count,
+                          reviewer_user_id = excluded.reviewer_user_id,
+                          notes = excluded.notes,
+                          reviewed_at = excluded.reviewed_at,
+                          updated_at = excluded.updated_at,
+                          version = news_source_trust_profile.version + 1
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.source_id)
+        .bind(input.trust_score)
+        .bind(input.trust_tier)
+        .bind(input.credibility_status)
+        .bind(input.fact_check_rating)
+        .bind(input.correction_count)
+        .bind(input.reviewer_user_id)
+        .bind(input.notes)
+        .bind(&input.reviewed_at)
+        .bind(&input.reviewed_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn retrieve_source_trust_profile(
+        &self,
+        tenant_id: &str,
+        source_id: &str,
+    ) -> Result<Option<NewsStoredSourceTrustProfile>, sqlx::Error> {
+        let row = sqlx::query(
+            r#"
+            SELECT source_id, trust_score, trust_tier, credibility_status, fact_check_rating,
+                   correction_count, reviewed_at
+            FROM news_source_trust_profile
+            WHERE tenant_id = ?
+              AND source_id = ?
+            LIMIT 1
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(source_id)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(row.map(|row| NewsStoredSourceTrustProfile {
+            source_id: string_cell(&row, "source_id"),
+            trust_score: integer_cell(&row, "trust_score"),
+            trust_tier: string_cell(&row, "trust_tier"),
+            credibility_status: string_cell(&row, "credibility_status"),
+            fact_check_rating: optional_string_cell(&row, "fact_check_rating"),
+            correction_count: integer_cell(&row, "correction_count"),
+            reviewed_at: string_cell(&row, "reviewed_at"),
+        }))
+    }
+
+    pub async fn create_fact_check(&self, input: NewNewsFactCheck) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_fact_check
+                (id, tenant_id, item_id, claim, verdict, summary, evidence_url, reviewer_user_id,
+                 status, published_at, archived_at, created_at, updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, 'draft', NULL, NULL, ?, ?, 0)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.item_id)
+        .bind(input.claim)
+        .bind(input.verdict)
+        .bind(input.summary)
+        .bind(input.evidence_url)
+        .bind(input.reviewer_user_id)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn publish_fact_check(
+        &self,
+        tenant_id: &str,
+        fact_check_id: &str,
+        now: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            UPDATE news_fact_check
+            SET status = 'published',
+                published_at = COALESCE(published_at, ?),
+                updated_at = ?,
+                version = version + 1
+            WHERE tenant_id = ?
+              AND id = ?
+              AND status != 'archived'
+            "#,
+        )
+        .bind(now)
+        .bind(now)
+        .bind(tenant_id)
+        .bind(fact_check_id)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_published_fact_checks(
+        &self,
+        tenant_id: &str,
+        item_id: Option<&str>,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredFactCheck>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT id, item_id, claim, verdict, summary, evidence_url, published_at
+            FROM news_fact_check
+            WHERE tenant_id = ?
+              AND status = 'published'
+              AND (? IS NULL OR item_id = ?)
+            ORDER BY published_at DESC, id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(item_id)
+        .bind(item_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredFactCheck {
+                id: string_cell(row, "id"),
+                item_id: optional_string_cell(row, "item_id"),
+                claim: string_cell(row, "claim"),
+                verdict: string_cell(row, "verdict"),
+                summary: string_cell(row, "summary"),
+                evidence_url: optional_string_cell(row, "evidence_url"),
+                published_at: optional_string_cell(row, "published_at"),
+            })
+            .collect())
+    }
+
+    pub async fn create_correction_notice(
+        &self,
+        input: NewNewsCorrectionNotice,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_correction_notice
+                (id, tenant_id, item_id, correction_type, title, body, actor_user_id, status,
+                 published_at, archived_at, created_at, updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, 'draft', NULL, NULL, ?, ?, 0)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.item_id)
+        .bind(input.correction_type)
+        .bind(input.title)
+        .bind(input.body)
+        .bind(input.actor_user_id)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn publish_correction_notice(
+        &self,
+        tenant_id: &str,
+        correction_id: &str,
+        now: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            UPDATE news_correction_notice
+            SET status = 'published',
+                published_at = COALESCE(published_at, ?),
+                updated_at = ?,
+                version = version + 1
+            WHERE tenant_id = ?
+              AND id = ?
+              AND status != 'archived'
+            "#,
+        )
+        .bind(now)
+        .bind(now)
+        .bind(tenant_id)
+        .bind(correction_id)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_published_correction_notices(
+        &self,
+        tenant_id: &str,
+        item_id: Option<&str>,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredCorrectionNotice>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT id, item_id, correction_type, title, body, published_at
+            FROM news_correction_notice
+            WHERE tenant_id = ?
+              AND status = 'published'
+              AND (? IS NULL OR item_id = ?)
+            ORDER BY published_at DESC, id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(item_id)
+        .bind(item_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredCorrectionNotice {
+                id: string_cell(row, "id"),
+                item_id: string_cell(row, "item_id"),
+                correction_type: string_cell(row, "correction_type"),
+                title: string_cell(row, "title"),
+                body: string_cell(row, "body"),
+                published_at: optional_string_cell(row, "published_at"),
+            })
+            .collect())
+    }
+
+    pub async fn upsert_item_trust_snapshot(
+        &self,
+        input: NewNewsItemTrustSnapshot,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_item_trust_snapshot
+                (id, tenant_id, item_id, trust_score, source_trust_score, fact_check_verdict,
+                 correction_count, risk_level, computed_at, updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            ON CONFLICT (tenant_id, item_id)
+            DO UPDATE SET trust_score = excluded.trust_score,
+                          source_trust_score = excluded.source_trust_score,
+                          fact_check_verdict = excluded.fact_check_verdict,
+                          correction_count = excluded.correction_count,
+                          risk_level = excluded.risk_level,
+                          computed_at = excluded.computed_at,
+                          updated_at = excluded.updated_at,
+                          version = news_item_trust_snapshot.version + 1
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.item_id)
+        .bind(input.trust_score)
+        .bind(input.source_trust_score)
+        .bind(input.fact_check_verdict)
+        .bind(input.correction_count)
+        .bind(input.risk_level)
+        .bind(&input.computed_at)
+        .bind(&input.computed_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn retrieve_item_trust_snapshot(
+        &self,
+        tenant_id: &str,
+        item_id: &str,
+    ) -> Result<Option<NewsStoredItemTrustSnapshot>, sqlx::Error> {
+        let row = sqlx::query(
+            r#"
+            SELECT item_id, trust_score, source_trust_score, fact_check_verdict,
+                   correction_count, risk_level, computed_at
+            FROM news_item_trust_snapshot
+            WHERE tenant_id = ?
+              AND item_id = ?
+            LIMIT 1
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(item_id)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(row.map(|row| NewsStoredItemTrustSnapshot {
+            item_id: string_cell(&row, "item_id"),
+            trust_score: integer_cell(&row, "trust_score"),
+            source_trust_score: optional_integer_cell(&row, "source_trust_score"),
+            fact_check_verdict: optional_string_cell(&row, "fact_check_verdict"),
+            correction_count: integer_cell(&row, "correction_count"),
+            risk_level: string_cell(&row, "risk_level"),
+            computed_at: string_cell(&row, "computed_at"),
+        }))
+    }
+
     async fn item_from_row(&self, row: sqlx::sqlite::SqliteRow) -> Result<NewsStoredItem, sqlx::Error> {
         let item_id = string_cell(&row, "id");
         let tags = self.item_tags(&item_id).await?;
@@ -1651,6 +2072,10 @@ pub fn news_database_tables() -> Vec<&'static str> {
         "news_breaking_alert",
         "news_digest_issue",
         "news_digest_item",
+        "news_source_trust_profile",
+        "news_fact_check",
+        "news_correction_notice",
+        "news_item_trust_snapshot",
     ]
 }
 
@@ -1708,6 +2133,11 @@ pub fn news_database_indexes() -> Vec<&'static str> {
         "idx_news_breaking_alert_target",
         "idx_news_digest_issue_status_time",
         "idx_news_digest_item_digest_rank",
+        "idx_news_source_trust_profile_score",
+        "idx_news_fact_check_item_status",
+        "idx_news_fact_check_verdict_status",
+        "idx_news_correction_notice_item_status",
+        "idx_news_item_trust_snapshot_risk",
     ]
 }
 
@@ -1717,6 +2147,7 @@ pub fn news_migration_names() -> Vec<&'static str> {
         "0002_news_industry_foundation.sql",
         "0003_news_personalization_foundation.sql",
         "0004_news_alert_digest_foundation.sql",
+        "0005_news_trust_correction_foundation.sql",
     ]
 }
 
@@ -1734,6 +2165,10 @@ pub fn news_personalization_migration_sql() -> &'static str {
 
 pub fn news_alert_digest_migration_sql() -> &'static str {
     include_str!("../migrations/0004_news_alert_digest_foundation.sql")
+}
+
+pub fn news_trust_correction_migration_sql() -> &'static str {
+    include_str!("../migrations/0005_news_trust_correction_foundation.sql")
 }
 
 pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
@@ -1818,6 +2253,19 @@ pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
                 "news_breaking_alert",
                 "news_digest_issue",
                 "news_digest_item",
+            ],
+        ),
+        migration(
+            5,
+            "0005_news_trust_correction_foundation.sql",
+            "news",
+            "migrations/0005_news_trust_correction_foundation.sql",
+            news_trust_correction_migration_sql(),
+            vec![
+                "news_source_trust_profile",
+                "news_fact_check",
+                "news_correction_notice",
+                "news_item_trust_snapshot",
             ],
         ),
     ]
@@ -1927,13 +2375,23 @@ pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
             "news.digest.repository",
             vec!["news_digest_issue", "news_digest_item"],
         ),
+        binding(
+            "news",
+            "news.trust.repository",
+            vec![
+                "news_source_trust_profile",
+                "news_fact_check",
+                "news_correction_notice",
+                "news_item_trust_snapshot",
+            ],
+        ),
     ]
 }
 
 pub fn news_storage_capability_manifest() -> NewsStorageCapabilityManifest {
     NewsStorageCapabilityManifest {
         name: "sdkwork-news-storage-sqlx",
-        schema_version: "news.storage.v4",
+        schema_version: "news.storage.v5",
         tables: news_database_tables(),
         indexes: news_database_indexes(),
         migrations: news_migration_names(),
@@ -1999,6 +2457,18 @@ fn integer_cell(row: &sqlx::sqlite::SqliteRow, column: &str) -> i64 {
     row.try_get::<i64, _>(column)
         .or_else(|_| row.try_get::<i32, _>(column).map(i64::from))
         .unwrap_or(0)
+}
+
+fn optional_integer_cell(row: &sqlx::sqlite::SqliteRow, column: &str) -> Option<i64> {
+    row.try_get::<Option<i64>, _>(column)
+        .ok()
+        .flatten()
+        .or_else(|| {
+            row.try_get::<Option<i32>, _>(column)
+                .ok()
+                .flatten()
+                .map(i64::from)
+        })
 }
 
 fn bool_cell(row: &sqlx::sqlite::SqliteRow, column: &str) -> bool {

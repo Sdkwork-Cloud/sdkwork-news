@@ -545,6 +545,131 @@ const schemas = {
       reason: { type: "string" },
     },
   },
+  NewsSourceTrustProfile: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "sourceId", "trustScore", "trustTier", "credibilityStatus", "correctionCount", "reviewedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      sourceId: { type: "string" },
+      trustScore: { type: "integer", minimum: 0, maximum: 100 },
+      trustTier: { type: "string", enum: ["verified", "standard", "watch", "restricted"] },
+      credibilityStatus: { type: "string", enum: ["verified", "unverified", "disputed", "restricted"] },
+      factCheckRating: { type: "string" },
+      correctionCount: { type: "integer", minimum: 0 },
+      reviewerUserId: { type: "string" },
+      notes: { type: "string" },
+      reviewedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsSourceTrustProfileListResponse: arrayOf("NewsSourceTrustProfile"),
+  NewsSourceTrustProfileCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["sourceId", "trustScore", "trustTier", "credibilityStatus", "correctionCount", "reviewedAt"],
+    properties: {
+      sourceId: { type: "string" },
+      trustScore: { type: "integer", minimum: 0, maximum: 100 },
+      trustTier: { type: "string", enum: ["verified", "standard", "watch", "restricted"] },
+      credibilityStatus: { type: "string", enum: ["verified", "unverified", "disputed", "restricted"] },
+      factCheckRating: { type: "string" },
+      correctionCount: { type: "integer", minimum: 0 },
+      reviewerUserId: { type: "string" },
+      notes: { type: "string" },
+      reviewedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsFactCheck: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "claim", "verdict", "summary", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      claim: { type: "string" },
+      verdict: { type: "string", enum: ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] },
+      summary: { type: "string" },
+      evidenceUrl: { type: "string", format: "uri" },
+      reviewerUserId: { type: "string" },
+      status: { type: "string", enum: ["draft", "published", "archived"] },
+      publishedAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsFactCheckListResponse: arrayOf("NewsFactCheck"),
+  NewsFactCheckCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["claim", "verdict", "summary"],
+    properties: {
+      itemId: { type: "string" },
+      claim: { type: "string" },
+      verdict: { type: "string", enum: ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] },
+      summary: { type: "string" },
+      evidenceUrl: { type: "string", format: "uri" },
+      reviewerUserId: { type: "string" },
+    },
+  },
+  NewsCorrectionNotice: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "itemId", "correctionType", "title", "body", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      correctionType: { type: "string", enum: ["correction", "clarification", "retraction", "update"] },
+      title: { type: "string" },
+      body: { type: "string" },
+      actorUserId: { type: "string" },
+      status: { type: "string", enum: ["draft", "published", "archived"] },
+      publishedAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsCorrectionNoticeListResponse: arrayOf("NewsCorrectionNotice"),
+  NewsCorrectionNoticeCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["itemId", "correctionType", "title", "body"],
+    properties: {
+      itemId: { type: "string" },
+      correctionType: { type: "string", enum: ["correction", "clarification", "retraction", "update"] },
+      title: { type: "string" },
+      body: { type: "string" },
+      actorUserId: { type: "string" },
+    },
+  },
+  NewsItemTrustSnapshot: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "itemId", "trustScore", "correctionCount", "riskLevel", "computedAt"],
+    properties: {
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      trustScore: { type: "integer", minimum: 0, maximum: 100 },
+      sourceTrustScore: { type: "integer", minimum: 0, maximum: 100 },
+      factCheckVerdict: { type: "string", enum: ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] },
+      correctionCount: { type: "integer", minimum: 0 },
+      riskLevel: { type: "string", enum: ["low", "medium", "high", "unknown"] },
+      computedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsItemTrustSnapshotCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["trustScore", "correctionCount", "riskLevel", "computedAt"],
+    properties: {
+      trustScore: { type: "integer", minimum: 0, maximum: 100 },
+      sourceTrustScore: { type: "integer", minimum: 0, maximum: 100 },
+      factCheckVerdict: { type: "string", enum: ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] },
+      correctionCount: { type: "integer", minimum: 0 },
+      riskLevel: { type: "string", enum: ["low", "medium", "high", "unknown"] },
+      computedAt: { type: "string", format: "date-time" },
+    },
+  },
   NewsModerationCase: {
     type: "object",
     additionalProperties: false,
@@ -681,6 +806,9 @@ const appRoutes = [
   route("delete", "/app/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", { schema: ref("NewsApiResult") }, false, [pathParam("subscriptionId")]),
   route("get", "/app/v3/api/news/alerts/breaking", "alerts.breaking.list", { schema: ref("NewsBreakingAlertListResponse") }, false, alertParams()),
   route("get", "/app/v3/api/news/digests", "digests.list", { schema: ref("NewsDigestIssueListResponse") }, false, digestParams()),
+  route("get", "/app/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", { schema: ref("NewsItemTrustSnapshot") }, false, [pathParam("itemId")]),
+  route("get", "/app/v3/api/news/fact_checks", "factChecks.list", { schema: ref("NewsFactCheckListResponse") }, false, factCheckParams()),
+  route("get", "/app/v3/api/news/corrections", "corrections.list", { schema: ref("NewsCorrectionNoticeListResponse") }, false, correctionParams()),
 ];
 
 const openRoutes = [
@@ -697,6 +825,9 @@ const openRoutes = [
   route("get", "/open/v3/api/news/search/suggestions", "search.suggestions.list", { schema: ref("NewsSearchSuggestionListResponse") }, true, suggestionParams()),
   route("get", "/open/v3/api/news/alerts/breaking", "alerts.breaking.list", { schema: ref("NewsBreakingAlertListResponse") }, true, alertParams()),
   route("get", "/open/v3/api/news/digests", "digests.list", { schema: ref("NewsDigestIssueListResponse") }, true, digestParams()),
+  route("get", "/open/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", { schema: ref("NewsItemTrustSnapshot") }, true, [pathParam("itemId")]),
+  route("get", "/open/v3/api/news/fact_checks", "factChecks.list", { schema: ref("NewsFactCheckListResponse") }, true, factCheckParams()),
+  route("get", "/open/v3/api/news/corrections", "corrections.list", { schema: ref("NewsCorrectionNoticeListResponse") }, true, correctionParams()),
 ];
 
 const backendRoutes = [
@@ -772,6 +903,18 @@ const backendRoutes = [
   route("post", "/backend/v3/api/news/digests", "digests.create", { schema: ref("NewsDigestIssue") }, false, [], "NewsDigestIssueCommand"),
   route("post", "/backend/v3/api/news/digests/{digestId}/publish", "digests.publish", { schema: ref("NewsDigestIssue") }, false, [pathParam("digestId")]),
   route("post", "/backend/v3/api/news/digests/{digestId}/items", "digests.items.attach", { schema: ref("NewsApiResult") }, false, [pathParam("digestId")], "NewsDigestItemCommand"),
+  route("get", "/backend/v3/api/news/trust/sources", "trust.sources.management.list", { schema: ref("NewsSourceTrustProfileListResponse") }, false, trustSourceParams()),
+  route("put", "/backend/v3/api/news/trust/sources", "trust.sources.upsert", { schema: ref("NewsSourceTrustProfile") }, false, [], "NewsSourceTrustProfileCommand"),
+  route("get", "/backend/v3/api/news/trust/items/{itemId}", "trust.items.retrieve", { schema: ref("NewsItemTrustSnapshot") }, false, [pathParam("itemId")]),
+  route("put", "/backend/v3/api/news/trust/items/{itemId}", "trust.items.upsert", { schema: ref("NewsItemTrustSnapshot") }, false, [pathParam("itemId")], "NewsItemTrustSnapshotCommand"),
+  route("get", "/backend/v3/api/news/fact_checks", "factChecks.management.list", { schema: ref("NewsFactCheckListResponse") }, false, factCheckParams()),
+  route("post", "/backend/v3/api/news/fact_checks", "factChecks.create", { schema: ref("NewsFactCheck") }, false, [], "NewsFactCheckCommand"),
+  route("post", "/backend/v3/api/news/fact_checks/{factCheckId}/publish", "factChecks.publish", { schema: ref("NewsFactCheck") }, false, [pathParam("factCheckId")]),
+  route("post", "/backend/v3/api/news/fact_checks/{factCheckId}/archive", "factChecks.archive", { schema: ref("NewsFactCheck") }, false, [pathParam("factCheckId")]),
+  route("get", "/backend/v3/api/news/corrections", "corrections.management.list", { schema: ref("NewsCorrectionNoticeListResponse") }, false, correctionParams()),
+  route("post", "/backend/v3/api/news/corrections", "corrections.create", { schema: ref("NewsCorrectionNotice") }, false, [], "NewsCorrectionNoticeCommand"),
+  route("post", "/backend/v3/api/news/corrections/{correctionId}/publish", "corrections.publish", { schema: ref("NewsCorrectionNotice") }, false, [pathParam("correctionId")]),
+  route("post", "/backend/v3/api/news/corrections/{correctionId}/archive", "corrections.archive", { schema: ref("NewsCorrectionNotice") }, false, [pathParam("correctionId")]),
 ];
 
 function ref(name) {
@@ -856,6 +999,18 @@ function alertParams() {
 
 function digestParams() {
   return [queryParam("digest_type"), queryParam("locale"), queryParam("cursor"), queryParam("limit")];
+}
+
+function factCheckParams() {
+  return [queryParam("item_id"), queryParam("verdict"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
+}
+
+function correctionParams() {
+  return [queryParam("item_id"), queryParam("correction_type"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
+}
+
+function trustSourceParams() {
+  return [queryParam("source_id"), queryParam("credibility_status"), queryParam("trust_tier"), queryParam("cursor"), queryParam("limit")];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {

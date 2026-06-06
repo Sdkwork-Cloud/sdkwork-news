@@ -1,8 +1,91 @@
-import { appApiPath } from './paths';
+﻿import { appApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsBreakingAlertListResponse, NewsComment, NewsCommentCommand, NewsCommentPage, NewsDigestIssueListResponse, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsNotificationSubscription, NewsNotificationSubscriptionCommand, NewsNotificationSubscriptionListResponse, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsSearchSuggestionListResponse, NewsUserFeedbackCommand, NewsUserInterestCommand, NewsUserInterestSignal, NewsUserInterestSignalListResponse, TopicsListResponse, TrendingListResponse } from '../types';
+import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsBreakingAlertListResponse, NewsComment, NewsCommentCommand, NewsCommentPage, NewsCorrectionNoticeListResponse, NewsDigestIssueListResponse, NewsFactCheckListResponse, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsItemTrustSnapshot, NewsNotificationSubscription, NewsNotificationSubscriptionCommand, NewsNotificationSubscriptionListResponse, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsSearchSuggestionListResponse, NewsUserFeedbackCommand, NewsUserInterestCommand, NewsUserInterestSignal, NewsUserInterestSignalListResponse, TopicsListResponse, TrendingListResponse } from '../types';
 
+
+export interface NewsCorrectionsListParams {
+  itemId?: string;
+  correctionType?: string;
+  status?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsCorrectionsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News corrections.list */
+  async list(params?: NewsCorrectionsListParams): Promise<NewsCorrectionNoticeListResponse> {
+    const query = buildQueryString([
+      { name: 'item_id', value: params?.itemId, style: 'form', explode: true, allowReserved: false },
+      { name: 'correction_type', value: params?.correctionType, style: 'form', explode: true, allowReserved: false },
+      { name: 'status', value: params?.status, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsCorrectionNoticeListResponse>(appendQueryString(appApiPath(`/news/corrections`), query));
+  }
+}
+
+export interface NewsFactChecksListParams {
+  itemId?: string;
+  verdict?: string;
+  status?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsFactChecksApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News factChecks.list */
+  async list(params?: NewsFactChecksListParams): Promise<NewsFactCheckListResponse> {
+    const query = buildQueryString([
+      { name: 'item_id', value: params?.itemId, style: 'form', explode: true, allowReserved: false },
+      { name: 'verdict', value: params?.verdict, style: 'form', explode: true, allowReserved: false },
+      { name: 'status', value: params?.status, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsFactCheckListResponse>(appendQueryString(appApiPath(`/news/fact_checks`), query));
+  }
+}
+
+export class NewsTrustItemApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News trust.item.retrieve */
+  async retrieve(itemId: string): Promise<NewsItemTrustSnapshot> {
+    return this.client.get<NewsItemTrustSnapshot>(appApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/trust`));
+  }
+}
+
+export class NewsTrustApi {
+  private client: HttpClient;
+  public readonly item: NewsTrustItemApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.item = new NewsTrustItemApi(client);
+  }
+
+}
 
 export interface NewsDigestsListParams {
   digestType?: string;
@@ -658,6 +741,9 @@ export class NewsApi {
   public readonly notification: NewsNotificationApi;
   public readonly alerts: NewsAlertsApi;
   public readonly digests: NewsDigestsApi;
+  public readonly trust: NewsTrustApi;
+  public readonly factChecks: NewsFactChecksApi;
+  public readonly corrections: NewsCorrectionsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -681,6 +767,9 @@ export class NewsApi {
     this.notification = new NewsNotificationApi(client);
     this.alerts = new NewsAlertsApi(client);
     this.digests = new NewsDigestsApi(client);
+    this.trust = new NewsTrustApi(client);
+    this.factChecks = new NewsFactChecksApi(client);
+    this.corrections = new NewsCorrectionsApi(client);
   }
 
 }

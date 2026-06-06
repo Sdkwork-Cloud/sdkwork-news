@@ -13,6 +13,11 @@ export const NEWS_NOTIFICATION_CHANNEL_VALUES = ["push", "email", "in_app", "sms
 export const NEWS_NOTIFICATION_FREQUENCY_VALUES = ["breaking", "daily", "weekly", "silent"] as const;
 export const NEWS_BREAKING_ALERT_SEVERITY_VALUES = ["breaking", "important", "watch"] as const;
 export const NEWS_DIGEST_TYPE_VALUES = ["daily", "weekly", "topic", "editorial"] as const;
+export const NEWS_TRUST_TIER_VALUES = ["verified", "standard", "watch", "restricted"] as const;
+export const NEWS_CREDIBILITY_STATUS_VALUES = ["verified", "unverified", "disputed", "restricted"] as const;
+export const NEWS_FACT_CHECK_VERDICT_VALUES = ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] as const;
+export const NEWS_CORRECTION_TYPE_VALUES = ["correction", "clarification", "retraction", "update"] as const;
+export const NEWS_TRUST_RISK_LEVEL_VALUES = ["low", "medium", "high", "unknown"] as const;
 
 export type SdkworkNewsItemStatus = (typeof NEWS_STATUS_VALUES)[number];
 export type SdkworkNewsChannelStatus = (typeof NEWS_CHANNEL_STATUS_VALUES)[number];
@@ -25,6 +30,11 @@ export type SdkworkNewsNotificationChannel = (typeof NEWS_NOTIFICATION_CHANNEL_V
 export type SdkworkNewsNotificationFrequency = (typeof NEWS_NOTIFICATION_FREQUENCY_VALUES)[number];
 export type SdkworkNewsBreakingAlertSeverity = (typeof NEWS_BREAKING_ALERT_SEVERITY_VALUES)[number];
 export type SdkworkNewsDigestType = (typeof NEWS_DIGEST_TYPE_VALUES)[number];
+export type SdkworkNewsTrustTier = (typeof NEWS_TRUST_TIER_VALUES)[number];
+export type SdkworkNewsCredibilityStatus = (typeof NEWS_CREDIBILITY_STATUS_VALUES)[number];
+export type SdkworkNewsFactCheckVerdict = (typeof NEWS_FACT_CHECK_VERDICT_VALUES)[number];
+export type SdkworkNewsCorrectionType = (typeof NEWS_CORRECTION_TYPE_VALUES)[number];
+export type SdkworkNewsTrustRiskLevel = (typeof NEWS_TRUST_RISK_LEVEL_VALUES)[number];
 export type SdkworkNewsEditorMode = "topic" | "url";
 export type SdkworkNewsEditorialAction = "archive" | "feature" | "publish" | "schedule";
 export type SdkworkNewsMediaKind = "image" | "video" | "audio" | "voice" | "document" | "archive" | "other";
@@ -299,6 +309,58 @@ export interface SdkworkNewsDigestItem {
   section?: string;
 }
 
+export interface SdkworkNewsSourceTrustProfile {
+  correctionCount: number;
+  credibilityStatus: SdkworkNewsCredibilityStatus;
+  factCheckRating?: string;
+  id: string;
+  notes?: string;
+  reviewedAt: string;
+  reviewerUserId?: string;
+  sourceId: string;
+  tenantId: string;
+  trustScore: number;
+  trustTier: SdkworkNewsTrustTier;
+}
+
+export interface SdkworkNewsFactCheck {
+  claim: string;
+  evidenceUrl?: string;
+  id: string;
+  itemId?: string;
+  publishedAt?: string;
+  reviewerUserId?: string;
+  status: "draft" | "published" | "archived";
+  summary: string;
+  tenantId: string;
+  updatedAt: string;
+  verdict: SdkworkNewsFactCheckVerdict;
+}
+
+export interface SdkworkNewsCorrectionNotice {
+  actorUserId?: string;
+  body: string;
+  correctionType: SdkworkNewsCorrectionType;
+  id: string;
+  itemId: string;
+  publishedAt?: string;
+  status: "draft" | "published" | "archived";
+  tenantId: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface SdkworkNewsItemTrustSnapshot {
+  computedAt: string;
+  correctionCount: number;
+  factCheckVerdict?: SdkworkNewsFactCheckVerdict;
+  itemId: string;
+  riskLevel: SdkworkNewsTrustRiskLevel;
+  sourceTrustScore?: number;
+  tenantId: string;
+  trustScore: number;
+}
+
 export interface SdkworkNewsApiRoute {
   method: "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
   operationId: string;
@@ -381,6 +443,9 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("DELETE", "/app/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", false),
   route("GET", "/app/v3/api/news/alerts/breaking", "alerts.breaking.list", false),
   route("GET", "/app/v3/api/news/digests", "digests.list", false),
+  route("GET", "/app/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", false),
+  route("GET", "/app/v3/api/news/fact_checks", "factChecks.list", false),
+  route("GET", "/app/v3/api/news/corrections", "corrections.list", false),
 ];
 
 export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -397,6 +462,9 @@ export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/open/v3/api/news/search/suggestions", "search.suggestions.list", true),
   route("GET", "/open/v3/api/news/alerts/breaking", "alerts.breaking.list", true),
   route("GET", "/open/v3/api/news/digests", "digests.list", true),
+  route("GET", "/open/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", true),
+  route("GET", "/open/v3/api/news/fact_checks", "factChecks.list", true),
+  route("GET", "/open/v3/api/news/corrections", "corrections.list", true),
 ];
 
 export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -472,6 +540,18 @@ export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("POST", "/backend/v3/api/news/digests", "digests.create", false),
   route("POST", "/backend/v3/api/news/digests/{digestId}/publish", "digests.publish", false),
   route("POST", "/backend/v3/api/news/digests/{digestId}/items", "digests.items.attach", false),
+  route("GET", "/backend/v3/api/news/trust/sources", "trust.sources.management.list", false),
+  route("PUT", "/backend/v3/api/news/trust/sources", "trust.sources.upsert", false),
+  route("GET", "/backend/v3/api/news/trust/items/{itemId}", "trust.items.retrieve", false),
+  route("PUT", "/backend/v3/api/news/trust/items/{itemId}", "trust.items.upsert", false),
+  route("GET", "/backend/v3/api/news/fact_checks", "factChecks.management.list", false),
+  route("POST", "/backend/v3/api/news/fact_checks", "factChecks.create", false),
+  route("POST", "/backend/v3/api/news/fact_checks/{factCheckId}/publish", "factChecks.publish", false),
+  route("POST", "/backend/v3/api/news/fact_checks/{factCheckId}/archive", "factChecks.archive", false),
+  route("GET", "/backend/v3/api/news/corrections", "corrections.management.list", false),
+  route("POST", "/backend/v3/api/news/corrections", "corrections.create", false),
+  route("POST", "/backend/v3/api/news/corrections/{correctionId}/publish", "corrections.publish", false),
+  route("POST", "/backend/v3/api/news/corrections/{correctionId}/archive", "corrections.archive", false),
 ];
 
 function route(

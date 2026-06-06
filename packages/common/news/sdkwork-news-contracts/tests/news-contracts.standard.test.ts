@@ -13,10 +13,14 @@ import {
   filterNewsItems,
   type SdkworkNewsBreakingAlert,
   type SdkworkNewsChannel,
+  type SdkworkNewsCorrectionNotice,
   type SdkworkNewsDigestIssue,
+  type SdkworkNewsFactCheck,
   type SdkworkNewsNotificationSubscription,
   type SdkworkNewsRecommendationEvent,
   type SdkworkNewsItem,
+  type SdkworkNewsItemTrustSnapshot,
+  type SdkworkNewsSourceTrustProfile,
 } from "../src/index.ts";
 
 const items: SdkworkNewsItem[] = [
@@ -92,6 +96,9 @@ describe("sdkwork-news contracts", () => {
       "notification.subscriptions.delete",
       "alerts.breaking.list",
       "digests.list",
+      "trust.item.retrieve",
+      "factChecks.list",
+      "corrections.list",
     ]);
     expect(NEWS_APP_API_ROUTES.every((route) => route.public === false)).toBe(true);
     expect(NEWS_OPEN_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -108,6 +115,9 @@ describe("sdkwork-news contracts", () => {
       "search.suggestions.list",
       "alerts.breaking.list",
       "digests.list",
+      "trust.item.retrieve",
+      "factChecks.list",
+      "corrections.list",
     ]);
     expect(NEWS_OPEN_API_ROUTES.every((route) => route.public === true)).toBe(true);
     expect(NEWS_BACKEND_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -183,6 +193,18 @@ describe("sdkwork-news contracts", () => {
       "digests.create",
       "digests.publish",
       "digests.items.attach",
+      "trust.sources.management.list",
+      "trust.sources.upsert",
+      "trust.items.retrieve",
+      "trust.items.upsert",
+      "factChecks.management.list",
+      "factChecks.create",
+      "factChecks.publish",
+      "factChecks.archive",
+      "corrections.management.list",
+      "corrections.create",
+      "corrections.publish",
+      "corrections.archive",
     ]);
   });
 
@@ -271,5 +293,50 @@ describe("sdkwork-news contracts", () => {
     expect(subscription.channel).toBe("push");
     expect(alert.severity).toBe("breaking");
     expect(digest.digestType).toBe("daily");
+  });
+
+  it("models news trust, fact checks, and correction notices", () => {
+    const sourceTrust: SdkworkNewsSourceTrustProfile = {
+      correctionCount: 1,
+      credibilityStatus: "verified",
+      id: "trust_source_1",
+      reviewedAt: "2026-06-06T08:03:00.000Z",
+      sourceId: "source_main",
+      tenantId: "tenant_1",
+      trustScore: 92,
+      trustTier: "verified",
+    };
+    const factCheck: SdkworkNewsFactCheck = {
+      claim: "AI benchmark claim",
+      id: "fact_check_1",
+      status: "published",
+      summary: "Mostly true with caveats",
+      tenantId: "tenant_1",
+      updatedAt: "2026-06-06T08:04:00.000Z",
+      verdict: "mostly_true",
+    };
+    const correction: SdkworkNewsCorrectionNotice = {
+      body: "Clarified the benchmark scope.",
+      correctionType: "clarification",
+      id: "correction_1",
+      itemId: "item_1",
+      status: "published",
+      tenantId: "tenant_1",
+      title: "Clarification",
+      updatedAt: "2026-06-06T08:05:00.000Z",
+    };
+    const itemTrust: SdkworkNewsItemTrustSnapshot = {
+      computedAt: "2026-06-06T08:06:00.000Z",
+      correctionCount: 1,
+      itemId: "item_1",
+      riskLevel: "low",
+      tenantId: "tenant_1",
+      trustScore: 88,
+    };
+
+    expect(sourceTrust.credibilityStatus).toBe("verified");
+    expect(factCheck.verdict).toBe("mostly_true");
+    expect(correction.correctionType).toBe("clarification");
+    expect(itemTrust.riskLevel).toBe("low");
   });
 });

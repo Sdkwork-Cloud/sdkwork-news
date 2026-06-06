@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 72,
+  "ownerOnlyOperationCount": 84,
   "operations": [
     {
       "method": "POST",
@@ -118,6 +118,26 @@
     },
     {
       "method": "POST",
+      "operationId": "corrections.archive",
+      "path": "/backend/v3/api/news/corrections/{correctionId}/archive"
+    },
+    {
+      "method": "POST",
+      "operationId": "corrections.create",
+      "path": "/backend/v3/api/news/corrections"
+    },
+    {
+      "method": "GET",
+      "operationId": "corrections.management.list",
+      "path": "/backend/v3/api/news/corrections"
+    },
+    {
+      "method": "POST",
+      "operationId": "corrections.publish",
+      "path": "/backend/v3/api/news/corrections/{correctionId}/publish"
+    },
+    {
+      "method": "POST",
       "operationId": "digests.create",
       "path": "/backend/v3/api/news/digests"
     },
@@ -155,6 +175,26 @@
       "method": "PATCH",
       "operationId": "experiments.update",
       "path": "/backend/v3/api/news/experiments/{experimentId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "factChecks.archive",
+      "path": "/backend/v3/api/news/fact_checks/{factCheckId}/archive"
+    },
+    {
+      "method": "POST",
+      "operationId": "factChecks.create",
+      "path": "/backend/v3/api/news/fact_checks"
+    },
+    {
+      "method": "GET",
+      "operationId": "factChecks.management.list",
+      "path": "/backend/v3/api/news/fact_checks"
+    },
+    {
+      "method": "POST",
+      "operationId": "factChecks.publish",
+      "path": "/backend/v3/api/news/fact_checks/{factCheckId}/publish"
     },
     {
       "method": "DELETE",
@@ -380,6 +420,26 @@
       "method": "PUT",
       "operationId": "trending.metrics.upsert",
       "path": "/backend/v3/api/news/trending/metrics"
+    },
+    {
+      "method": "GET",
+      "operationId": "trust.items.retrieve",
+      "path": "/backend/v3/api/news/trust/items/{itemId}"
+    },
+    {
+      "method": "PUT",
+      "operationId": "trust.items.upsert",
+      "path": "/backend/v3/api/news/trust/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "trust.sources.management.list",
+      "path": "/backend/v3/api/news/trust/sources"
+    },
+    {
+      "method": "PUT",
+      "operationId": "trust.sources.upsert",
+      "path": "/backend/v3/api/news/trust/sources"
     }
   ],
   "managedBy": "tools/news_sdk_generator_runner.mjs"

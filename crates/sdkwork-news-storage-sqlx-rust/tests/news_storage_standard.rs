@@ -1,10 +1,12 @@
 use sdkwork_news_storage_sqlx::{
     news_database_tables, news_migration_names, news_storage_capability_manifest,
     NewNewsBreakingAlert, NewNewsCategory, NewNewsChannel, NewNewsChannelItem, NewNewsDigestIssue,
-    NewNewsDigestItem, NewNewsFavorite, NewNewsFeedCandidate, NewNewsItem,
+    NewNewsDigestItem, NewNewsCorrectionNotice, NewNewsFactCheck, NewNewsFavorite,
+    NewNewsFeedCandidate, NewNewsItem, NewNewsItemTrustSnapshot,
     NewNewsItemMetricSnapshot, NewNewsNotificationSubscription, NewNewsReaction,
     NewNewsRecommendationEvent, NewNewsSearchEvent, NewNewsSearchSuggestion,
-    NewNewsTrendingMetric, NewNewsUserFeedback, NewNewsUserInterestSignal, SqliteNewsStore,
+    NewNewsSourceTrustProfile, NewNewsTrendingMetric, NewNewsUserFeedback,
+    NewNewsUserInterestSignal, SqliteNewsStore,
 };
 use sqlx::sqlite::SqlitePoolOptions;
 
@@ -12,7 +14,7 @@ use sqlx::sqlite::SqlitePoolOptions;
 fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     let manifest = news_storage_capability_manifest();
     assert_eq!(manifest.name, "sdkwork-news-storage-sqlx");
-    assert_eq!(manifest.schema_version, "news.storage.v4");
+    assert_eq!(manifest.schema_version, "news.storage.v5");
     assert_eq!(news_database_tables(), manifest.tables);
     assert_eq!(news_migration_names(), manifest.migrations);
     for table in [
@@ -62,6 +64,10 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
         "news_breaking_alert",
         "news_digest_issue",
         "news_digest_item",
+        "news_source_trust_profile",
+        "news_fact_check",
+        "news_correction_notice",
+        "news_item_trust_snapshot",
     ] {
         assert!(manifest.tables.contains(&table), "missing table {table}");
     }
@@ -82,14 +88,20 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     assert!(manifest.indexes.contains(&"idx_news_breaking_alert_status_time"));
     assert!(manifest.indexes.contains(&"idx_news_digest_issue_status_time"));
     assert!(manifest.indexes.contains(&"idx_news_digest_item_digest_rank"));
+    assert!(manifest.indexes.contains(&"idx_news_source_trust_profile_score"));
+    assert!(manifest.indexes.contains(&"idx_news_fact_check_item_status"));
+    assert!(manifest.indexes.contains(&"idx_news_correction_notice_item_status"));
+    assert!(manifest.indexes.contains(&"idx_news_item_trust_snapshot_risk"));
     assert_eq!(manifest.migration_plan[0].name, "0001_news_foundation.sql");
     assert_eq!(manifest.migration_plan[1].name, "0002_news_industry_foundation.sql");
     assert_eq!(manifest.migration_plan[2].name, "0003_news_personalization_foundation.sql");
     assert_eq!(manifest.migration_plan[3].name, "0004_news_alert_digest_foundation.sql");
+    assert_eq!(manifest.migration_plan[4].name, "0005_news_trust_correction_foundation.sql");
     assert!(manifest.migration_plan[0].sql.contains("CREATE TABLE news_item"));
     assert!(manifest.migration_plan[1].sql.contains("CREATE TABLE news_channel"));
     assert!(manifest.migration_plan[2].sql.contains("CREATE TABLE news_feed_candidate"));
     assert!(manifest.migration_plan[3].sql.contains("CREATE TABLE news_breaking_alert"));
+    assert!(manifest.migration_plan[4].sql.contains("CREATE TABLE news_fact_check"));
 }
 
 #[test]
@@ -118,6 +130,7 @@ fn news_storage_repositories_bind_to_news_tables() {
         "news.notification.repository",
         "news.alert.repository",
         "news.digest.repository",
+        "news.trust.repository",
     ]);
 }
 
@@ -603,4 +616,118 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
         .await
         .expect("list disabled subscriptions")
         .is_empty());
+}
+
+#[tokio::test]
+async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
+    let pool = SqlitePoolOptions::new()
+        .max_connections(1)
+        .connect("sqlite::memory:")
+        .await
+        .expect("sqlite pool");
+    let store = SqliteNewsStore::new(pool);
+    store.migrate().await.expect("news migration");
+
+    store
+        .upsert_source_trust_profile(NewNewsSourceTrustProfile {
+            id: "trust_source_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            source_id: "source_main".to_owned(),
+            trust_score: 92,
+            trust_tier: "verified".to_owned(),
+            credibility_status: "verified".to_owned(),
+            fact_check_rating: Some("high".to_owned()),
+            correction_count: 1,
+            reviewer_user_id: Some("reviewer_1".to_owned()),
+            notes: Some("Long-running verified newsroom".to_owned()),
+            reviewed_at: "2026-06-06T05:00:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert source trust");
+
+    let source_trust = store
+        .retrieve_source_trust_profile("tenant_1", "source_main")
+        .await
+        .expect("retrieve source trust")
+        .expect("source trust profile");
+    assert_eq!(source_trust.trust_score, 92);
+    assert_eq!(source_trust.trust_tier, "verified");
+
+    store
+        .create_fact_check(NewNewsFactCheck {
+            id: "fact_check_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            item_id: Some("item_ai".to_owned()),
+            claim: "AI model reached public safety benchmark".to_owned(),
+            verdict: "mostly_true".to_owned(),
+            summary: "Independent sources confirm the benchmark with caveats.".to_owned(),
+            evidence_url: Some("https://example.com/fact-check".to_owned()),
+            reviewer_user_id: Some("reviewer_1".to_owned()),
+            now: "2026-06-06T05:10:00Z".to_owned(),
+        })
+        .await
+        .expect("create fact check");
+    assert!(store
+        .list_published_fact_checks("tenant_1", Some("item_ai"), 10)
+        .await
+        .expect("draft fact checks")
+        .is_empty());
+
+    store
+        .publish_fact_check("tenant_1", "fact_check_1", "2026-06-06T05:20:00Z")
+        .await
+        .expect("publish fact check");
+    let fact_checks = store
+        .list_published_fact_checks("tenant_1", Some("item_ai"), 10)
+        .await
+        .expect("list fact checks");
+    assert_eq!(fact_checks.len(), 1);
+    assert_eq!(fact_checks[0].verdict, "mostly_true");
+
+    store
+        .create_correction_notice(NewNewsCorrectionNotice {
+            id: "correction_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            item_id: "item_ai".to_owned(),
+            correction_type: "clarification".to_owned(),
+            title: "Clarified benchmark scope".to_owned(),
+            body: "The benchmark applies to the public evaluation set only.".to_owned(),
+            actor_user_id: Some("editor_1".to_owned()),
+            now: "2026-06-06T05:30:00Z".to_owned(),
+        })
+        .await
+        .expect("create correction");
+    store
+        .publish_correction_notice("tenant_1", "correction_1", "2026-06-06T05:40:00Z")
+        .await
+        .expect("publish correction");
+    let corrections = store
+        .list_published_correction_notices("tenant_1", Some("item_ai"), 10)
+        .await
+        .expect("list corrections");
+    assert_eq!(corrections.len(), 1);
+    assert_eq!(corrections[0].correction_type, "clarification");
+
+    store
+        .upsert_item_trust_snapshot(NewNewsItemTrustSnapshot {
+            id: "trust_item_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            item_id: "item_ai".to_owned(),
+            trust_score: 88,
+            source_trust_score: Some(92),
+            fact_check_verdict: Some("mostly_true".to_owned()),
+            correction_count: 1,
+            risk_level: "low".to_owned(),
+            computed_at: "2026-06-06T05:45:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert item trust");
+    let item_trust = store
+        .retrieve_item_trust_snapshot("tenant_1", "item_ai")
+        .await
+        .expect("retrieve item trust")
+        .expect("item trust snapshot");
+    assert_eq!(item_trust.trust_score, 88);
+    assert_eq!(item_trust.risk_level, "low");
+    assert_eq!(item_trust.correction_count, 1);
 }
