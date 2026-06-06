@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "generator": "@sdkwork/sdk-generator",
+  "sdk": {
+    "name": "sdkwork-news-app-sdk",
+    "version": "0.1.0",
+    "language": "typescript",
+    "sdkType": "app",
+    "packageName": "sdkwork-news-app-sdk-generated-typescript"
+  },
+  "changeFingerprint": "8a724ac80535b7775c9cc3b19a744f70e52bddbf3cfd81f104369857b3077fa3",
+  "changes": {
+    "createdGeneratedFiles": [
+      "bin/publish-core.mjs",
+      "bin/publish.ps1",
+      "bin/publish.sh",
+      "bin/sdk-gen.bat",
+      "bin/sdk-gen.sh",
+      "CHANGELOG.md",
+      "LICENSE",
+      "package.json",
+      "README.md",
+      "sdkwork-sdk.json",
+      "src/api/base.ts",
+      "src/api/index.ts",
+      "src/api/news.ts",
+      "src/api/paths.ts",
+      "src/auth/index.ts",
+      "src/http/client.ts",
+      "src/http/index.ts",
+      "src/index.ts",
+      "src/sdk.ts",
+      "src/types/categories-list-response.ts",
+      "src/types/common.ts",
+      "src/types/index.ts",
+      "src/types/items-list-response.ts",
+      "src/types/news-api-result.ts",
+      "src/types/news-category-command.ts",
+      "src/types/news-category.ts",
+      "src/types/news-editorial-readiness.ts",
+      "src/types/news-item-command.ts",
+      "src/types/news-item-status.ts",
+      "src/types/news-item.ts",
+      "src/types/news-overview.ts",
+      "src/types/news-schedule-command.ts",
+      "src/types/problem-detail.ts",
+      "tsconfig.json"
+    ],
+    "updatedGeneratedFiles": [],
+    "unchangedGeneratedFiles": [],
+    "deletedGeneratedFiles": [],
+    "scaffoldedFiles": [
+      "custom/build-runtime.mjs",
+      "custom/README.md"
+    ],
+    "preservedScaffoldFiles": [],
+    "backedUpFiles": []
+  },
+  "impact": {
+    "schemaVersion": 1,
+    "areas": [
+      "api-surface",
+      "models",
+      "runtime",
+      "build-metadata",
+      "publish-workflow",
+      "documentation",
+      "custom-scaffold",
+      "unknown"
+    ],
+    "details": [
+      {
+        "area": "api-surface",
+        "paths": [
+          "src/api/base.ts",
+          "src/api/index.ts",
+          "src/api/news.ts",
+          "src/api/paths.ts",
+          "src/http/client.ts",
+          "src/sdk.ts"
+        ]
+      },
+      {
+        "area": "models",
+        "paths": [
+          "src/types/categories-list-response.ts",
+          "src/types/common.ts",
+          "src/types/index.ts",
+          "src/types/items-list-response.ts",
+          "src/types/news-api-result.ts",
+          "src/types/news-category-command.ts",
+          "src/types/news-category.ts",
+          "src/types/news-editorial-readiness.ts",
+          "src/types/news-item-command.ts",
+          "src/types/news-item-status.ts",
+          "src/types/news-item.ts",
+          "src/types/news-overview.ts",
+          "src/types/news-schedule-command.ts",
+          "src/types/problem-detail.ts"
+        ]
+      },
+      {
+        "area": "runtime",
+        "paths": [
+          "src/auth/index.ts",
+          "src/http/client.ts",
+          "src/http/index.ts"
+        ]
+      },
+      {
+        "area": "build-metadata",
+        "paths": [
+          "package.json",
+          "sdkwork-sdk.json",
+          "tsconfig.json"
+        ]
+      },
+      {
+        "area": "publish-workflow",
+        "paths": [
+          "bin/publish-core.mjs",
+          "bin/publish.ps1",
+          "bin/publish.sh",
+          "bin/sdk-gen.bat",
+          "bin/sdk-gen.sh"
+        ]
+      },
+      {
+        "area": "documentation",
+        "paths": [
+          "CHANGELOG.md",
+          "custom/README.md",
+          "README.md"
+        ]
+      },
+      {
+        "area": "custom-scaffold",
+        "paths": [
+          "custom/build-runtime.mjs",
+          "custom/README.md"
+        ]
+      },
+      {
+        "area": "unknown",
+        "paths": [
+          "LICENSE",
+          "src/index.ts"
+        ]
+      }
+    ],
+    "requiresVerification": true,
+    "summary": "Detected impact areas: api-surface, models, runtime, build-metadata, publish-workflow, documentation, custom-scaffold, unknown. Verification is required."
+  },
+  "verificationPlan": {
+    "shouldRun": true,
+    "runPhase": "now",
+    "summary": "Detected impact areas: api-surface, models, runtime, build-metadata, publish-workflow, documentation, custom-scaffold, unknown. Verification is required. Run the required verification commands now against the generated SDK output.",
+    "steps": [
+      {
+        "id": "check",
+        "title": "Unified package check",
+        "required": true,
+        "rationale": "Validate the generated package with the unified publish helper. Triggered by: api-surface, models, runtime, build-metadata, publish-workflow, documentation, custom-scaffold, unknown.",
+        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "command": "node",
+        "args": [
+          "./bin/publish-core.mjs",
+          "--language",
+          "typescript",
+          "--project-dir",
+          ".",
+          "--action",
+          "check"
+        ],
+        "displayCommand": "node ./bin/publish-core.mjs --language typescript --project-dir . --action check"
+      },
+      {
+        "id": "build",
+        "title": "Unified package build",
+        "required": true,
+        "rationale": "Run the full package build because this language uses a lighter check path than the final build. Triggered by: api-surface, models, runtime, build-metadata, publish-workflow, documentation, custom-scaffold, unknown.",
+        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "command": "node",
+        "args": [
+          "./bin/publish-core.mjs",
+          "--language",
+          "typescript",
+          "--project-dir",
+          ".",
+          "--action",
+          "build"
+        ],
+        "displayCommand": "node ./bin/publish-core.mjs --language typescript --project-dir . --action build"
+      }
+    ]
+  },
+  "executionDecision": {
+    "schemaVersion": 1,
+    "riskLevel": "high",
+    "nextAction": "verify",
+    "requiresManualReview": false,
+    "applyRequiresExpectedFingerprint": false,
+    "summary": "Changes have been applied. Run the required verification plan now.",
+    "reasons": [
+      "manual-review-required",
+      "preserved-legacy-files",
+      "unknown-impact",
+      "verification-required"
+    ]
+  },
+  "preservedLegacyFiles": true
+}

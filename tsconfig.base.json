@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2023",
+    "types": [
+      "node",
+      "vitest/globals"
+    ],
+    "paths": {
+      "@sdkwork/news-contracts": [
+        "packages/common/news/sdkwork-news-contracts/src/index.ts"
+      ],
+      "@sdkwork/news-sdk-ports": [
+        "packages/common/news/sdkwork-news-sdk-ports/src/index.ts"
+      ],
+      "@sdkwork/news-service": [
+        "packages/common/news/sdkwork-news-service/src/index.ts"
+      ],
+      "@sdkwork/news-runtime": [
+        "packages/common/news/sdkwork-news-runtime/src/index.ts"
+      ],
+      "@sdkwork/news-pc-react": [
+        "apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react/src/index.ts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+[package]
+name = "sdkwork-news-http-rust"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+sdkwork-news-core-rust = { path = "../sdkwork-news-core-rust" }
+
+[lib]
+name = "sdkwork_news_http"
+path = "src/lib.rs"
+

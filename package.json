@@ -1,0 +1,33 @@
+{
+  "name": "sdkwork-news-workspace",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "test": "pnpm test:node && pnpm test:vitest && cargo test --workspace",
+    "test:node": "node --test sdks/test/*.test.mjs sdks/sdkwork-news-app-sdk/tests/*.test.mjs sdks/sdkwork-news-backend-sdk/tests/*.test.mjs sdks/sdkwork-news-sdk/tests/*.test.mjs",
+    "test:vitest": "vitest run --config vitest.config.ts --configLoader native --pool vmThreads",
+    "typecheck": "tsc --noEmit",
+    "sdk:check": "node tools/news_sdk_generate.mjs --check",
+    "sdk:generate": "node tools/news_sdk_generate.mjs",
+    "openapi:export": "node tools/news_openapi_export.mjs",
+    "verify": "pnpm sdk:check && pnpm test:node && pnpm test:vitest && cargo test --workspace"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.2"
+  }
+}
+

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "sdkName": "sdkwork-news-backend-sdk",
+  "sdkOwner": "sdkwork-news",
+  "apiAuthority": "sdkwork-news.backend",
+  "sdkFamily": "sdkwork-news-backend-sdk",
+  "sdkType": "backend",
+  "apiPrefix": "/backend/v3/api",
+  "generationInputSpec": "../../generated/openapi/news-backend-api.openapi.json",
+  "generatedPackages": {
+    "typescript": {
+      "language": "typescript",
+      "packageName": "sdkwork-news-backend-sdk-generated-typescript",
+      "generatedOutput": "sdkwork-news-backend-sdk-typescript/generated/server-openapi"
+    }
+  },
+  "generatorName": "@sdkwork/sdk-generator",
+  "generatorPath": "D:\\javasource\\spring-ai-plus\\sdk\\sdkwork-sdk-generator\\bin\\sdkgen.js",
+  "baseUrl": "http://127.0.0.1:18080",
+  "standardProfile": "sdkwork-v3",
+  "fixedSdkVersion": "0.1.0",
+  "ownerOnlyOperationCount": 13,
+  "operations": [
+    {
+      "method": "POST",
+      "operationId": "categories.create",
+      "path": "/backend/v3/api/news/categories"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "categories.delete",
+      "path": "/backend/v3/api/news/categories/{categoryId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "categories.management.list",
+      "path": "/backend/v3/api/news/categories"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "categories.update",
+      "path": "/backend/v3/api/news/categories/{categoryId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.archive",
+      "path": "/backend/v3/api/news/items/{itemId}/archive"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.create",
+      "path": "/backend/v3/api/news/items"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "items.delete",
+      "path": "/backend/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.editorialReadiness.retrieve",
+      "path": "/backend/v3/api/news/items/{itemId}/editorial_readiness"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.feature",
+      "path": "/backend/v3/api/news/items/{itemId}/feature"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.management.list",
+      "path": "/backend/v3/api/news/items"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.publish",
+      "path": "/backend/v3/api/news/items/{itemId}/publish"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.schedule",
+      "path": "/backend/v3/api/news/items/{itemId}/schedule"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "items.update",
+      "path": "/backend/v3/api/news/items/{itemId}"
+    }
+  ],
+  "managedBy": "tools/news_sdk_generator_runner.mjs"
+}

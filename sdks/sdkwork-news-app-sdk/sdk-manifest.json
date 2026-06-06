@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "sdkName": "sdkwork-news-app-sdk",
+  "sdkOwner": "sdkwork-news",
+  "apiAuthority": "sdkwork-news.app",
+  "sdkFamily": "sdkwork-news-app-sdk",
+  "sdkType": "app",
+  "apiPrefix": "/app/v3/api",
+  "generationInputSpec": "../../generated/openapi/news-app-api.openapi.json",
+  "generatedPackages": {
+    "typescript": {
+      "language": "typescript",
+      "packageName": "sdkwork-news-app-sdk-generated-typescript",
+      "generatedOutput": "sdkwork-news-app-sdk-typescript/generated/server-openapi"
+    }
+  },
+  "generatorName": "@sdkwork/sdk-generator",
+  "generatorPath": "D:\\javasource\\spring-ai-plus\\sdk\\sdkwork-sdk-generator\\bin\\sdkgen.js",
+  "baseUrl": "http://127.0.0.1:18080",
+  "standardProfile": "sdkwork-v3",
+  "fixedSdkVersion": "0.1.0",
+  "ownerOnlyOperationCount": 5,
+  "operations": [
+    {
+      "method": "GET",
+      "operationId": "categories.list",
+      "path": "/app/v3/api/news/categories"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.bySlug.retrieve",
+      "path": "/app/v3/api/news/items/by_slug/{slug}"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.list",
+      "path": "/app/v3/api/news/items"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.retrieve",
+      "path": "/app/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "overview.retrieve",
+      "path": "/app/v3/api/news/overview"
+    }
+  ],
+  "managedBy": "tools/news_sdk_generator_runner.mjs"
+}

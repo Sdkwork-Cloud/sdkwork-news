@@ -1,0 +1,22 @@
+{
+  "workspace": "sdkwork-news-backend-sdk",
+  "title": "SDKWork News Backend API SDK",
+  "apiVersion": "0.1.0",
+  "openapiVersion": "3.1.2",
+  "authoritySpec": "../../generated/openapi/news-backend-api.openapi.json",
+  "generationInputSpec": "../../generated/openapi/news-backend-api.openapi.json",
+  "derivedSpecs": {
+    "default": "../../generated/openapi/news-backend-api.openapi.json"
+  },
+  "sdkOwner": "sdkwork-news",
+  "apiAuthority": "sdkwork-news.backend",
+  "discoverySurface": {
+    "sdkTarget": "backend",
+    "apiPrefix": "/backend/v3/api",
+    "schemaUrl": "/backend/v3/openapi.json",
+    "generatedProtocols": [
+      "http-openapi"
+    ],
+    "manualTransports": []
+  }
+}

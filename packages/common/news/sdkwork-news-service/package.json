@@ -1,0 +1,22 @@
+{
+  "name": "@sdkwork/news-service",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@sdkwork/news-contracts": "workspace:*",
+    "@sdkwork/news-sdk-ports": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run tests --config ../../../../vitest.config.ts --configLoader native --pool vmThreads",
+    "typecheck": "tsc --noEmit"
+  }
+}
+

@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "crates/sdkwork-news-core-rust",
+    "crates/sdkwork-news-storage-sqlx-rust",
+    "crates/sdkwork-news-http-rust",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+

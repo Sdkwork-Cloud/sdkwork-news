@@ -1,0 +1,10 @@
+{
+  "name": "@sdkwork/news-sdk-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node bin/generate-sdk.mjs"
+  }
+}
+

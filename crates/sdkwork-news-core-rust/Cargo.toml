@@ -1,0 +1,9 @@
+[package]
+name = "sdkwork-news-core-rust"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "sdkwork_news_core"
+path = "src/lib.rs"
+

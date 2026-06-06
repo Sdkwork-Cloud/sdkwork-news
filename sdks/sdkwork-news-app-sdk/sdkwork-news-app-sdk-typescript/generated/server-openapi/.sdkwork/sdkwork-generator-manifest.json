@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "generator": "@sdkwork/sdk-generator",
+  "sdk": {
+    "name": "sdkwork-news-app-sdk",
+    "version": "0.1.0",
+    "language": "typescript",
+    "sdkType": "app",
+    "packageName": "sdkwork-news-app-sdk-generated-typescript"
+  },
+  "generatedFiles": [
+    {
+      "path": "bin/publish-core.mjs",
+      "sha256": "affb1f1b5400ac492e94e2d01f3104b8dd38b50329e371265d4f0945f2b0763c"
+    },
+    {
+      "path": "bin/publish.ps1",
+      "sha256": "78c6419400b988409d9393c2ecd85aa02dd6760f73edb3cc84cb28fefc51b41e"
+    },
+    {
+      "path": "bin/publish.sh",
+      "sha256": "899087c23e670b6951a12a13490fd557f761c96d78fabfb7e58a37e367db889f"
+    },
+    {
+      "path": "bin/sdk-gen.bat",
+      "sha256": "2d56891dc8276339ebbffc78ada3cc1bf73e2831453da89d95fcd2277bb4a05b"
+    },
+    {
+      "path": "bin/sdk-gen.sh",
+      "sha256": "c9bab3f87d5327833ca9a392f6b8e6b6d3386a46836cc3c48ef48313b603bd90"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "fb941a0806986a54fc192f98a98f6d9c282b8d350b2b19a3e71dda404e92d545"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "7840cc7d2b36ff364ac16c2fc5ec15b861bfe96854eecf81fb59b00edb8b1447"
+    },
+    {
+      "path": "package.json",
+      "sha256": "d60aa60ac3addc0e9f11dc6243a73d7772dd4876952106fabf104295444c2835"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c623a3dbb99e20501f50da4d3df4847270381e5b5acff5b3c1acea72230687e"
+    },
+    {
+      "path": "sdkwork-sdk.json",
+      "sha256": "3c5938b69092b6dba6dd4e223d083e5779e8ca2bec42176d6a46303ba715d0fe"
+    },
+    {
+      "path": "src/api/base.ts",
+      "sha256": "02ad25e6bf331ff241ba387c2947ddf1900dd849038e08c2757416a3aa788a04"
+    },
+    {
+      "path": "src/api/index.ts",
+      "sha256": "f275e1e7ec19e53b7aedce1dcc7ab83676a11e3724db5680a17f9cc141694bfe"
+    },
+    {
+      "path": "src/api/news.ts",
+      "sha256": "11c28fc4a3438855a901e8a79e430dbc9d25ea640585ef8b088a9066838cf1bd"
+    },
+    {
+      "path": "src/api/paths.ts",
+      "sha256": "4ffed7b7d576dc11081bf6b43511465d3a5db410bd25c425ef47b69b154981ad"
+    },
+    {
+      "path": "src/auth/index.ts",
+      "sha256": "657fc63738bdcd61d83133120732a477dd127448cf2c51229b05d21f5e1f5c04"
+    },
+    {
+      "path": "src/http/client.ts",
+      "sha256": "8c0e5980169c9c73a5432ccc2a7019a530e01c14b371456057d7ee796c146b31"
+    },
+    {
+      "path": "src/http/index.ts",
+      "sha256": "fc204fbe89750b9d25ecaffe41003e6ac243a1a895b65e65856202ab825d2dbe"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "1b72e156546dff1aa4a094a8fb926ab543ccd7e320d3aacef790509f4df5f48b"
+    },
+    {
+      "path": "src/sdk.ts",
+      "sha256": "bfac82fd56411019b83dbdc76022f58f9e2cdfaed02c7768cacbb32c9bd8449c"
+    },
+    {
+      "path": "src/types/categories-list-response.ts",
+      "sha256": "58c641ceaff178681a3a4d346d38324f4ac0d4bb147ea60024bcce1674ee7ff7"
+    },
+    {
+      "path": "src/types/common.ts",
+      "sha256": "ac5b348259c39e2cd8357dfcf8269268ee1da5f8a6e0770d714ab5eb796b3050"
+    },
+    {
+      "path": "src/types/index.ts",
+      "sha256": "8137938dfe15b57547aac52d7b0c95a705a3ef403e3a41e0a406f0bec59fc69c"
+    },
+    {
+      "path": "src/types/items-list-response.ts",
+      "sha256": "5e4d23dae27b96b1f88b55c4bad4ca69c1ee1b2cd659d59c77665d45064e319d"
+    },
+    {
+      "path": "src/types/news-api-result.ts",
+      "sha256": "9198815b2b076e776fec780ed938981bd0978a41fa2916dc15fbaed39d5997c1"
+    },
+    {
+      "path": "src/types/news-category-command.ts",
+      "sha256": "49b6ebb3119ce3edb03418294da32b686323e62a740579f3ac852eccb3804fc1"
+    },
+    {
+      "path": "src/types/news-category.ts",
+      "sha256": "0056f9e00b0c87ddb067c95097880ba7f3a97188a8645515271ebd97023d32a1"
+    },
+    {
+      "path": "src/types/news-editorial-readiness.ts",
+      "sha256": "3c1ff02508635c246f2b789daabde66406c35c5af11ad62ad445f8adb134326c"
+    },
+    {
+      "path": "src/types/news-item-command.ts",
+      "sha256": "c16a741f804883b50115695a75f0a1bcb80b8bfcc24b9d302c198a83fbe31bfe"
+    },
+    {
+      "path": "src/types/news-item-status.ts",
+      "sha256": "27c4c497d5d29dcabc6dfbc807e5c0720b26ac71abc7a412f0253ed195dde1a2"
+    },
+    {
+      "path": "src/types/news-item.ts",
+      "sha256": "28d3270bce18671a95ee00e099ff31ea2fbbd61bd2862f1a8968b06dd96b6f0e"
+    },
+    {
+      "path": "src/types/news-overview.ts",
+      "sha256": "55ecb2a1471903088933cf88edda43a89e898fedd858040f5330f023f669c86c"
+    },
+    {
+      "path": "src/types/news-schedule-command.ts",
+      "sha256": "6f8e377393d02e673f65ff1db2bf8713e446815e19c71de8a4d9a4ad72482c02"
+    },
+    {
+      "path": "src/types/problem-detail.ts",
+      "sha256": "ea50f7466f2e1f6a350f2f7974613579a50cfe968d6ff503496c7662e12fb612"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "7c8a6c2b00fb208ec28e1e6045194487d1b3e563d6c44cef4783fd4fe0e8ffad"
+    }
+  ],
+  "scaffoldFiles": [
+    "custom/build-runtime.mjs",
+    "custom/README.md"
+  ],
+  "customRoots": [
+    "custom/"
+  ]
+}
