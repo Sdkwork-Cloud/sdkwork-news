@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 37,
+  "ownerOnlyOperationCount": 40,
   "operations": [
     {
       "method": "GET",
@@ -145,6 +145,21 @@
       "method": "GET",
       "operationId": "items.retrieve",
       "path": "/app/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.events.list",
+      "path": "/app/v3/api/news/live/events"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.events.retrieve",
+      "path": "/app/v3/api/news/live/events/{eventId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.updates.list",
+      "path": "/app/v3/api/news/live/events/{eventId}/updates"
     },
     {
       "method": "DELETE",

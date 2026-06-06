@@ -446,6 +446,88 @@ pub struct NewsStoredItemTrustSnapshot {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsLiveEvent {
+    pub id: String,
+    pub tenant_id: String,
+    pub organization_id: String,
+    pub slug: String,
+    pub title: String,
+    pub summary: String,
+    pub event_type: String,
+    pub priority: i64,
+    pub region: Option<String>,
+    pub locale: Option<String>,
+    pub started_at: Option<String>,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredLiveEvent {
+    pub id: String,
+    pub slug: String,
+    pub title: String,
+    pub summary: String,
+    pub event_type: String,
+    pub priority: i64,
+    pub status: String,
+    pub region: Option<String>,
+    pub locale: Option<String>,
+    pub started_at: Option<String>,
+    pub published_at: Option<String>,
+    pub closed_at: Option<String>,
+    pub updated_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsLiveUpdate {
+    pub id: String,
+    pub tenant_id: String,
+    pub live_event_id: String,
+    pub title: Option<String>,
+    pub body: String,
+    pub update_type: String,
+    pub importance: i64,
+    pub source_id: Option<String>,
+    pub author_id: Option<String>,
+    pub item_id: Option<String>,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredLiveUpdate {
+    pub id: String,
+    pub live_event_id: String,
+    pub title: Option<String>,
+    pub body: String,
+    pub update_type: String,
+    pub importance: i64,
+    pub source_id: Option<String>,
+    pub author_id: Option<String>,
+    pub item_id: Option<String>,
+    pub published_at: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsLiveEventItem {
+    pub id: String,
+    pub tenant_id: String,
+    pub live_event_id: String,
+    pub item_id: String,
+    pub relation_type: String,
+    pub rank: i64,
+    pub note: Option<String>,
+    pub created_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredLiveEventItem {
+    pub item_id: String,
+    pub relation_type: String,
+    pub rank: i64,
+    pub note: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NewsStoredItem {
     pub id: String,
     pub tenant_id: String,
@@ -498,6 +580,9 @@ impl SqliteNewsStore {
             .execute(&self.pool)
             .await?;
         sqlx::raw_sql(news_trust_correction_migration_sql())
+            .execute(&self.pool)
+            .await?;
+        sqlx::raw_sql(news_live_coverage_migration_sql())
             .execute(&self.pool)
             .await?;
         Ok(())
@@ -764,7 +849,10 @@ impl SqliteNewsStore {
         Ok(())
     }
 
-    pub async fn attach_item_to_channel(&self, input: NewNewsChannelItem) -> Result<(), sqlx::Error> {
+    pub async fn attach_item_to_channel(
+        &self,
+        input: NewNewsChannelItem,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_channel_item
@@ -830,7 +918,10 @@ impl SqliteNewsStore {
         Ok(items)
     }
 
-    pub async fn record_recommendation_event(&self, input: NewNewsRecommendationEvent) -> Result<(), sqlx::Error> {
+    pub async fn record_recommendation_event(
+        &self,
+        input: NewNewsRecommendationEvent,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_recommendation_event
@@ -854,7 +945,10 @@ impl SqliteNewsStore {
         Ok(())
     }
 
-    pub async fn record_user_feedback(&self, input: NewNewsUserFeedback) -> Result<(), sqlx::Error> {
+    pub async fn record_user_feedback(
+        &self,
+        input: NewNewsUserFeedback,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_user_feedback
@@ -923,7 +1017,10 @@ impl SqliteNewsStore {
         Ok(())
     }
 
-    pub async fn upsert_trending_metric(&self, input: NewNewsTrendingMetric) -> Result<(), sqlx::Error> {
+    pub async fn upsert_trending_metric(
+        &self,
+        input: NewNewsTrendingMetric,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_trending_metric
@@ -1054,7 +1151,10 @@ impl SqliteNewsStore {
             .collect())
     }
 
-    pub async fn upsert_feed_candidate(&self, input: NewNewsFeedCandidate) -> Result<(), sqlx::Error> {
+    pub async fn upsert_feed_candidate(
+        &self,
+        input: NewNewsFeedCandidate,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_feed_candidate
@@ -1403,7 +1503,10 @@ impl SqliteNewsStore {
         Ok(())
     }
 
-    pub async fn create_breaking_alert(&self, input: NewNewsBreakingAlert) -> Result<(), sqlx::Error> {
+    pub async fn create_breaking_alert(
+        &self,
+        input: NewNewsBreakingAlert,
+    ) -> Result<(), sqlx::Error> {
         sqlx::query(
             r#"
             INSERT INTO news_breaking_alert
@@ -1503,7 +1606,11 @@ impl SqliteNewsStore {
     }
 
     pub async fn create_digest_issue(&self, input: NewNewsDigestIssue) -> Result<(), sqlx::Error> {
-        let status = if input.published_at.is_some() { "published" } else { "draft" };
+        let status = if input.published_at.is_some() {
+            "published"
+        } else {
+            "draft"
+        };
         sqlx::query(
             r#"
             INSERT INTO news_digest_issue
@@ -1984,7 +2091,296 @@ impl SqliteNewsStore {
         }))
     }
 
-    async fn item_from_row(&self, row: sqlx::sqlite::SqliteRow) -> Result<NewsStoredItem, sqlx::Error> {
+    pub async fn create_live_event(&self, input: NewNewsLiveEvent) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_live_event
+                (id, tenant_id, organization_id, slug, title, summary, event_type, priority,
+                 status, region, locale, started_at, published_at, closed_at, created_at,
+                 updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, NULL, NULL, ?, ?, 0)
+            ON CONFLICT (tenant_id, slug)
+            DO UPDATE SET organization_id = excluded.organization_id,
+                          title = excluded.title,
+                          summary = excluded.summary,
+                          event_type = excluded.event_type,
+                          priority = excluded.priority,
+                          region = excluded.region,
+                          locale = excluded.locale,
+                          started_at = excluded.started_at,
+                          updated_at = excluded.updated_at,
+                          version = news_live_event.version + 1
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.organization_id)
+        .bind(input.slug)
+        .bind(input.title)
+        .bind(input.summary)
+        .bind(input.event_type)
+        .bind(input.priority)
+        .bind(input.region)
+        .bind(input.locale)
+        .bind(input.started_at)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn publish_live_event(
+        &self,
+        tenant_id: &str,
+        live_event_id: &str,
+        now: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            UPDATE news_live_event
+            SET status = 'published',
+                published_at = COALESCE(published_at, ?),
+                updated_at = ?,
+                version = version + 1
+            WHERE tenant_id = ?
+              AND id = ?
+              AND status != 'closed'
+            "#,
+        )
+        .bind(now)
+        .bind(now)
+        .bind(tenant_id)
+        .bind(live_event_id)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn close_live_event(
+        &self,
+        tenant_id: &str,
+        live_event_id: &str,
+        now: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            UPDATE news_live_event
+            SET status = 'closed',
+                closed_at = COALESCE(closed_at, ?),
+                updated_at = ?,
+                version = version + 1
+            WHERE tenant_id = ?
+              AND id = ?
+            "#,
+        )
+        .bind(now)
+        .bind(now)
+        .bind(tenant_id)
+        .bind(live_event_id)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_published_live_events(
+        &self,
+        tenant_id: &str,
+        now: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredLiveEvent>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT id, slug, title, summary, event_type, priority, status, region, locale,
+                   started_at, published_at, closed_at, updated_at
+            FROM news_live_event
+            WHERE tenant_id = ?
+              AND status = 'published'
+              AND (published_at IS NULL OR published_at <= ?)
+            ORDER BY priority ASC, published_at DESC, started_at DESC, id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(now)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows.iter().map(live_event_from_row).collect())
+    }
+
+    pub async fn retrieve_published_live_event(
+        &self,
+        tenant_id: &str,
+        live_event_id: &str,
+    ) -> Result<Option<NewsStoredLiveEvent>, sqlx::Error> {
+        let row = sqlx::query(
+            r#"
+            SELECT id, slug, title, summary, event_type, priority, status, region, locale,
+                   started_at, published_at, closed_at, updated_at
+            FROM news_live_event
+            WHERE tenant_id = ?
+              AND id = ?
+              AND status = 'published'
+            LIMIT 1
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(live_event_id)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(row.as_ref().map(live_event_from_row))
+    }
+
+    pub async fn create_live_update(&self, input: NewNewsLiveUpdate) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_live_update
+                (id, tenant_id, live_event_id, title, body, update_type, importance, source_id,
+                 author_id, item_id, status, published_at, created_at, updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', NULL, ?, ?, 0)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.live_event_id)
+        .bind(input.title)
+        .bind(input.body)
+        .bind(input.update_type)
+        .bind(input.importance)
+        .bind(input.source_id)
+        .bind(input.author_id)
+        .bind(input.item_id)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn publish_live_update(
+        &self,
+        tenant_id: &str,
+        live_update_id: &str,
+        now: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            UPDATE news_live_update
+            SET status = 'published',
+                published_at = COALESCE(published_at, ?),
+                updated_at = ?,
+                version = version + 1
+            WHERE tenant_id = ?
+              AND id = ?
+              AND status != 'archived'
+            "#,
+        )
+        .bind(now)
+        .bind(now)
+        .bind(tenant_id)
+        .bind(live_update_id)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_published_live_updates(
+        &self,
+        tenant_id: &str,
+        live_event_id: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredLiveUpdate>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT id, live_event_id, title, body, update_type, importance, source_id,
+                   author_id, item_id, published_at
+            FROM news_live_update
+            WHERE tenant_id = ?
+              AND live_event_id = ?
+              AND status = 'published'
+            ORDER BY published_at DESC, importance DESC, id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(live_event_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows.iter().map(live_update_from_row).collect())
+    }
+
+    pub async fn attach_item_to_live_event(
+        &self,
+        input: NewNewsLiveEventItem,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_live_event_item
+                (id, tenant_id, live_event_id, item_id, relation_type, rank, note, created_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (tenant_id, live_event_id, item_id, relation_type)
+            DO UPDATE SET rank = excluded.rank,
+                          note = excluded.note
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.live_event_id)
+        .bind(input.item_id)
+        .bind(input.relation_type)
+        .bind(input.rank)
+        .bind(input.note)
+        .bind(input.created_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_live_event_items(
+        &self,
+        tenant_id: &str,
+        live_event_id: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredLiveEventItem>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT item_id, relation_type, rank, note
+            FROM news_live_event_item
+            WHERE tenant_id = ?
+              AND live_event_id = ?
+            ORDER BY rank ASC, item_id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(live_event_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredLiveEventItem {
+                item_id: string_cell(row, "item_id"),
+                relation_type: string_cell(row, "relation_type"),
+                rank: integer_cell(row, "rank"),
+                note: optional_string_cell(row, "note"),
+            })
+            .collect())
+    }
+
+    async fn item_from_row(
+        &self,
+        row: sqlx::sqlite::SqliteRow,
+    ) -> Result<NewsStoredItem, sqlx::Error> {
         let item_id = string_cell(&row, "id");
         let tags = self.item_tags(&item_id).await?;
         Ok(NewsStoredItem {
@@ -2021,6 +2417,39 @@ impl SqliteNewsStore {
         .fetch_all(&self.pool)
         .await?;
         Ok(rows.iter().map(|row| string_cell(row, "slug")).collect())
+    }
+}
+
+fn live_event_from_row(row: &sqlx::sqlite::SqliteRow) -> NewsStoredLiveEvent {
+    NewsStoredLiveEvent {
+        id: string_cell(row, "id"),
+        slug: string_cell(row, "slug"),
+        title: string_cell(row, "title"),
+        summary: string_cell(row, "summary"),
+        event_type: string_cell(row, "event_type"),
+        priority: integer_cell(row, "priority"),
+        status: string_cell(row, "status"),
+        region: optional_string_cell(row, "region"),
+        locale: optional_string_cell(row, "locale"),
+        started_at: optional_string_cell(row, "started_at"),
+        published_at: optional_string_cell(row, "published_at"),
+        closed_at: optional_string_cell(row, "closed_at"),
+        updated_at: string_cell(row, "updated_at"),
+    }
+}
+
+fn live_update_from_row(row: &sqlx::sqlite::SqliteRow) -> NewsStoredLiveUpdate {
+    NewsStoredLiveUpdate {
+        id: string_cell(row, "id"),
+        live_event_id: string_cell(row, "live_event_id"),
+        title: optional_string_cell(row, "title"),
+        body: string_cell(row, "body"),
+        update_type: string_cell(row, "update_type"),
+        importance: integer_cell(row, "importance"),
+        source_id: optional_string_cell(row, "source_id"),
+        author_id: optional_string_cell(row, "author_id"),
+        item_id: optional_string_cell(row, "item_id"),
+        published_at: optional_string_cell(row, "published_at"),
     }
 }
 
@@ -2076,6 +2505,9 @@ pub fn news_database_tables() -> Vec<&'static str> {
         "news_fact_check",
         "news_correction_notice",
         "news_item_trust_snapshot",
+        "news_live_event",
+        "news_live_update",
+        "news_live_event_item",
     ]
 }
 
@@ -2138,6 +2570,11 @@ pub fn news_database_indexes() -> Vec<&'static str> {
         "idx_news_fact_check_verdict_status",
         "idx_news_correction_notice_item_status",
         "idx_news_item_trust_snapshot_risk",
+        "idx_news_live_event_status_priority",
+        "idx_news_live_event_slug",
+        "idx_news_live_update_event_status_time",
+        "idx_news_live_update_item",
+        "idx_news_live_event_item_event_rank",
     ]
 }
 
@@ -2148,6 +2585,7 @@ pub fn news_migration_names() -> Vec<&'static str> {
         "0003_news_personalization_foundation.sql",
         "0004_news_alert_digest_foundation.sql",
         "0005_news_trust_correction_foundation.sql",
+        "0006_news_live_coverage_foundation.sql",
     ]
 }
 
@@ -2169,6 +2607,10 @@ pub fn news_alert_digest_migration_sql() -> &'static str {
 
 pub fn news_trust_correction_migration_sql() -> &'static str {
     include_str!("../migrations/0005_news_trust_correction_foundation.sql")
+}
+
+pub fn news_live_coverage_migration_sql() -> &'static str {
+    include_str!("../migrations/0006_news_live_coverage_foundation.sql")
 }
 
 pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
@@ -2268,6 +2710,18 @@ pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
                 "news_item_trust_snapshot",
             ],
         ),
+        migration(
+            6,
+            "0006_news_live_coverage_foundation.sql",
+            "news",
+            "migrations/0006_news_live_coverage_foundation.sql",
+            news_live_coverage_migration_sql(),
+            vec![
+                "news_live_event",
+                "news_live_update",
+                "news_live_event_item",
+            ],
+        ),
     ]
 }
 
@@ -2285,7 +2739,11 @@ pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
                 "news_publication_event",
             ],
         ),
-        binding("news", "news.read_state.repository", vec!["news_read_state"]),
+        binding(
+            "news",
+            "news.read_state.repository",
+            vec!["news_read_state"],
+        ),
         binding(
             "news",
             "news.audit.repository",
@@ -2385,13 +2843,22 @@ pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
                 "news_item_trust_snapshot",
             ],
         ),
+        binding(
+            "news",
+            "news.live.repository",
+            vec![
+                "news_live_event",
+                "news_live_update",
+                "news_live_event_item",
+            ],
+        ),
     ]
 }
 
 pub fn news_storage_capability_manifest() -> NewsStorageCapabilityManifest {
     NewsStorageCapabilityManifest {
         name: "sdkwork-news-storage-sqlx",
-        schema_version: "news.storage.v5",
+        schema_version: "news.storage.v6",
         tables: news_database_tables(),
         indexes: news_database_indexes(),
         migrations: news_migration_names(),

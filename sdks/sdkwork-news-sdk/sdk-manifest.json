@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18082",
   "standardProfile": null,
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 16,
+  "ownerOnlyOperationCount": 19,
   "operations": [
     {
       "method": "GET",
@@ -70,6 +70,21 @@
       "method": "GET",
       "operationId": "items.retrieve",
       "path": "/open/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.events.list",
+      "path": "/open/v3/api/news/live/events"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.events.retrieve",
+      "path": "/open/v3/api/news/live/events/{eventId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.updates.list",
+      "path": "/open/v3/api/news/live/events/{eventId}/updates"
     },
     {
       "method": "GET",

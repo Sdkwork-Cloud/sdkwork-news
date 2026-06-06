@@ -1,8 +1,123 @@
 ﻿import { backendApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsMetricsListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsBreakingAlert, NewsBreakingAlertCommand, NewsBreakingAlertListResponse, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsCorrectionNotice, NewsCorrectionNoticeCommand, NewsCorrectionNoticeListResponse, NewsDigestIssue, NewsDigestIssueCommand, NewsDigestIssueListResponse, NewsDigestItemCommand, NewsEditorialReadiness, NewsExperiment, NewsFactCheck, NewsFactCheckCommand, NewsFactCheckListResponse, NewsFeedCandidate, NewsFeedCandidateCommand, NewsFeedCandidateListResponse, NewsGenericCommand, NewsItem, NewsItemCommand, NewsItemMetricSnapshot, NewsItemTrustSnapshot, NewsItemTrustSnapshotCommand, NewsModerationCase, NewsNotificationSubscriptionListResponse, NewsScheduleCommand, NewsSearchSuggestion, NewsSearchSuggestionCommand, NewsSearchSuggestionListResponse, NewsSource, NewsSourceTrustProfile, NewsSourceTrustProfileCommand, NewsSourceTrustProfileListResponse, NewsTopic, NewsTrendingMetric, NewsUserInterestSignalListResponse, SearchEventsListResponse, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
+import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsMetricsListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsBreakingAlert, NewsBreakingAlertCommand, NewsBreakingAlertListResponse, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsCorrectionNotice, NewsCorrectionNoticeCommand, NewsCorrectionNoticeListResponse, NewsDigestIssue, NewsDigestIssueCommand, NewsDigestIssueListResponse, NewsDigestItemCommand, NewsEditorialReadiness, NewsExperiment, NewsFactCheck, NewsFactCheckCommand, NewsFactCheckListResponse, NewsFeedCandidate, NewsFeedCandidateCommand, NewsFeedCandidateListResponse, NewsGenericCommand, NewsItem, NewsItemCommand, NewsItemMetricSnapshot, NewsItemTrustSnapshot, NewsItemTrustSnapshotCommand, NewsLiveEvent, NewsLiveEventCommand, NewsLiveEventItemCommand, NewsLiveEventListResponse, NewsLiveUpdate, NewsLiveUpdateCommand, NewsModerationCase, NewsNotificationSubscriptionListResponse, NewsScheduleCommand, NewsSearchSuggestion, NewsSearchSuggestionCommand, NewsSearchSuggestionListResponse, NewsSource, NewsSourceTrustProfile, NewsSourceTrustProfileCommand, NewsSourceTrustProfileListResponse, NewsTopic, NewsTrendingMetric, NewsUserInterestSignalListResponse, SearchEventsListResponse, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
 
+
+export class NewsLiveItemsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News live.items.attach */
+  async attach(eventId: string, body: NewsLiveEventItemCommand): Promise<NewsApiResult> {
+    return this.client.post<NewsApiResult>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/items`), body, undefined, undefined, 'application/json');
+  }
+}
+
+export class NewsLiveUpdatesApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News live.updates.create */
+  async create(eventId: string, body: NewsLiveUpdateCommand): Promise<NewsLiveUpdate> {
+    return this.client.post<NewsLiveUpdate>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates`), body, undefined, undefined, 'application/json');
+  }
+
+/** News live.updates.update */
+  async update(eventId: string, updateId: string, body: NewsLiveUpdateCommand): Promise<NewsLiveUpdate> {
+    return this.client.patch<NewsLiveUpdate>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates/${serializePathParameter(updateId, { name: 'updateId', style: 'simple', explode: false })}`), body, undefined, undefined, 'application/json');
+  }
+
+/** News live.updates.publish */
+  async publish(eventId: string, updateId: string): Promise<NewsLiveUpdate> {
+    return this.client.post<NewsLiveUpdate>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates/${serializePathParameter(updateId, { name: 'updateId', style: 'simple', explode: false })}/publish`));
+  }
+}
+
+export interface NewsLiveEventsManagementListParams {
+  eventType?: string;
+  region?: string;
+  locale?: string;
+  status?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsLiveEventsManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News live.events.management.list */
+  async list(params?: NewsLiveEventsManagementListParams): Promise<NewsLiveEventListResponse> {
+    const query = buildQueryString([
+      { name: 'event_type', value: params?.eventType, style: 'form', explode: true, allowReserved: false },
+      { name: 'region', value: params?.region, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+      { name: 'status', value: params?.status, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsLiveEventListResponse>(appendQueryString(backendApiPath(`/news/live/events`), query));
+  }
+}
+
+export class NewsLiveEventsApi {
+  private client: HttpClient;
+  public readonly management: NewsLiveEventsManagementApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsLiveEventsManagementApi(client);
+  }
+
+
+/** News live.events.create */
+  async create(body: NewsLiveEventCommand): Promise<NewsLiveEvent> {
+    return this.client.post<NewsLiveEvent>(backendApiPath(`/news/live/events`), body, undefined, undefined, 'application/json');
+  }
+
+/** News live.events.update */
+  async update(eventId: string, body: NewsLiveEventCommand): Promise<NewsLiveEvent> {
+    return this.client.patch<NewsLiveEvent>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}`), body, undefined, undefined, 'application/json');
+  }
+
+/** News live.events.publish */
+  async publish(eventId: string): Promise<NewsLiveEvent> {
+    return this.client.post<NewsLiveEvent>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/publish`));
+  }
+
+/** News live.events.close */
+  async close(eventId: string): Promise<NewsLiveEvent> {
+    return this.client.post<NewsLiveEvent>(backendApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/close`));
+  }
+}
+
+export class NewsLiveApi {
+  private client: HttpClient;
+  public readonly events: NewsLiveEventsApi;
+  public readonly updates: NewsLiveUpdatesApi;
+  public readonly items: NewsLiveItemsApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.events = new NewsLiveEventsApi(client);
+    this.updates = new NewsLiveUpdatesApi(client);
+    this.items = new NewsLiveItemsApi(client);
+  }
+
+}
 
 export interface NewsCorrectionsManagementListParams {
   itemId?: string;
@@ -1221,6 +1336,7 @@ export class NewsApi {
   public readonly trust: NewsTrustApi;
   public readonly factChecks: NewsFactChecksApi;
   public readonly corrections: NewsCorrectionsApi;
+  public readonly live: NewsLiveApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -1244,6 +1360,7 @@ export class NewsApi {
     this.trust = new NewsTrustApi(client);
     this.factChecks = new NewsFactChecksApi(client);
     this.corrections = new NewsCorrectionsApi(client);
+    this.live = new NewsLiveApi(client);
   }
 
 }

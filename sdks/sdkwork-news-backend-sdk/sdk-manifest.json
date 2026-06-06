@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 84,
+  "ownerOnlyOperationCount": 93,
   "operations": [
     {
       "method": "POST",
@@ -310,6 +310,51 @@
       "method": "GET",
       "operationId": "items.versions.list",
       "path": "/backend/v3/api/news/items/{itemId}/versions"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.events.close",
+      "path": "/backend/v3/api/news/live/events/{eventId}/close"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.events.create",
+      "path": "/backend/v3/api/news/live/events"
+    },
+    {
+      "method": "GET",
+      "operationId": "live.events.management.list",
+      "path": "/backend/v3/api/news/live/events"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.events.publish",
+      "path": "/backend/v3/api/news/live/events/{eventId}/publish"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "live.events.update",
+      "path": "/backend/v3/api/news/live/events/{eventId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.items.attach",
+      "path": "/backend/v3/api/news/live/events/{eventId}/items"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.updates.create",
+      "path": "/backend/v3/api/news/live/events/{eventId}/updates"
+    },
+    {
+      "method": "POST",
+      "operationId": "live.updates.publish",
+      "path": "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}/publish"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "live.updates.update",
+      "path": "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}"
     },
     {
       "method": "GET",

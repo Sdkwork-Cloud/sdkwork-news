@@ -37,16 +37,32 @@ impl NewsHttpRoute {
 
 pub fn app_routes() -> Vec<NewsHttpRoute> {
     vec![
-        route(HttpMethod::Get, "/app/v3/api/news/categories", "categories.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/categories",
+            "categories.list",
+        ),
         route(HttpMethod::Get, "/app/v3/api/news/items", "items.list"),
-        route(HttpMethod::Get, "/app/v3/api/news/items/{itemId}", "items.retrieve"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/items/{itemId}",
+            "items.retrieve",
+        ),
         route(
             HttpMethod::Get,
             "/app/v3/api/news/items/by_slug/{slug}",
             "items.bySlug.retrieve",
         ),
-        route(HttpMethod::Get, "/app/v3/api/news/overview", "overview.retrieve"),
-        route(HttpMethod::Get, "/app/v3/api/news/channels", "channels.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/overview",
+            "overview.retrieve",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/channels",
+            "channels.list",
+        ),
         route(
             HttpMethod::Get,
             "/app/v3/api/news/channels/{channelId}/feed",
@@ -68,7 +84,11 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "/app/v3/api/news/items/{itemId}/related",
             "items.related.list",
         ),
-        route(HttpMethod::Get, "/app/v3/api/news/trending", "trending.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/trending",
+            "trending.list",
+        ),
         route(HttpMethod::Get, "/app/v3/api/news/search", "search.list"),
         route(
             HttpMethod::Get,
@@ -76,7 +96,11 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "search.suggestions.list",
         ),
         route(HttpMethod::Post, "/app/v3/api/news/events", "events.create"),
-        route(HttpMethod::Get, "/app/v3/api/news/favorites", "favorites.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/favorites",
+            "favorites.list",
+        ),
         route(
             HttpMethod::Post,
             "/app/v3/api/news/items/{itemId}/favorites",
@@ -102,18 +126,38 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "/app/v3/api/news/items/{itemId}/comments",
             "comments.create",
         ),
-        route(HttpMethod::Post, "/app/v3/api/news/reports", "reports.create"),
-        route(HttpMethod::Post, "/app/v3/api/news/feedback", "feedback.create"),
+        route(
+            HttpMethod::Post,
+            "/app/v3/api/news/reports",
+            "reports.create",
+        ),
+        route(
+            HttpMethod::Post,
+            "/app/v3/api/news/feedback",
+            "feedback.create",
+        ),
         route(HttpMethod::Get, "/app/v3/api/news/history", "history.list"),
         route(HttpMethod::Get, "/app/v3/api/news/follows", "follows.list"),
-        route(HttpMethod::Post, "/app/v3/api/news/follows", "follows.create"),
+        route(
+            HttpMethod::Post,
+            "/app/v3/api/news/follows",
+            "follows.create",
+        ),
         route(
             HttpMethod::Delete,
             "/app/v3/api/news/follows/{followId}",
             "follows.delete",
         ),
-        route(HttpMethod::Get, "/app/v3/api/news/interests", "interests.list"),
-        route(HttpMethod::Put, "/app/v3/api/news/interests", "interests.upsert"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/interests",
+            "interests.list",
+        ),
+        route(
+            HttpMethod::Put,
+            "/app/v3/api/news/interests",
+            "interests.upsert",
+        ),
         route(
             HttpMethod::Get,
             "/app/v3/api/news/notification/subscriptions",
@@ -150,19 +194,42 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "/app/v3/api/news/corrections",
             "corrections.list",
         ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/live/events",
+            "live.events.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/live/events/{eventId}",
+            "live.events.retrieve",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/live/events/{eventId}/updates",
+            "live.updates.list",
+        ),
     ]
 }
 
 pub fn open_routes() -> Vec<NewsHttpRoute> {
     vec![
         route(HttpMethod::Get, "/open/v3/api/news/items", "items.list"),
-        route(HttpMethod::Get, "/open/v3/api/news/items/{itemId}", "items.retrieve"),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/items/{itemId}",
+            "items.retrieve",
+        ),
         route(
             HttpMethod::Get,
             "/open/v3/api/news/items/by_slug/{slug}",
             "items.bySlug.retrieve",
         ),
-        route(HttpMethod::Get, "/open/v3/api/news/channels", "channels.list"),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/channels",
+            "channels.list",
+        ),
         route(
             HttpMethod::Get,
             "/open/v3/api/news/channels/{channelId}/feed",
@@ -179,7 +246,11 @@ pub fn open_routes() -> Vec<NewsHttpRoute> {
             "/open/v3/api/news/items/{itemId}/related",
             "items.related.list",
         ),
-        route(HttpMethod::Get, "/open/v3/api/news/trending", "trending.list"),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/trending",
+            "trending.list",
+        ),
         route(HttpMethod::Get, "/open/v3/api/news/search", "search.list"),
         route(
             HttpMethod::Get,
@@ -206,6 +277,21 @@ pub fn open_routes() -> Vec<NewsHttpRoute> {
             HttpMethod::Get,
             "/open/v3/api/news/corrections",
             "corrections.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/live/events",
+            "live.events.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/live/events/{eventId}",
+            "live.events.retrieve",
+        ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/live/events/{eventId}/updates",
+            "live.updates.list",
         ),
     ]
 }
@@ -237,7 +323,11 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             "/backend/v3/api/news/items",
             "items.management.list",
         ),
-        route(HttpMethod::Post, "/backend/v3/api/news/items", "items.create"),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/items",
+            "items.create",
+        ),
         route(
             HttpMethod::Patch,
             "/backend/v3/api/news/items/{itemId}",
@@ -278,7 +368,11 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             "/backend/v3/api/news/sources",
             "sources.management.list",
         ),
-        route(HttpMethod::Post, "/backend/v3/api/news/sources", "sources.create"),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/sources",
+            "sources.create",
+        ),
         route(
             HttpMethod::Patch,
             "/backend/v3/api/news/sources/{sourceId}",
@@ -294,7 +388,11 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             "/backend/v3/api/news/authors",
             "authors.management.list",
         ),
-        route(HttpMethod::Post, "/backend/v3/api/news/authors", "authors.create"),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/authors",
+            "authors.create",
+        ),
         route(
             HttpMethod::Patch,
             "/backend/v3/api/news/authors/{authorId}",
@@ -310,7 +408,11 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             "/backend/v3/api/news/channels",
             "channels.management.list",
         ),
-        route(HttpMethod::Post, "/backend/v3/api/news/channels", "channels.create"),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/channels",
+            "channels.create",
+        ),
         route(
             HttpMethod::Patch,
             "/backend/v3/api/news/channels/{channelId}",
@@ -326,7 +428,11 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             "/backend/v3/api/news/topics",
             "topics.management.list",
         ),
-        route(HttpMethod::Post, "/backend/v3/api/news/topics", "topics.create"),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/topics",
+            "topics.create",
+        ),
         route(
             HttpMethod::Patch,
             "/backend/v3/api/news/topics/{topicId}",
@@ -611,6 +717,51 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             HttpMethod::Post,
             "/backend/v3/api/news/corrections/{correctionId}/archive",
             "corrections.archive",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/live/events",
+            "live.events.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events",
+            "live.events.create",
+        ),
+        route(
+            HttpMethod::Patch,
+            "/backend/v3/api/news/live/events/{eventId}",
+            "live.events.update",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events/{eventId}/publish",
+            "live.events.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events/{eventId}/close",
+            "live.events.close",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events/{eventId}/updates",
+            "live.updates.create",
+        ),
+        route(
+            HttpMethod::Patch,
+            "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}",
+            "live.updates.update",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}/publish",
+            "live.updates.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/live/events/{eventId}/items",
+            "live.items.attach",
         ),
     ]
 }

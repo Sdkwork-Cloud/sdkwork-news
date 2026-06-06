@@ -670,6 +670,88 @@ const schemas = {
       computedAt: { type: "string", format: "date-time" },
     },
   },
+  NewsLiveEvent: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "slug", "title", "summary", "eventType", "priority", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      slug: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      eventType: { type: "string", enum: ["developing_story", "election", "sports", "market", "weather", "emergency"] },
+      priority: { type: "integer" },
+      status: { type: "string", enum: ["draft", "published", "closed", "archived"] },
+      region: { type: "string" },
+      locale: { type: "string" },
+      startedAt: { type: "string", format: "date-time" },
+      publishedAt: { type: "string", format: "date-time" },
+      closedAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsLiveEventListResponse: arrayOf("NewsLiveEvent"),
+  NewsLiveEventCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["slug", "title", "summary", "eventType", "priority"],
+    properties: {
+      slug: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      eventType: { type: "string", enum: ["developing_story", "election", "sports", "market", "weather", "emergency"] },
+      priority: { type: "integer" },
+      region: { type: "string" },
+      locale: { type: "string" },
+      startedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsLiveUpdate: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "liveEventId", "body", "updateType", "importance", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      liveEventId: { type: "string" },
+      title: { type: "string" },
+      body: { type: "string" },
+      updateType: { type: "string", enum: ["text", "image", "video", "quote", "fact_check", "correction"] },
+      importance: { type: "integer", minimum: 0 },
+      sourceId: { type: "string" },
+      authorId: { type: "string" },
+      itemId: { type: "string" },
+      status: { type: "string", enum: ["draft", "published", "archived"] },
+      publishedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsLiveUpdateListResponse: arrayOf("NewsLiveUpdate"),
+  NewsLiveUpdateCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["body", "updateType", "importance"],
+    properties: {
+      title: { type: "string" },
+      body: { type: "string" },
+      updateType: { type: "string", enum: ["text", "image", "video", "quote", "fact_check", "correction"] },
+      importance: { type: "integer", minimum: 0 },
+      sourceId: { type: "string" },
+      authorId: { type: "string" },
+      itemId: { type: "string" },
+    },
+  },
+  NewsLiveEventItemCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["itemId", "relationType", "rank"],
+    properties: {
+      itemId: { type: "string" },
+      relationType: { type: "string", enum: ["source_article", "background", "analysis", "timeline_context", "related"] },
+      rank: { type: "integer" },
+      note: { type: "string" },
+    },
+  },
   NewsModerationCase: {
     type: "object",
     additionalProperties: false,
@@ -809,6 +891,9 @@ const appRoutes = [
   route("get", "/app/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", { schema: ref("NewsItemTrustSnapshot") }, false, [pathParam("itemId")]),
   route("get", "/app/v3/api/news/fact_checks", "factChecks.list", { schema: ref("NewsFactCheckListResponse") }, false, factCheckParams()),
   route("get", "/app/v3/api/news/corrections", "corrections.list", { schema: ref("NewsCorrectionNoticeListResponse") }, false, correctionParams()),
+  route("get", "/app/v3/api/news/live/events", "live.events.list", { schema: ref("NewsLiveEventListResponse") }, false, liveEventParams()),
+  route("get", "/app/v3/api/news/live/events/{eventId}", "live.events.retrieve", { schema: ref("NewsLiveEvent") }, false, [pathParam("eventId")]),
+  route("get", "/app/v3/api/news/live/events/{eventId}/updates", "live.updates.list", { schema: ref("NewsLiveUpdateListResponse") }, false, [pathParam("eventId"), ...pageParams()]),
 ];
 
 const openRoutes = [
@@ -828,6 +913,9 @@ const openRoutes = [
   route("get", "/open/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", { schema: ref("NewsItemTrustSnapshot") }, true, [pathParam("itemId")]),
   route("get", "/open/v3/api/news/fact_checks", "factChecks.list", { schema: ref("NewsFactCheckListResponse") }, true, factCheckParams()),
   route("get", "/open/v3/api/news/corrections", "corrections.list", { schema: ref("NewsCorrectionNoticeListResponse") }, true, correctionParams()),
+  route("get", "/open/v3/api/news/live/events", "live.events.list", { schema: ref("NewsLiveEventListResponse") }, true, liveEventParams()),
+  route("get", "/open/v3/api/news/live/events/{eventId}", "live.events.retrieve", { schema: ref("NewsLiveEvent") }, true, [pathParam("eventId")]),
+  route("get", "/open/v3/api/news/live/events/{eventId}/updates", "live.updates.list", { schema: ref("NewsLiveUpdateListResponse") }, true, [pathParam("eventId"), ...pageParams()]),
 ];
 
 const backendRoutes = [
@@ -915,6 +1003,15 @@ const backendRoutes = [
   route("post", "/backend/v3/api/news/corrections", "corrections.create", { schema: ref("NewsCorrectionNotice") }, false, [], "NewsCorrectionNoticeCommand"),
   route("post", "/backend/v3/api/news/corrections/{correctionId}/publish", "corrections.publish", { schema: ref("NewsCorrectionNotice") }, false, [pathParam("correctionId")]),
   route("post", "/backend/v3/api/news/corrections/{correctionId}/archive", "corrections.archive", { schema: ref("NewsCorrectionNotice") }, false, [pathParam("correctionId")]),
+  route("get", "/backend/v3/api/news/live/events", "live.events.management.list", { schema: ref("NewsLiveEventListResponse") }, false, liveEventParams()),
+  route("post", "/backend/v3/api/news/live/events", "live.events.create", { schema: ref("NewsLiveEvent") }, false, [], "NewsLiveEventCommand"),
+  route("patch", "/backend/v3/api/news/live/events/{eventId}", "live.events.update", { schema: ref("NewsLiveEvent") }, false, [pathParam("eventId")], "NewsLiveEventCommand"),
+  route("post", "/backend/v3/api/news/live/events/{eventId}/publish", "live.events.publish", { schema: ref("NewsLiveEvent") }, false, [pathParam("eventId")]),
+  route("post", "/backend/v3/api/news/live/events/{eventId}/close", "live.events.close", { schema: ref("NewsLiveEvent") }, false, [pathParam("eventId")]),
+  route("post", "/backend/v3/api/news/live/events/{eventId}/updates", "live.updates.create", { schema: ref("NewsLiveUpdate") }, false, [pathParam("eventId")], "NewsLiveUpdateCommand"),
+  route("patch", "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}", "live.updates.update", { schema: ref("NewsLiveUpdate") }, false, [pathParam("eventId"), pathParam("updateId")], "NewsLiveUpdateCommand"),
+  route("post", "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}/publish", "live.updates.publish", { schema: ref("NewsLiveUpdate") }, false, [pathParam("eventId"), pathParam("updateId")]),
+  route("post", "/backend/v3/api/news/live/events/{eventId}/items", "live.items.attach", { schema: ref("NewsApiResult") }, false, [pathParam("eventId")], "NewsLiveEventItemCommand"),
 ];
 
 function ref(name) {
@@ -1011,6 +1108,10 @@ function correctionParams() {
 
 function trustSourceParams() {
   return [queryParam("source_id"), queryParam("credibility_status"), queryParam("trust_tier"), queryParam("cursor"), queryParam("limit")];
+}
+
+function liveEventParams() {
+  return [queryParam("event_type"), queryParam("region"), queryParam("locale"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {

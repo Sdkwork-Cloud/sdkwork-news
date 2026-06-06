@@ -16,6 +16,9 @@ import {
   type SdkworkNewsCorrectionNotice,
   type SdkworkNewsDigestIssue,
   type SdkworkNewsFactCheck,
+  type SdkworkNewsLiveEvent,
+  type SdkworkNewsLiveEventItem,
+  type SdkworkNewsLiveUpdate,
   type SdkworkNewsNotificationSubscription,
   type SdkworkNewsRecommendationEvent,
   type SdkworkNewsItem,
@@ -99,6 +102,9 @@ describe("sdkwork-news contracts", () => {
       "trust.item.retrieve",
       "factChecks.list",
       "corrections.list",
+      "live.events.list",
+      "live.events.retrieve",
+      "live.updates.list",
     ]);
     expect(NEWS_APP_API_ROUTES.every((route) => route.public === false)).toBe(true);
     expect(NEWS_OPEN_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -118,6 +124,9 @@ describe("sdkwork-news contracts", () => {
       "trust.item.retrieve",
       "factChecks.list",
       "corrections.list",
+      "live.events.list",
+      "live.events.retrieve",
+      "live.updates.list",
     ]);
     expect(NEWS_OPEN_API_ROUTES.every((route) => route.public === true)).toBe(true);
     expect(NEWS_BACKEND_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -205,6 +214,15 @@ describe("sdkwork-news contracts", () => {
       "corrections.create",
       "corrections.publish",
       "corrections.archive",
+      "live.events.management.list",
+      "live.events.create",
+      "live.events.update",
+      "live.events.publish",
+      "live.events.close",
+      "live.updates.create",
+      "live.updates.update",
+      "live.updates.publish",
+      "live.items.attach",
     ]);
   });
 
@@ -338,5 +356,40 @@ describe("sdkwork-news contracts", () => {
     expect(factCheck.verdict).toBe("mostly_true");
     expect(correction.correctionType).toBe("clarification");
     expect(itemTrust.riskLevel).toBe("low");
+  });
+
+  it("models live coverage events, timeline updates, and linked items", () => {
+    const liveEvent: SdkworkNewsLiveEvent = {
+      eventType: "developing_story",
+      id: "live_event_1",
+      priority: 1,
+      publishedAt: "2026-06-06T08:00:00.000Z",
+      slug: "election-night",
+      status: "published",
+      summary: "Minute-by-minute election coverage",
+      tenantId: "tenant_1",
+      title: "Election night live",
+      updatedAt: "2026-06-06T08:00:00.000Z",
+    };
+    const liveUpdate: SdkworkNewsLiveUpdate = {
+      body: "First official projections are coming in.",
+      id: "live_update_1",
+      importance: 90,
+      liveEventId: "live_event_1",
+      publishedAt: "2026-06-06T08:10:00.000Z",
+      status: "published",
+      tenantId: "tenant_1",
+      title: "First projections",
+      updateType: "text",
+    };
+    const liveItem: SdkworkNewsLiveEventItem = {
+      itemId: "item_projection",
+      rank: 1,
+      relationType: "source_article",
+    };
+
+    expect(liveEvent.eventType).toBe("developing_story");
+    expect(liveUpdate.importance).toBe(90);
+    expect(liveItem.relationType).toBe("source_article");
   });
 });

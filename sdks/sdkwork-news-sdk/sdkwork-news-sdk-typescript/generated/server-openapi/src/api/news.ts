@@ -1,8 +1,80 @@
 ﻿import { customApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { ChannelsListResponse, ItemsListResponse, NewsBreakingAlertListResponse, NewsCorrectionNoticeListResponse, NewsDigestIssueListResponse, NewsFactCheckListResponse, NewsFeedPage, NewsItem, NewsItemPage, NewsItemTrustSnapshot, NewsSearchResultPage, NewsSearchSuggestionListResponse, TopicsListResponse, TrendingListResponse } from '../types';
+import type { ChannelsListResponse, ItemsListResponse, NewsBreakingAlertListResponse, NewsCorrectionNoticeListResponse, NewsDigestIssueListResponse, NewsFactCheckListResponse, NewsFeedPage, NewsItem, NewsItemPage, NewsItemTrustSnapshot, NewsLiveEvent, NewsLiveEventListResponse, NewsLiveUpdateListResponse, NewsSearchResultPage, NewsSearchSuggestionListResponse, TopicsListResponse, TrendingListResponse } from '../types';
 
+
+export interface NewsLiveUpdatesListParams {
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsLiveUpdatesApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News live.updates.list */
+  async list(eventId: string, params?: NewsLiveUpdatesListParams): Promise<NewsLiveUpdateListResponse> {
+    const query = buildQueryString([
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsLiveUpdateListResponse>(appendQueryString(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates`), query));
+  }
+}
+
+export interface NewsLiveEventsListParams {
+  eventType?: string;
+  region?: string;
+  locale?: string;
+  status?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsLiveEventsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News live.events.list */
+  async list(params?: NewsLiveEventsListParams): Promise<NewsLiveEventListResponse> {
+    const query = buildQueryString([
+      { name: 'event_type', value: params?.eventType, style: 'form', explode: true, allowReserved: false },
+      { name: 'region', value: params?.region, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+      { name: 'status', value: params?.status, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsLiveEventListResponse>(appendQueryString(customApiPath(`/news/live/events`), query));
+  }
+
+/** News live.events.retrieve */
+  async retrieve(eventId: string): Promise<NewsLiveEvent> {
+    return this.client.get<NewsLiveEvent>(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}`));
+  }
+}
+
+export class NewsLiveApi {
+  private client: HttpClient;
+  public readonly events: NewsLiveEventsApi;
+  public readonly updates: NewsLiveUpdatesApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.events = new NewsLiveEventsApi(client);
+    this.updates = new NewsLiveUpdatesApi(client);
+  }
+
+}
 
 export interface NewsCorrectionsListParams {
   itemId?: string;
@@ -414,6 +486,7 @@ export class NewsApi {
   public readonly trust: NewsTrustApi;
   public readonly factChecks: NewsFactChecksApi;
   public readonly corrections: NewsCorrectionsApi;
+  public readonly live: NewsLiveApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -427,6 +500,7 @@ export class NewsApi {
     this.trust = new NewsTrustApi(client);
     this.factChecks = new NewsFactChecksApi(client);
     this.corrections = new NewsCorrectionsApi(client);
+    this.live = new NewsLiveApi(client);
   }
 
 }

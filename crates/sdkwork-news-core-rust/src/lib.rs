@@ -88,6 +88,9 @@ pub fn news_capability_manifest() -> NewsCapabilityManifest {
             "trust.item.retrieve",
             "factChecks.list",
             "corrections.list",
+            "live.events.list",
+            "live.events.retrieve",
+            "live.updates.list",
             "categories.management.list",
             "categories.create",
             "categories.update",
@@ -172,6 +175,15 @@ pub fn news_capability_manifest() -> NewsCapabilityManifest {
             "corrections.create",
             "corrections.publish",
             "corrections.archive",
+            "live.events.management.list",
+            "live.events.create",
+            "live.events.update",
+            "live.events.publish",
+            "live.events.close",
+            "live.updates.create",
+            "live.updates.update",
+            "live.updates.publish",
+            "live.items.attach",
         ],
     }
 }
@@ -190,7 +202,13 @@ pub fn evaluate_editorial_readiness(
     if item.body.map(str::trim).unwrap_or_default().is_empty() {
         issues.push("missing-body");
     }
-    if item.tags.iter().filter(|tag| !tag.trim().is_empty()).count() == 0 {
+    if item
+        .tags
+        .iter()
+        .filter(|tag| !tag.trim().is_empty())
+        .count()
+        == 0
+    {
         issues.push("missing-tags");
     }
     if matches!(action, NewsEditorialAction::Archive)

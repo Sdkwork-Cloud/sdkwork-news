@@ -18,6 +18,9 @@ export const NEWS_CREDIBILITY_STATUS_VALUES = ["verified", "unverified", "disput
 export const NEWS_FACT_CHECK_VERDICT_VALUES = ["true", "mostly_true", "mixed", "mostly_false", "false", "unverified"] as const;
 export const NEWS_CORRECTION_TYPE_VALUES = ["correction", "clarification", "retraction", "update"] as const;
 export const NEWS_TRUST_RISK_LEVEL_VALUES = ["low", "medium", "high", "unknown"] as const;
+export const NEWS_LIVE_EVENT_TYPE_VALUES = ["developing_story", "election", "sports", "market", "weather", "emergency"] as const;
+export const NEWS_LIVE_UPDATE_TYPE_VALUES = ["text", "image", "video", "quote", "fact_check", "correction"] as const;
+export const NEWS_LIVE_ITEM_RELATION_VALUES = ["source_article", "background", "analysis", "timeline_context", "related"] as const;
 
 export type SdkworkNewsItemStatus = (typeof NEWS_STATUS_VALUES)[number];
 export type SdkworkNewsChannelStatus = (typeof NEWS_CHANNEL_STATUS_VALUES)[number];
@@ -35,6 +38,9 @@ export type SdkworkNewsCredibilityStatus = (typeof NEWS_CREDIBILITY_STATUS_VALUE
 export type SdkworkNewsFactCheckVerdict = (typeof NEWS_FACT_CHECK_VERDICT_VALUES)[number];
 export type SdkworkNewsCorrectionType = (typeof NEWS_CORRECTION_TYPE_VALUES)[number];
 export type SdkworkNewsTrustRiskLevel = (typeof NEWS_TRUST_RISK_LEVEL_VALUES)[number];
+export type SdkworkNewsLiveEventType = (typeof NEWS_LIVE_EVENT_TYPE_VALUES)[number];
+export type SdkworkNewsLiveUpdateType = (typeof NEWS_LIVE_UPDATE_TYPE_VALUES)[number];
+export type SdkworkNewsLiveItemRelationType = (typeof NEWS_LIVE_ITEM_RELATION_VALUES)[number];
 export type SdkworkNewsEditorMode = "topic" | "url";
 export type SdkworkNewsEditorialAction = "archive" | "feature" | "publish" | "schedule";
 export type SdkworkNewsMediaKind = "image" | "video" | "audio" | "voice" | "document" | "archive" | "other";
@@ -361,6 +367,45 @@ export interface SdkworkNewsItemTrustSnapshot {
   trustScore: number;
 }
 
+export interface SdkworkNewsLiveEvent {
+  closedAt?: string;
+  eventType: SdkworkNewsLiveEventType;
+  id: string;
+  locale?: string;
+  priority: number;
+  publishedAt?: string;
+  region?: string;
+  slug: string;
+  startedAt?: string;
+  status: "draft" | "published" | "closed" | "archived";
+  summary: string;
+  tenantId: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface SdkworkNewsLiveUpdate {
+  authorId?: string;
+  body: string;
+  id: string;
+  importance: number;
+  itemId?: string;
+  liveEventId: string;
+  publishedAt?: string;
+  sourceId?: string;
+  status: "draft" | "published" | "archived";
+  tenantId: string;
+  title?: string;
+  updateType: SdkworkNewsLiveUpdateType;
+}
+
+export interface SdkworkNewsLiveEventItem {
+  itemId: string;
+  note?: string;
+  rank: number;
+  relationType: SdkworkNewsLiveItemRelationType;
+}
+
 export interface SdkworkNewsApiRoute {
   method: "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
   operationId: string;
@@ -446,6 +491,9 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/app/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", false),
   route("GET", "/app/v3/api/news/fact_checks", "factChecks.list", false),
   route("GET", "/app/v3/api/news/corrections", "corrections.list", false),
+  route("GET", "/app/v3/api/news/live/events", "live.events.list", false),
+  route("GET", "/app/v3/api/news/live/events/{eventId}", "live.events.retrieve", false),
+  route("GET", "/app/v3/api/news/live/events/{eventId}/updates", "live.updates.list", false),
 ];
 
 export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -465,6 +513,9 @@ export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/open/v3/api/news/items/{itemId}/trust", "trust.item.retrieve", true),
   route("GET", "/open/v3/api/news/fact_checks", "factChecks.list", true),
   route("GET", "/open/v3/api/news/corrections", "corrections.list", true),
+  route("GET", "/open/v3/api/news/live/events", "live.events.list", true),
+  route("GET", "/open/v3/api/news/live/events/{eventId}", "live.events.retrieve", true),
+  route("GET", "/open/v3/api/news/live/events/{eventId}/updates", "live.updates.list", true),
 ];
 
 export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -552,6 +603,15 @@ export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("POST", "/backend/v3/api/news/corrections", "corrections.create", false),
   route("POST", "/backend/v3/api/news/corrections/{correctionId}/publish", "corrections.publish", false),
   route("POST", "/backend/v3/api/news/corrections/{correctionId}/archive", "corrections.archive", false),
+  route("GET", "/backend/v3/api/news/live/events", "live.events.management.list", false),
+  route("POST", "/backend/v3/api/news/live/events", "live.events.create", false),
+  route("PATCH", "/backend/v3/api/news/live/events/{eventId}", "live.events.update", false),
+  route("POST", "/backend/v3/api/news/live/events/{eventId}/publish", "live.events.publish", false),
+  route("POST", "/backend/v3/api/news/live/events/{eventId}/close", "live.events.close", false),
+  route("POST", "/backend/v3/api/news/live/events/{eventId}/updates", "live.updates.create", false),
+  route("PATCH", "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}", "live.updates.update", false),
+  route("POST", "/backend/v3/api/news/live/events/{eventId}/updates/{updateId}/publish", "live.updates.publish", false),
+  route("POST", "/backend/v3/api/news/live/events/{eventId}/items", "live.items.attach", false),
 ];
 
 function route(

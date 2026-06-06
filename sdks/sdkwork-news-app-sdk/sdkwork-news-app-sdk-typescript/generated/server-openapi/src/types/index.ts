@@ -58,6 +58,13 @@ export type { NewsCorrectionNoticeListResponse } from './news-correction-notice-
 export type { NewsCorrectionNoticeCommand } from './news-correction-notice-command';
 export type { NewsItemTrustSnapshot } from './news-item-trust-snapshot';
 export type { NewsItemTrustSnapshotCommand } from './news-item-trust-snapshot-command';
+export type { NewsLiveEvent } from './news-live-event';
+export type { NewsLiveEventListResponse } from './news-live-event-list-response';
+export type { NewsLiveEventCommand } from './news-live-event-command';
+export type { NewsLiveUpdate } from './news-live-update';
+export type { NewsLiveUpdateListResponse } from './news-live-update-list-response';
+export type { NewsLiveUpdateCommand } from './news-live-update-command';
+export type { NewsLiveEventItemCommand } from './news-live-event-item-command';
 export type { NewsModerationCase } from './news-moderation-case';
 export type { NewsExperiment } from './news-experiment';
 export type { NewsGenericCommand } from './news-generic-command';

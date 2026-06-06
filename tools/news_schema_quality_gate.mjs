@@ -81,7 +81,7 @@ const counts = {
   open: checkDocument(open, "sdkwork-news.open", "/open/v3/api"),
 };
 
-if (counts.app !== 37 || counts.backend !== 84 || counts.open !== 16) {
+if (counts.app !== 40 || counts.backend !== 93 || counts.open !== 19) {
   fail(`unexpected route counts ${JSON.stringify(counts)}`);
 }
 
