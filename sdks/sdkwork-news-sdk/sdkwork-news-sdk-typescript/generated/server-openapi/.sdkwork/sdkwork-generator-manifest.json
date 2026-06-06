@@ -59,7 +59,7 @@
     },
     {
       "path": "src/api/news.ts",
-      "sha256": "14aa4c3ba77cc9dc3adca5a685669caeefe4b42e3d4518baddb3e7ded5c2d90d"
+      "sha256": "7ed6eb0af3861bac15363f7558ea3a5aadabdd1347debc6b79dfca92e0287570"
     },
     {
       "path": "src/api/paths.ts",
@@ -95,7 +95,7 @@
     },
     {
       "path": "src/types/index.ts",
-      "sha256": "a46583acdcc9fd5f58006d68938c461f893d5b32da92f80fe7314e8a79280a0f"
+      "sha256": "7a355ec2ce44800081ff80e63bd7e82f6ca444bcbec2cfe6e68600aa8eed3be9"
     },
     {
       "path": "src/types/items-list-response.ts",
@@ -112,6 +112,18 @@
     {
       "path": "src/types/news-author.ts",
       "sha256": "8a1f16b344b27273b0558ac456dd7acde268f5d8a1fa248a73c7367d928bcf80"
+    },
+    {
+      "path": "src/types/news-breaking-alert-command.ts",
+      "sha256": "4ed51f30d1b051a306fafea7dc092cd5db252e0507cd0be72d738309d1c90f60"
+    },
+    {
+      "path": "src/types/news-breaking-alert-list-response.ts",
+      "sha256": "4ddc35281b3d1c902f1cada49377814e96f80e56f30373868776fb75744e070e"
+    },
+    {
+      "path": "src/types/news-breaking-alert.ts",
+      "sha256": "93d8039a64d855e3ef35ef2e7897e81c75cfe930229899cb0e95588969807d28"
     },
     {
       "path": "src/types/news-category-command.ts",
@@ -136,6 +148,22 @@
     {
       "path": "src/types/news-comment.ts",
       "sha256": "bb80f2d555a1c1dcf35779f318eb094e8ad4aceb92cf5833494d2f602422f654"
+    },
+    {
+      "path": "src/types/news-digest-issue-command.ts",
+      "sha256": "350ff1821636fef1a88f0d7b01f26cb52e288624a4cb3320d134e4916242bbf5"
+    },
+    {
+      "path": "src/types/news-digest-issue-list-response.ts",
+      "sha256": "11f7fd270baa965121bdc6209629ba1fe5ae5cafbae8a2a65e7e1075ac22a7f3"
+    },
+    {
+      "path": "src/types/news-digest-issue.ts",
+      "sha256": "4fc0f41a02626ec77893079a61804f4b402699e3d5429f164ad8a5f84fce39b3"
+    },
+    {
+      "path": "src/types/news-digest-item-command.ts",
+      "sha256": "4008a023029ff6163d608a5fa2ead88a888dfb84d8fd1fc63f327f53c6610c9b"
     },
     {
       "path": "src/types/news-editorial-readiness.ts",
@@ -212,6 +240,18 @@
     {
       "path": "src/types/news-moderation-case.ts",
       "sha256": "bb7a4d8eb41e0b5c23c5de896a98dd1340785f8cfe3b54d78c7e9daf5be92730"
+    },
+    {
+      "path": "src/types/news-notification-subscription-command.ts",
+      "sha256": "7f61038f8ff6faf81e334e79c075c27271938a0f89a0e2e8d86b7a5ab316a33d"
+    },
+    {
+      "path": "src/types/news-notification-subscription-list-response.ts",
+      "sha256": "eba45cd865fcb9609a5011e1f6ab0fafc3102db43c8a2646283631014298eb3c"
+    },
+    {
+      "path": "src/types/news-notification-subscription.ts",
+      "sha256": "4195441c50a3564a8ebd33b39096e0bc6d1844e28c53f2968262a1cdb4e6dd8f"
     },
     {
       "path": "src/types/news-overview.ts",

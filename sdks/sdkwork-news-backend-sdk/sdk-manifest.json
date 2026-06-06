@@ -19,8 +19,33 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 61,
+  "ownerOnlyOperationCount": 72,
   "operations": [
+    {
+      "method": "POST",
+      "operationId": "alerts.breaking.cancel",
+      "path": "/backend/v3/api/news/alerts/breaking/{alertId}/cancel"
+    },
+    {
+      "method": "POST",
+      "operationId": "alerts.breaking.create",
+      "path": "/backend/v3/api/news/alerts/breaking"
+    },
+    {
+      "method": "GET",
+      "operationId": "alerts.breaking.management.list",
+      "path": "/backend/v3/api/news/alerts/breaking"
+    },
+    {
+      "method": "POST",
+      "operationId": "alerts.breaking.publish",
+      "path": "/backend/v3/api/news/alerts/breaking/{alertId}/publish"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "alerts.breaking.update",
+      "path": "/backend/v3/api/news/alerts/breaking/{alertId}"
+    },
     {
       "method": "POST",
       "operationId": "authors.create",
@@ -90,6 +115,26 @@
       "method": "PATCH",
       "operationId": "comments.moderation.update",
       "path": "/backend/v3/api/news/comments/{commentId}/moderation"
+    },
+    {
+      "method": "POST",
+      "operationId": "digests.create",
+      "path": "/backend/v3/api/news/digests"
+    },
+    {
+      "method": "POST",
+      "operationId": "digests.items.attach",
+      "path": "/backend/v3/api/news/digests/{digestId}/items"
+    },
+    {
+      "method": "GET",
+      "operationId": "digests.management.list",
+      "path": "/backend/v3/api/news/digests"
+    },
+    {
+      "method": "POST",
+      "operationId": "digests.publish",
+      "path": "/backend/v3/api/news/digests/{digestId}/publish"
     },
     {
       "method": "POST",
@@ -240,6 +285,16 @@
       "method": "PATCH",
       "operationId": "moderation.cases.update",
       "path": "/backend/v3/api/news/moderation/cases/{caseId}"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "notification.subscriptions.delete",
+      "path": "/backend/v3/api/news/notification/subscriptions/{subscriptionId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "notification.subscriptions.management.list",
+      "path": "/backend/v3/api/news/notification/subscriptions"
     },
     {
       "method": "GET",

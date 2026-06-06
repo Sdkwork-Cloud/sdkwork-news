@@ -19,8 +19,13 @@
   "baseUrl": "http://127.0.0.1:18082",
   "standardProfile": null,
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 11,
+  "ownerOnlyOperationCount": 13,
   "operations": [
+    {
+      "method": "GET",
+      "operationId": "alerts.breaking.list",
+      "path": "/open/v3/api/news/alerts/breaking"
+    },
     {
       "method": "GET",
       "operationId": "channels.feed.list",
@@ -30,6 +35,11 @@
       "method": "GET",
       "operationId": "channels.list",
       "path": "/open/v3/api/news/channels"
+    },
+    {
+      "method": "GET",
+      "operationId": "digests.list",
+      "path": "/open/v3/api/news/digests"
     },
     {
       "method": "GET",

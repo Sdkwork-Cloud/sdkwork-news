@@ -50,16 +50,23 @@ test("news OpenAPI documents are owner-only sdkwork-v3 compatible inputs", () =>
       }
     }
   }
-  assert.equal(operations(open).length, 11);
-  assert.equal(operations(app).length, 29);
-  assert.equal(operations(backend).length, 61);
+  assert.equal(operations(open).length, 13);
+  assert.equal(operations(app).length, 34);
+  assert.equal(operations(backend).length, 72);
   assert.ok(open.paths["/open/v3/api/news/channels/{channelId}/feed"]?.get, "open channel feed");
   assert.ok(open.paths["/open/v3/api/news/search/suggestions"]?.get, "open search suggestions");
   assert.ok(app.paths["/app/v3/api/news/events"]?.post, "app event ingestion");
   assert.ok(app.paths["/app/v3/api/news/interests"]?.put, "app interest upsert");
+  assert.ok(app.paths["/app/v3/api/news/notification/subscriptions"]?.put, "app subscription upsert");
+  assert.ok(app.paths["/app/v3/api/news/alerts/breaking"]?.get, "app breaking alerts");
+  assert.ok(app.paths["/app/v3/api/news/digests"]?.get, "app digests");
   assert.ok(app.paths["/app/v3/api/news/items/{itemId}/comments"]?.post, "app comments");
+  assert.ok(open.paths["/open/v3/api/news/alerts/breaking"]?.get, "open breaking alerts");
+  assert.ok(open.paths["/open/v3/api/news/digests"]?.get, "open digests");
   assert.ok(backend.paths["/backend/v3/api/news/moderation/cases/{caseId}"]?.patch, "backend moderation");
   assert.ok(backend.paths["/backend/v3/api/news/feed/candidates"]?.put, "backend feed candidates");
   assert.ok(backend.paths["/backend/v3/api/news/items/{itemId}/metrics"]?.get, "backend item metrics");
+  assert.ok(backend.paths["/backend/v3/api/news/alerts/breaking/{alertId}/publish"]?.post, "backend alert publish");
+  assert.ok(backend.paths["/backend/v3/api/news/digests/{digestId}/items"]?.post, "backend digest item attach");
   assert.ok(backend.paths["/backend/v3/api/news/experiments/{experimentId}/archive"]?.post, "backend experiments");
 });

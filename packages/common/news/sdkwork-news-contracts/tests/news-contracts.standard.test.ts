@@ -11,7 +11,10 @@ import {
   createNewsItemDigest,
   evaluateNewsEditorialReadiness,
   filterNewsItems,
+  type SdkworkNewsBreakingAlert,
   type SdkworkNewsChannel,
+  type SdkworkNewsDigestIssue,
+  type SdkworkNewsNotificationSubscription,
   type SdkworkNewsRecommendationEvent,
   type SdkworkNewsItem,
 } from "../src/index.ts";
@@ -84,6 +87,11 @@ describe("sdkwork-news contracts", () => {
       "follows.delete",
       "interests.list",
       "interests.upsert",
+      "notification.subscriptions.list",
+      "notification.subscriptions.upsert",
+      "notification.subscriptions.delete",
+      "alerts.breaking.list",
+      "digests.list",
     ]);
     expect(NEWS_APP_API_ROUTES.every((route) => route.public === false)).toBe(true);
     expect(NEWS_OPEN_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -98,6 +106,8 @@ describe("sdkwork-news contracts", () => {
       "trending.list",
       "search.list",
       "search.suggestions.list",
+      "alerts.breaking.list",
+      "digests.list",
     ]);
     expect(NEWS_OPEN_API_ROUTES.every((route) => route.public === true)).toBe(true);
     expect(NEWS_BACKEND_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -162,6 +172,17 @@ describe("sdkwork-news contracts", () => {
       "experiments.create",
       "experiments.update",
       "experiments.archive",
+      "notification.subscriptions.management.list",
+      "notification.subscriptions.delete",
+      "alerts.breaking.management.list",
+      "alerts.breaking.create",
+      "alerts.breaking.update",
+      "alerts.breaking.publish",
+      "alerts.breaking.cancel",
+      "digests.management.list",
+      "digests.create",
+      "digests.publish",
+      "digests.items.attach",
     ]);
   });
 
@@ -212,5 +233,43 @@ describe("sdkwork-news contracts", () => {
 
     expect(channel.type).toBe("editorial");
     expect(createNewsFeedEventDigest(event)).toEqual("impression:item_1:user_1");
+  });
+
+  it("models news-owned subscriptions, breaking alerts, and digests", () => {
+    const subscription: SdkworkNewsNotificationSubscription = {
+      channel: "push",
+      frequency: "breaking",
+      id: "subscription_1",
+      status: "active",
+      targetId: "topic_ai",
+      targetType: "topic",
+      tenantId: "tenant_1",
+      updatedAt: "2026-06-06T08:00:00.000Z",
+      userId: "user_1",
+    };
+    const alert: SdkworkNewsBreakingAlert = {
+      audienceType: "all",
+      id: "alert_1",
+      priority: 1,
+      severity: "breaking",
+      status: "published",
+      summary: "Important update",
+      tenantId: "tenant_1",
+      title: "Breaking",
+      updatedAt: "2026-06-06T08:01:00.000Z",
+    };
+    const digest: SdkworkNewsDigestIssue = {
+      digestKey: "daily-2026-06-06",
+      digestType: "daily",
+      id: "digest_1",
+      status: "published",
+      tenantId: "tenant_1",
+      title: "Daily briefing",
+      updatedAt: "2026-06-06T08:02:00.000Z",
+    };
+
+    expect(subscription.channel).toBe("push");
+    expect(alert.severity).toBe("breaking");
+    expect(digest.digestType).toBe("daily");
   });
 });

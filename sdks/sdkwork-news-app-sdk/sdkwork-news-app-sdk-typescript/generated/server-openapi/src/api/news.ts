@@ -1,8 +1,127 @@
 import { appApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsComment, NewsCommentCommand, NewsCommentPage, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsSearchSuggestionListResponse, NewsUserFeedbackCommand, NewsUserInterestCommand, NewsUserInterestSignal, NewsUserInterestSignalListResponse, TopicsListResponse, TrendingListResponse } from '../types';
+import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsBreakingAlertListResponse, NewsComment, NewsCommentCommand, NewsCommentPage, NewsDigestIssueListResponse, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsNotificationSubscription, NewsNotificationSubscriptionCommand, NewsNotificationSubscriptionListResponse, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsSearchSuggestionListResponse, NewsUserFeedbackCommand, NewsUserInterestCommand, NewsUserInterestSignal, NewsUserInterestSignalListResponse, TopicsListResponse, TrendingListResponse } from '../types';
 
+
+export interface NewsDigestsListParams {
+  digestType?: string;
+  locale?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsDigestsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News digests.list */
+  async list(params?: NewsDigestsListParams): Promise<NewsDigestIssueListResponse> {
+    const query = buildQueryString([
+      { name: 'digest_type', value: params?.digestType, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsDigestIssueListResponse>(appendQueryString(appApiPath(`/news/digests`), query));
+  }
+}
+
+export interface NewsAlertsBreakingListParams {
+  severity?: string;
+  targetType?: string;
+  targetId?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsAlertsBreakingApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News alerts.breaking.list */
+  async list(params?: NewsAlertsBreakingListParams): Promise<NewsBreakingAlertListResponse> {
+    const query = buildQueryString([
+      { name: 'severity', value: params?.severity, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_id', value: params?.targetId, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsBreakingAlertListResponse>(appendQueryString(appApiPath(`/news/alerts/breaking`), query));
+  }
+}
+
+export class NewsAlertsApi {
+  private client: HttpClient;
+  public readonly breaking: NewsAlertsBreakingApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.breaking = new NewsAlertsBreakingApi(client);
+  }
+
+}
+
+export interface NewsNotificationSubscriptionsListParams {
+  userId?: string;
+  targetType?: string;
+  targetId?: string;
+  channel?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsNotificationSubscriptionsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News notification.subscriptions.list */
+  async list(params?: NewsNotificationSubscriptionsListParams): Promise<NewsNotificationSubscriptionListResponse> {
+    const query = buildQueryString([
+      { name: 'user_id', value: params?.userId, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_id', value: params?.targetId, style: 'form', explode: true, allowReserved: false },
+      { name: 'channel', value: params?.channel, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsNotificationSubscriptionListResponse>(appendQueryString(appApiPath(`/news/notification/subscriptions`), query));
+  }
+
+/** News notification.subscriptions.upsert */
+  async upsert(body: NewsNotificationSubscriptionCommand): Promise<NewsNotificationSubscription> {
+    return this.client.put<NewsNotificationSubscription>(appApiPath(`/news/notification/subscriptions`), body, undefined, undefined, 'application/json');
+  }
+
+/** News notification.subscriptions.delete */
+  async delete(subscriptionId: string): Promise<NewsApiResult> {
+    return this.client.delete<NewsApiResult>(appApiPath(`/news/notification/subscriptions/${serializePathParameter(subscriptionId, { name: 'subscriptionId', style: 'simple', explode: false })}`));
+  }
+}
+
+export class NewsNotificationApi {
+  private client: HttpClient;
+  public readonly subscriptions: NewsNotificationSubscriptionsApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.subscriptions = new NewsNotificationSubscriptionsApi(client);
+  }
+
+}
 
 export interface NewsInterestsListParams {
   cursor?: string;
@@ -536,6 +655,9 @@ export class NewsApi {
   public readonly history: NewsHistoryApi;
   public readonly follows: NewsFollowsApi;
   public readonly interests: NewsInterestsApi;
+  public readonly notification: NewsNotificationApi;
+  public readonly alerts: NewsAlertsApi;
+  public readonly digests: NewsDigestsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -556,6 +678,9 @@ export class NewsApi {
     this.history = new NewsHistoryApi(client);
     this.follows = new NewsFollowsApi(client);
     this.interests = new NewsInterestsApi(client);
+    this.notification = new NewsNotificationApi(client);
+    this.alerts = new NewsAlertsApi(client);
+    this.digests = new NewsDigestsApi(client);
   }
 
 }

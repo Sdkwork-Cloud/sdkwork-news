@@ -18,6 +18,9 @@ fn news_core_manifest_owns_news_domain_contracts() {
     assert!(manifest.operations.contains(&"interests.upsert"));
     assert!(manifest.operations.contains(&"search.suggestions.list"));
     assert!(manifest.operations.contains(&"items.metrics.retrieve"));
+    assert!(manifest.operations.contains(&"notification.subscriptions.upsert"));
+    assert!(manifest.operations.contains(&"alerts.breaking.publish"));
+    assert!(manifest.operations.contains(&"digests.items.attach"));
     assert!(manifest.operations.contains(&"moderation.cases.update"));
     assert!(manifest.operations.contains(&"experiments.archive"));
 }

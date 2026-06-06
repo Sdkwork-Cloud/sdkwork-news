@@ -428,6 +428,123 @@ const schemas = {
       expiresAt: { type: "string", format: "date-time" },
     },
   },
+  NewsNotificationSubscription: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "userId", "targetType", "targetId", "channel", "frequency", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      channel: { type: "string", enum: ["push", "email", "in_app", "sms"] },
+      frequency: { type: "string", enum: ["breaking", "daily", "weekly", "silent"] },
+      status: { type: "string", enum: ["active", "disabled"] },
+      quietStart: { type: "string" },
+      quietEnd: { type: "string" },
+      locale: { type: "string" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsNotificationSubscriptionListResponse: arrayOf("NewsNotificationSubscription"),
+  NewsNotificationSubscriptionCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["targetType", "targetId", "channel", "frequency"],
+    properties: {
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      channel: { type: "string", enum: ["push", "email", "in_app", "sms"] },
+      frequency: { type: "string", enum: ["breaking", "daily", "weekly", "silent"] },
+      quietStart: { type: "string" },
+      quietEnd: { type: "string" },
+      locale: { type: "string" },
+    },
+  },
+  NewsBreakingAlert: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "title", "summary", "severity", "audienceType", "priority", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      severity: { type: "string", enum: ["breaking", "important", "watch"] },
+      audienceType: { type: "string", enum: ["all", "subscribers", "targeted"] },
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      priority: { type: "integer" },
+      status: { type: "string", enum: ["draft", "scheduled", "published", "cancelled", "expired"] },
+      publishedAt: { type: "string", format: "date-time" },
+      expiresAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsBreakingAlertListResponse: arrayOf("NewsBreakingAlert"),
+  NewsBreakingAlertCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["title", "summary", "severity", "audienceType", "priority"],
+    properties: {
+      itemId: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      severity: { type: "string", enum: ["breaking", "important", "watch"] },
+      audienceType: { type: "string", enum: ["all", "subscribers", "targeted"] },
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      priority: { type: "integer" },
+      scheduledAt: { type: "string", format: "date-time" },
+      expiresAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsDigestIssue: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "digestKey", "title", "digestType", "status", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      digestKey: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      digestType: { type: "string", enum: ["daily", "weekly", "topic", "editorial"] },
+      audienceType: { type: "string", enum: ["all", "subscribers", "targeted"] },
+      locale: { type: "string" },
+      status: { type: "string", enum: ["draft", "scheduled", "published", "archived"] },
+      publishedAt: { type: "string", format: "date-time" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsDigestIssueListResponse: arrayOf("NewsDigestIssue"),
+  NewsDigestIssueCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["digestKey", "title", "digestType"],
+    properties: {
+      digestKey: { type: "string" },
+      title: { type: "string" },
+      summary: { type: "string" },
+      digestType: { type: "string", enum: ["daily", "weekly", "topic", "editorial"] },
+      audienceType: { type: "string", enum: ["all", "subscribers", "targeted"] },
+      locale: { type: "string" },
+      publishedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsDigestItemCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["itemId", "rank"],
+    properties: {
+      itemId: { type: "string" },
+      rank: { type: "integer" },
+      section: { type: "string" },
+      reason: { type: "string" },
+    },
+  },
   NewsModerationCase: {
     type: "object",
     additionalProperties: false,
@@ -559,6 +676,11 @@ const appRoutes = [
   route("delete", "/app/v3/api/news/follows/{followId}", "follows.delete", { schema: ref("NewsApiResult") }, false, [pathParam("followId")]),
   route("get", "/app/v3/api/news/interests", "interests.list", { schema: ref("NewsUserInterestSignalListResponse") }, false, pageParams()),
   route("put", "/app/v3/api/news/interests", "interests.upsert", { schema: ref("NewsUserInterestSignal") }, false, [], "NewsUserInterestCommand"),
+  route("get", "/app/v3/api/news/notification/subscriptions", "notification.subscriptions.list", { schema: ref("NewsNotificationSubscriptionListResponse") }, false, subscriptionParams()),
+  route("put", "/app/v3/api/news/notification/subscriptions", "notification.subscriptions.upsert", { schema: ref("NewsNotificationSubscription") }, false, [], "NewsNotificationSubscriptionCommand"),
+  route("delete", "/app/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", { schema: ref("NewsApiResult") }, false, [pathParam("subscriptionId")]),
+  route("get", "/app/v3/api/news/alerts/breaking", "alerts.breaking.list", { schema: ref("NewsBreakingAlertListResponse") }, false, alertParams()),
+  route("get", "/app/v3/api/news/digests", "digests.list", { schema: ref("NewsDigestIssueListResponse") }, false, digestParams()),
 ];
 
 const openRoutes = [
@@ -573,6 +695,8 @@ const openRoutes = [
   route("get", "/open/v3/api/news/trending", "trending.list", { schema: arrayOf("NewsTrendingMetric") }, true, pageParams()),
   route("get", "/open/v3/api/news/search", "search.list", { schema: ref("NewsSearchResultPage") }, true, searchParams()),
   route("get", "/open/v3/api/news/search/suggestions", "search.suggestions.list", { schema: ref("NewsSearchSuggestionListResponse") }, true, suggestionParams()),
+  route("get", "/open/v3/api/news/alerts/breaking", "alerts.breaking.list", { schema: ref("NewsBreakingAlertListResponse") }, true, alertParams()),
+  route("get", "/open/v3/api/news/digests", "digests.list", { schema: ref("NewsDigestIssueListResponse") }, true, digestParams()),
 ];
 
 const backendRoutes = [
@@ -637,6 +761,17 @@ const backendRoutes = [
   route("post", "/backend/v3/api/news/experiments", "experiments.create", { schema: ref("NewsExperiment") }, false, [], "NewsGenericCommand"),
   route("patch", "/backend/v3/api/news/experiments/{experimentId}", "experiments.update", { schema: ref("NewsExperiment") }, false, [pathParam("experimentId")], "NewsGenericCommand"),
   route("post", "/backend/v3/api/news/experiments/{experimentId}/archive", "experiments.archive", { schema: ref("NewsExperiment") }, false, [pathParam("experimentId")]),
+  route("get", "/backend/v3/api/news/notification/subscriptions", "notification.subscriptions.management.list", { schema: ref("NewsNotificationSubscriptionListResponse") }, false, subscriptionParams()),
+  route("delete", "/backend/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", { schema: ref("NewsApiResult") }, false, [pathParam("subscriptionId")]),
+  route("get", "/backend/v3/api/news/alerts/breaking", "alerts.breaking.management.list", { schema: ref("NewsBreakingAlertListResponse") }, false, alertParams()),
+  route("post", "/backend/v3/api/news/alerts/breaking", "alerts.breaking.create", { schema: ref("NewsBreakingAlert") }, false, [], "NewsBreakingAlertCommand"),
+  route("patch", "/backend/v3/api/news/alerts/breaking/{alertId}", "alerts.breaking.update", { schema: ref("NewsBreakingAlert") }, false, [pathParam("alertId")], "NewsBreakingAlertCommand"),
+  route("post", "/backend/v3/api/news/alerts/breaking/{alertId}/publish", "alerts.breaking.publish", { schema: ref("NewsBreakingAlert") }, false, [pathParam("alertId")]),
+  route("post", "/backend/v3/api/news/alerts/breaking/{alertId}/cancel", "alerts.breaking.cancel", { schema: ref("NewsBreakingAlert") }, false, [pathParam("alertId")]),
+  route("get", "/backend/v3/api/news/digests", "digests.management.list", { schema: ref("NewsDigestIssueListResponse") }, false, digestParams()),
+  route("post", "/backend/v3/api/news/digests", "digests.create", { schema: ref("NewsDigestIssue") }, false, [], "NewsDigestIssueCommand"),
+  route("post", "/backend/v3/api/news/digests/{digestId}/publish", "digests.publish", { schema: ref("NewsDigestIssue") }, false, [pathParam("digestId")]),
+  route("post", "/backend/v3/api/news/digests/{digestId}/items", "digests.items.attach", { schema: ref("NewsApiResult") }, false, [pathParam("digestId")], "NewsDigestItemCommand"),
 ];
 
 function ref(name) {
@@ -709,6 +844,18 @@ function interestParams() {
 
 function searchEventParams() {
   return [queryParam("q"), queryParam("user_id"), queryParam("cursor"), queryParam("limit")];
+}
+
+function subscriptionParams() {
+  return [queryParam("user_id"), queryParam("target_type"), queryParam("target_id"), queryParam("channel"), queryParam("cursor"), queryParam("limit")];
+}
+
+function alertParams() {
+  return [queryParam("severity"), queryParam("target_type"), queryParam("target_id"), queryParam("cursor"), queryParam("limit")];
+}
+
+function digestParams() {
+  return [queryParam("digest_type"), queryParam("locale"), queryParam("cursor"), queryParam("limit")];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {

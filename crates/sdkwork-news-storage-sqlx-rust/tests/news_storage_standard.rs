@@ -1,9 +1,10 @@
 use sdkwork_news_storage_sqlx::{
     news_database_tables, news_migration_names, news_storage_capability_manifest,
-    NewNewsCategory, NewNewsChannel, NewNewsChannelItem, NewNewsFavorite, NewNewsFeedCandidate,
-    NewNewsItem, NewNewsItemMetricSnapshot, NewNewsReaction, NewNewsRecommendationEvent,
-    NewNewsSearchEvent, NewNewsSearchSuggestion, NewNewsTrendingMetric, NewNewsUserFeedback,
-    NewNewsUserInterestSignal, SqliteNewsStore,
+    NewNewsBreakingAlert, NewNewsCategory, NewNewsChannel, NewNewsChannelItem, NewNewsDigestIssue,
+    NewNewsDigestItem, NewNewsFavorite, NewNewsFeedCandidate, NewNewsItem,
+    NewNewsItemMetricSnapshot, NewNewsNotificationSubscription, NewNewsReaction,
+    NewNewsRecommendationEvent, NewNewsSearchEvent, NewNewsSearchSuggestion,
+    NewNewsTrendingMetric, NewNewsUserFeedback, NewNewsUserInterestSignal, SqliteNewsStore,
 };
 use sqlx::sqlite::SqlitePoolOptions;
 
@@ -11,7 +12,7 @@ use sqlx::sqlite::SqlitePoolOptions;
 fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     let manifest = news_storage_capability_manifest();
     assert_eq!(manifest.name, "sdkwork-news-storage-sqlx");
-    assert_eq!(manifest.schema_version, "news.storage.v3");
+    assert_eq!(manifest.schema_version, "news.storage.v4");
     assert_eq!(news_database_tables(), manifest.tables);
     assert_eq!(news_migration_names(), manifest.migrations);
     for table in [
@@ -57,6 +58,10 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
         "news_item_metric_snapshot",
         "news_search_suggestion",
         "news_search_event",
+        "news_notification_subscription",
+        "news_breaking_alert",
+        "news_digest_issue",
+        "news_digest_item",
     ] {
         assert!(manifest.tables.contains(&table), "missing table {table}");
     }
@@ -73,12 +78,18 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     assert!(manifest.indexes.contains(&"idx_news_item_metric_snapshot_hot"));
     assert!(manifest.indexes.contains(&"idx_news_search_suggestion_query_rank"));
     assert!(manifest.indexes.contains(&"idx_news_search_event_query_time"));
+    assert!(manifest.indexes.contains(&"idx_news_notification_subscription_user_target"));
+    assert!(manifest.indexes.contains(&"idx_news_breaking_alert_status_time"));
+    assert!(manifest.indexes.contains(&"idx_news_digest_issue_status_time"));
+    assert!(manifest.indexes.contains(&"idx_news_digest_item_digest_rank"));
     assert_eq!(manifest.migration_plan[0].name, "0001_news_foundation.sql");
     assert_eq!(manifest.migration_plan[1].name, "0002_news_industry_foundation.sql");
     assert_eq!(manifest.migration_plan[2].name, "0003_news_personalization_foundation.sql");
+    assert_eq!(manifest.migration_plan[3].name, "0004_news_alert_digest_foundation.sql");
     assert!(manifest.migration_plan[0].sql.contains("CREATE TABLE news_item"));
     assert!(manifest.migration_plan[1].sql.contains("CREATE TABLE news_channel"));
     assert!(manifest.migration_plan[2].sql.contains("CREATE TABLE news_feed_candidate"));
+    assert!(manifest.migration_plan[3].sql.contains("CREATE TABLE news_breaking_alert"));
 }
 
 #[test]
@@ -104,6 +115,9 @@ fn news_storage_repositories_bind_to_news_tables() {
         "news.personalization.repository",
         "news.metrics.repository",
         "news.search.repository",
+        "news.notification.repository",
+        "news.alert.repository",
+        "news.digest.repository",
     ]);
 }
 
@@ -459,4 +473,134 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
         })
         .await
         .expect("record search event");
+}
+
+#[tokio::test]
+async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() {
+    let pool = SqlitePoolOptions::new()
+        .max_connections(1)
+        .connect("sqlite::memory:")
+        .await
+        .expect("sqlite pool");
+    let store = SqliteNewsStore::new(pool);
+    store.migrate().await.expect("news migration");
+
+    store
+        .upsert_notification_subscription(NewNewsNotificationSubscription {
+            id: "subscription_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            user_id: "user_1".to_owned(),
+            target_type: "topic".to_owned(),
+            target_id: "topic_ai".to_owned(),
+            channel: "push".to_owned(),
+            frequency: "breaking".to_owned(),
+            quiet_start: Some("22:00".to_owned()),
+            quiet_end: Some("07:00".to_owned()),
+            locale: Some("zh-CN".to_owned()),
+            updated_at: "2026-06-06T02:00:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert subscription");
+
+    let subscriptions = store
+        .list_notification_subscriptions("tenant_1", "user_1", 10)
+        .await
+        .expect("list subscriptions");
+    assert_eq!(subscriptions.len(), 1);
+    assert_eq!(subscriptions[0].target_id, "topic_ai");
+    assert_eq!(subscriptions[0].frequency, "breaking");
+
+    store
+        .create_breaking_alert(NewNewsBreakingAlert {
+            id: "alert_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            organization_id: "org_1".to_owned(),
+            item_id: Some("item_ai".to_owned()),
+            title: "AI breaking".to_owned(),
+            summary: "AI breaking summary".to_owned(),
+            severity: "breaking".to_owned(),
+            audience_type: "all".to_owned(),
+            target_type: Some("topic".to_owned()),
+            target_id: Some("topic_ai".to_owned()),
+            priority: 1,
+            scheduled_at: Some("2026-06-06T02:10:00Z".to_owned()),
+            expires_at: Some("2026-06-07T02:10:00Z".to_owned()),
+            now: "2026-06-06T02:05:00Z".to_owned(),
+        })
+        .await
+        .expect("create alert");
+    assert!(store
+        .list_active_breaking_alerts("tenant_1", "2026-06-06T02:06:00Z", 10)
+        .await
+        .expect("draft alerts")
+        .is_empty());
+
+    store
+        .publish_breaking_alert("tenant_1", "alert_1", "2026-06-06T02:11:00Z")
+        .await
+        .expect("publish alert");
+    let alerts = store
+        .list_active_breaking_alerts("tenant_1", "2026-06-06T02:12:00Z", 10)
+        .await
+        .expect("list active alerts");
+    assert_eq!(alerts.len(), 1);
+    assert_eq!(alerts[0].title, "AI breaking");
+    assert_eq!(alerts[0].severity, "breaking");
+
+    store
+        .create_digest_issue(NewNewsDigestIssue {
+            id: "digest_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            digest_key: "daily-2026-06-06".to_owned(),
+            title: "Daily briefing".to_owned(),
+            summary: Some("Top AI news".to_owned()),
+            digest_type: "daily".to_owned(),
+            audience_type: "all".to_owned(),
+            locale: Some("zh-CN".to_owned()),
+            published_at: Some("2026-06-06T03:00:00Z".to_owned()),
+            now: "2026-06-06T02:30:00Z".to_owned(),
+        })
+        .await
+        .expect("create digest");
+    store
+        .attach_digest_item(NewNewsDigestItem {
+            id: "digest_item_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            digest_id: "digest_1".to_owned(),
+            item_id: "item_ai".to_owned(),
+            rank: 1,
+            section: Some("AI".to_owned()),
+            reason: Some("editor-pick".to_owned()),
+            created_at: "2026-06-06T02:31:00Z".to_owned(),
+        })
+        .await
+        .expect("attach digest item");
+    store
+        .publish_digest_issue("tenant_1", "digest_1", "2026-06-06T03:00:00Z")
+        .await
+        .expect("publish digest");
+
+    let digests = store
+        .list_published_digest_issues("tenant_1", "2026-06-06T03:01:00Z", 10)
+        .await
+        .expect("list digests");
+    assert_eq!(digests.len(), 1);
+    assert_eq!(digests[0].digest_key, "daily-2026-06-06");
+
+    let digest_items = store
+        .list_digest_items("tenant_1", "digest_1", 10)
+        .await
+        .expect("list digest items");
+    assert_eq!(digest_items.len(), 1);
+    assert_eq!(digest_items[0].item_id, "item_ai");
+
+    store
+        .disable_notification_subscription("tenant_1", "subscription_1", "2026-06-06T04:00:00Z")
+        .await
+        .expect("disable subscription");
+    assert!(store
+        .list_notification_subscriptions("tenant_1", "user_1", 10)
+        .await
+        .expect("list disabled subscriptions")
+        .is_empty());
 }

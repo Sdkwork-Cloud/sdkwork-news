@@ -8,6 +8,11 @@ export const NEWS_CHANNEL_TYPE_VALUES = ["editorial", "algorithmic", "topic", "f
 export const NEWS_FEED_EVENT_VALUES = ["impression", "click", "dwell", "complete", "dismiss", "share"] as const;
 export const NEWS_INTEREST_TARGET_VALUES = ["source", "author", "topic", "channel", "tag"] as const;
 export const NEWS_SUGGESTION_TYPE_VALUES = ["hot", "history", "topic", "source", "correction"] as const;
+export const NEWS_NOTIFICATION_TARGET_VALUES = ["source", "author", "topic", "channel", "tag"] as const;
+export const NEWS_NOTIFICATION_CHANNEL_VALUES = ["push", "email", "in_app", "sms"] as const;
+export const NEWS_NOTIFICATION_FREQUENCY_VALUES = ["breaking", "daily", "weekly", "silent"] as const;
+export const NEWS_BREAKING_ALERT_SEVERITY_VALUES = ["breaking", "important", "watch"] as const;
+export const NEWS_DIGEST_TYPE_VALUES = ["daily", "weekly", "topic", "editorial"] as const;
 
 export type SdkworkNewsItemStatus = (typeof NEWS_STATUS_VALUES)[number];
 export type SdkworkNewsChannelStatus = (typeof NEWS_CHANNEL_STATUS_VALUES)[number];
@@ -15,6 +20,11 @@ export type SdkworkNewsChannelType = (typeof NEWS_CHANNEL_TYPE_VALUES)[number];
 export type SdkworkNewsFeedEventType = (typeof NEWS_FEED_EVENT_VALUES)[number];
 export type SdkworkNewsInterestTargetType = (typeof NEWS_INTEREST_TARGET_VALUES)[number];
 export type SdkworkNewsSuggestionType = (typeof NEWS_SUGGESTION_TYPE_VALUES)[number];
+export type SdkworkNewsNotificationTargetType = (typeof NEWS_NOTIFICATION_TARGET_VALUES)[number];
+export type SdkworkNewsNotificationChannel = (typeof NEWS_NOTIFICATION_CHANNEL_VALUES)[number];
+export type SdkworkNewsNotificationFrequency = (typeof NEWS_NOTIFICATION_FREQUENCY_VALUES)[number];
+export type SdkworkNewsBreakingAlertSeverity = (typeof NEWS_BREAKING_ALERT_SEVERITY_VALUES)[number];
+export type SdkworkNewsDigestType = (typeof NEWS_DIGEST_TYPE_VALUES)[number];
 export type SdkworkNewsEditorMode = "topic" | "url";
 export type SdkworkNewsEditorialAction = "archive" | "feature" | "publish" | "schedule";
 export type SdkworkNewsMediaKind = "image" | "video" | "audio" | "voice" | "document" | "archive" | "other";
@@ -236,6 +246,59 @@ export interface SdkworkNewsModerationCase {
   tenantId: string;
 }
 
+export interface SdkworkNewsNotificationSubscription {
+  channel: SdkworkNewsNotificationChannel;
+  frequency: SdkworkNewsNotificationFrequency;
+  id: string;
+  locale?: string;
+  quietEnd?: string;
+  quietStart?: string;
+  status: "active" | "disabled";
+  targetId: string;
+  targetType: SdkworkNewsNotificationTargetType;
+  tenantId: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface SdkworkNewsBreakingAlert {
+  audienceType: "all" | "subscribers" | "targeted";
+  expiresAt?: string;
+  id: string;
+  itemId?: string;
+  priority: number;
+  publishedAt?: string;
+  severity: SdkworkNewsBreakingAlertSeverity;
+  status: "draft" | "scheduled" | "published" | "cancelled" | "expired";
+  summary: string;
+  targetId?: string;
+  targetType?: SdkworkNewsNotificationTargetType;
+  tenantId: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface SdkworkNewsDigestIssue {
+  audienceType?: "all" | "subscribers" | "targeted";
+  digestKey: string;
+  digestType: SdkworkNewsDigestType;
+  id: string;
+  locale?: string;
+  publishedAt?: string;
+  status: "draft" | "scheduled" | "published" | "archived";
+  summary?: string;
+  tenantId: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface SdkworkNewsDigestItem {
+  itemId: string;
+  rank: number;
+  reason?: string;
+  section?: string;
+}
+
 export interface SdkworkNewsApiRoute {
   method: "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
   operationId: string;
@@ -313,6 +376,11 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("DELETE", "/app/v3/api/news/follows/{followId}", "follows.delete", false),
   route("GET", "/app/v3/api/news/interests", "interests.list", false),
   route("PUT", "/app/v3/api/news/interests", "interests.upsert", false),
+  route("GET", "/app/v3/api/news/notification/subscriptions", "notification.subscriptions.list", false),
+  route("PUT", "/app/v3/api/news/notification/subscriptions", "notification.subscriptions.upsert", false),
+  route("DELETE", "/app/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", false),
+  route("GET", "/app/v3/api/news/alerts/breaking", "alerts.breaking.list", false),
+  route("GET", "/app/v3/api/news/digests", "digests.list", false),
 ];
 
 export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -327,6 +395,8 @@ export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/open/v3/api/news/trending", "trending.list", true),
   route("GET", "/open/v3/api/news/search", "search.list", true),
   route("GET", "/open/v3/api/news/search/suggestions", "search.suggestions.list", true),
+  route("GET", "/open/v3/api/news/alerts/breaking", "alerts.breaking.list", true),
+  route("GET", "/open/v3/api/news/digests", "digests.list", true),
 ];
 
 export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -391,6 +461,17 @@ export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("POST", "/backend/v3/api/news/experiments", "experiments.create", false),
   route("PATCH", "/backend/v3/api/news/experiments/{experimentId}", "experiments.update", false),
   route("POST", "/backend/v3/api/news/experiments/{experimentId}/archive", "experiments.archive", false),
+  route("GET", "/backend/v3/api/news/notification/subscriptions", "notification.subscriptions.management.list", false),
+  route("DELETE", "/backend/v3/api/news/notification/subscriptions/{subscriptionId}", "notification.subscriptions.delete", false),
+  route("GET", "/backend/v3/api/news/alerts/breaking", "alerts.breaking.management.list", false),
+  route("POST", "/backend/v3/api/news/alerts/breaking", "alerts.breaking.create", false),
+  route("PATCH", "/backend/v3/api/news/alerts/breaking/{alertId}", "alerts.breaking.update", false),
+  route("POST", "/backend/v3/api/news/alerts/breaking/{alertId}/publish", "alerts.breaking.publish", false),
+  route("POST", "/backend/v3/api/news/alerts/breaking/{alertId}/cancel", "alerts.breaking.cancel", false),
+  route("GET", "/backend/v3/api/news/digests", "digests.management.list", false),
+  route("POST", "/backend/v3/api/news/digests", "digests.create", false),
+  route("POST", "/backend/v3/api/news/digests/{digestId}/publish", "digests.publish", false),
+  route("POST", "/backend/v3/api/news/digests/{digestId}/items", "digests.items.attach", false),
 ];
 
 function route(

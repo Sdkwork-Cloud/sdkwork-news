@@ -114,6 +114,27 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
         ),
         route(HttpMethod::Get, "/app/v3/api/news/interests", "interests.list"),
         route(HttpMethod::Put, "/app/v3/api/news/interests", "interests.upsert"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/notification/subscriptions",
+            "notification.subscriptions.list",
+        ),
+        route(
+            HttpMethod::Put,
+            "/app/v3/api/news/notification/subscriptions",
+            "notification.subscriptions.upsert",
+        ),
+        route(
+            HttpMethod::Delete,
+            "/app/v3/api/news/notification/subscriptions/{subscriptionId}",
+            "notification.subscriptions.delete",
+        ),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/alerts/breaking",
+            "alerts.breaking.list",
+        ),
+        route(HttpMethod::Get, "/app/v3/api/news/digests", "digests.list"),
     ]
 }
 
@@ -150,6 +171,12 @@ pub fn open_routes() -> Vec<NewsHttpRoute> {
             "/open/v3/api/news/search/suggestions",
             "search.suggestions.list",
         ),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/alerts/breaking",
+            "alerts.breaking.list",
+        ),
+        route(HttpMethod::Get, "/open/v3/api/news/digests", "digests.list"),
     ]
 }
 
@@ -439,6 +466,61 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             HttpMethod::Post,
             "/backend/v3/api/news/experiments/{experimentId}/archive",
             "experiments.archive",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/notification/subscriptions",
+            "notification.subscriptions.management.list",
+        ),
+        route(
+            HttpMethod::Delete,
+            "/backend/v3/api/news/notification/subscriptions/{subscriptionId}",
+            "notification.subscriptions.delete",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/alerts/breaking",
+            "alerts.breaking.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/alerts/breaking",
+            "alerts.breaking.create",
+        ),
+        route(
+            HttpMethod::Patch,
+            "/backend/v3/api/news/alerts/breaking/{alertId}",
+            "alerts.breaking.update",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/alerts/breaking/{alertId}/publish",
+            "alerts.breaking.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/alerts/breaking/{alertId}/cancel",
+            "alerts.breaking.cancel",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/digests",
+            "digests.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/digests",
+            "digests.create",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/digests/{digestId}/publish",
+            "digests.publish",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/digests/{digestId}/items",
+            "digests.items.attach",
         ),
     ]
 }

@@ -1,8 +1,201 @@
 import { backendApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsMetricsListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsEditorialReadiness, NewsExperiment, NewsFeedCandidate, NewsFeedCandidateCommand, NewsFeedCandidateListResponse, NewsGenericCommand, NewsItem, NewsItemCommand, NewsItemMetricSnapshot, NewsModerationCase, NewsScheduleCommand, NewsSearchSuggestion, NewsSearchSuggestionCommand, NewsSearchSuggestionListResponse, NewsSource, NewsTopic, NewsTrendingMetric, NewsUserInterestSignalListResponse, SearchEventsListResponse, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
+import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsMetricsListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsBreakingAlert, NewsBreakingAlertCommand, NewsBreakingAlertListResponse, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsDigestIssue, NewsDigestIssueCommand, NewsDigestIssueListResponse, NewsDigestItemCommand, NewsEditorialReadiness, NewsExperiment, NewsFeedCandidate, NewsFeedCandidateCommand, NewsFeedCandidateListResponse, NewsGenericCommand, NewsItem, NewsItemCommand, NewsItemMetricSnapshot, NewsModerationCase, NewsNotificationSubscriptionListResponse, NewsScheduleCommand, NewsSearchSuggestion, NewsSearchSuggestionCommand, NewsSearchSuggestionListResponse, NewsSource, NewsTopic, NewsTrendingMetric, NewsUserInterestSignalListResponse, SearchEventsListResponse, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
 
+
+export class NewsDigestsItemsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News digests.items.attach */
+  async attach(digestId: string, body: NewsDigestItemCommand): Promise<NewsApiResult> {
+    return this.client.post<NewsApiResult>(backendApiPath(`/news/digests/${serializePathParameter(digestId, { name: 'digestId', style: 'simple', explode: false })}/items`), body, undefined, undefined, 'application/json');
+  }
+}
+
+export interface NewsDigestsManagementListParams {
+  digestType?: string;
+  locale?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsDigestsManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News digests.management.list */
+  async list(params?: NewsDigestsManagementListParams): Promise<NewsDigestIssueListResponse> {
+    const query = buildQueryString([
+      { name: 'digest_type', value: params?.digestType, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsDigestIssueListResponse>(appendQueryString(backendApiPath(`/news/digests`), query));
+  }
+}
+
+export class NewsDigestsApi {
+  private client: HttpClient;
+  public readonly management: NewsDigestsManagementApi;
+  public readonly items: NewsDigestsItemsApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsDigestsManagementApi(client);
+    this.items = new NewsDigestsItemsApi(client);
+  }
+
+
+/** News digests.create */
+  async create(body: NewsDigestIssueCommand): Promise<NewsDigestIssue> {
+    return this.client.post<NewsDigestIssue>(backendApiPath(`/news/digests`), body, undefined, undefined, 'application/json');
+  }
+
+/** News digests.publish */
+  async publish(digestId: string): Promise<NewsDigestIssue> {
+    return this.client.post<NewsDigestIssue>(backendApiPath(`/news/digests/${serializePathParameter(digestId, { name: 'digestId', style: 'simple', explode: false })}/publish`));
+  }
+}
+
+export interface NewsAlertsBreakingManagementListParams {
+  severity?: string;
+  targetType?: string;
+  targetId?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsAlertsBreakingManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News alerts.breaking.management.list */
+  async list(params?: NewsAlertsBreakingManagementListParams): Promise<NewsBreakingAlertListResponse> {
+    const query = buildQueryString([
+      { name: 'severity', value: params?.severity, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_id', value: params?.targetId, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsBreakingAlertListResponse>(appendQueryString(backendApiPath(`/news/alerts/breaking`), query));
+  }
+}
+
+export class NewsAlertsBreakingApi {
+  private client: HttpClient;
+  public readonly management: NewsAlertsBreakingManagementApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsAlertsBreakingManagementApi(client);
+  }
+
+
+/** News alerts.breaking.create */
+  async create(body: NewsBreakingAlertCommand): Promise<NewsBreakingAlert> {
+    return this.client.post<NewsBreakingAlert>(backendApiPath(`/news/alerts/breaking`), body, undefined, undefined, 'application/json');
+  }
+
+/** News alerts.breaking.update */
+  async update(alertId: string, body: NewsBreakingAlertCommand): Promise<NewsBreakingAlert> {
+    return this.client.patch<NewsBreakingAlert>(backendApiPath(`/news/alerts/breaking/${serializePathParameter(alertId, { name: 'alertId', style: 'simple', explode: false })}`), body, undefined, undefined, 'application/json');
+  }
+
+/** News alerts.breaking.publish */
+  async publish(alertId: string): Promise<NewsBreakingAlert> {
+    return this.client.post<NewsBreakingAlert>(backendApiPath(`/news/alerts/breaking/${serializePathParameter(alertId, { name: 'alertId', style: 'simple', explode: false })}/publish`));
+  }
+
+/** News alerts.breaking.cancel */
+  async cancel(alertId: string): Promise<NewsBreakingAlert> {
+    return this.client.post<NewsBreakingAlert>(backendApiPath(`/news/alerts/breaking/${serializePathParameter(alertId, { name: 'alertId', style: 'simple', explode: false })}/cancel`));
+  }
+}
+
+export class NewsAlertsApi {
+  private client: HttpClient;
+  public readonly breaking: NewsAlertsBreakingApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.breaking = new NewsAlertsBreakingApi(client);
+  }
+
+}
+
+export interface NewsNotificationSubscriptionsManagementListParams {
+  userId?: string;
+  targetType?: string;
+  targetId?: string;
+  channel?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsNotificationSubscriptionsManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News notification.subscriptions.management.list */
+  async list(params?: NewsNotificationSubscriptionsManagementListParams): Promise<NewsNotificationSubscriptionListResponse> {
+    const query = buildQueryString([
+      { name: 'user_id', value: params?.userId, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_id', value: params?.targetId, style: 'form', explode: true, allowReserved: false },
+      { name: 'channel', value: params?.channel, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsNotificationSubscriptionListResponse>(appendQueryString(backendApiPath(`/news/notification/subscriptions`), query));
+  }
+}
+
+export class NewsNotificationSubscriptionsApi {
+  private client: HttpClient;
+  public readonly management: NewsNotificationSubscriptionsManagementApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsNotificationSubscriptionsManagementApi(client);
+  }
+
+
+/** News notification.subscriptions.delete */
+  async delete(subscriptionId: string): Promise<NewsApiResult> {
+    return this.client.delete<NewsApiResult>(backendApiPath(`/news/notification/subscriptions/${serializePathParameter(subscriptionId, { name: 'subscriptionId', style: 'simple', explode: false })}`));
+  }
+}
+
+export class NewsNotificationApi {
+  private client: HttpClient;
+  public readonly subscriptions: NewsNotificationSubscriptionsApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.subscriptions = new NewsNotificationSubscriptionsApi(client);
+  }
+
+}
 
 export interface NewsExperimentsManagementListParams {
   cursor?: string;
@@ -835,6 +1028,9 @@ export class NewsApi {
   public readonly interests: NewsInterestsApi;
   public readonly search: NewsSearchApi;
   public readonly experiments: NewsExperimentsApi;
+  public readonly notification: NewsNotificationApi;
+  public readonly alerts: NewsAlertsApi;
+  public readonly digests: NewsDigestsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -852,6 +1048,9 @@ export class NewsApi {
     this.interests = new NewsInterestsApi(client);
     this.search = new NewsSearchApi(client);
     this.experiments = new NewsExperimentsApi(client);
+    this.notification = new NewsNotificationApi(client);
+    this.alerts = new NewsAlertsApi(client);
+    this.digests = new NewsDigestsApi(client);
   }
 
 }
