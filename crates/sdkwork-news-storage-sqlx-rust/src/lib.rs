@@ -59,6 +59,84 @@ pub struct NewNewsItem {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsChannel {
+    pub id: String,
+    pub tenant_id: String,
+    pub organization_id: String,
+    pub slug: String,
+    pub title: String,
+    pub channel_type: String,
+    pub priority: i64,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsChannelItem {
+    pub id: String,
+    pub tenant_id: String,
+    pub channel_id: String,
+    pub item_id: String,
+    pub rank: i64,
+    pub reason: Option<String>,
+    pub now: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsRecommendationEvent {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: Option<String>,
+    pub item_id: String,
+    pub channel_id: Option<String>,
+    pub event_type: String,
+    pub dwell_ms: Option<i64>,
+    pub trace_id: Option<String>,
+    pub occurred_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsUserFeedback {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: String,
+    pub target_type: String,
+    pub target_id: String,
+    pub feedback_type: String,
+    pub reason: Option<String>,
+    pub created_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsFavorite {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: String,
+    pub item_id: String,
+    pub created_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsReaction {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: String,
+    pub item_id: String,
+    pub reaction_type: String,
+    pub updated_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsTrendingMetric {
+    pub id: String,
+    pub tenant_id: String,
+    pub item_id: String,
+    pub metric_window: String,
+    pub score: i64,
+    pub rank: i64,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NewsStoredItem {
     pub id: String,
     pub tenant_id: String,
@@ -78,6 +156,15 @@ pub struct NewsStoredItem {
     pub updated_at: String,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredTrendingMetric {
+    pub item_id: String,
+    pub metric_window: String,
+    pub score: i64,
+    pub rank: i64,
+    pub computed_at: String,
+}
+
 #[derive(Clone, Debug)]
 pub struct SqliteNewsStore {
     pool: SqlitePool,
@@ -90,6 +177,9 @@ impl SqliteNewsStore {
 
     pub async fn migrate(&self) -> Result<(), sqlx::Error> {
         sqlx::raw_sql(news_initial_migration_sql())
+            .execute(&self.pool)
+            .await?;
+        sqlx::raw_sql(news_industry_migration_sql())
             .execute(&self.pool)
             .await?;
         Ok(())
@@ -332,6 +422,248 @@ impl SqliteNewsStore {
         }
     }
 
+    pub async fn create_channel(&self, input: NewNewsChannel) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_channel
+                (id, tenant_id, organization_id, slug, title, channel_type, status, priority,
+                 created_at, updated_at, version)
+            VALUES
+                (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, 0)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.organization_id)
+        .bind(input.slug)
+        .bind(input.title)
+        .bind(input.channel_type)
+        .bind(input.priority)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn attach_item_to_channel(&self, input: NewNewsChannelItem) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_channel_item
+                (id, tenant_id, channel_id, item_id, rank, reason, pinned, status, starts_at, ends_at,
+                 created_at, updated_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, FALSE, 'active', NULL, NULL, ?, ?)
+            ON CONFLICT (tenant_id, channel_id, item_id)
+            DO UPDATE SET rank = excluded.rank,
+                          reason = excluded.reason,
+                          status = 'active',
+                          updated_at = excluded.updated_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.channel_id)
+        .bind(input.item_id)
+        .bind(input.rank)
+        .bind(input.reason)
+        .bind(&input.now)
+        .bind(&input.now)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_channel_feed(
+        &self,
+        tenant_id: &str,
+        channel_id: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredItem>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT i.id, i.tenant_id, i.category_id, i.slug, i.title, i.summary,
+                   b.body_markdown, i.status, i.author_name, i.featured,
+                   i.priority, i.estimated_read_minutes, i.published_at,
+                   i.scheduled_for, i.updated_at
+            FROM news_channel_item ci
+            JOIN news_item i ON i.id = ci.item_id
+            JOIN news_item_body b ON b.item_id = i.id
+            WHERE ci.tenant_id = ?
+              AND ci.channel_id = ?
+              AND ci.status = 'active'
+              AND i.status = 'published'
+            ORDER BY ci.rank ASC, i.published_at DESC, i.slug ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(channel_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        let mut items = Vec::with_capacity(rows.len());
+        for row in rows {
+            let mut item = self.item_from_row(row).await?;
+            item.tags.sort();
+            items.push(item);
+        }
+        Ok(items)
+    }
+
+    pub async fn record_recommendation_event(&self, input: NewNewsRecommendationEvent) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_recommendation_event
+                (id, tenant_id, user_id, item_id, channel_id, event_type, dwell_ms, trace_id,
+                 occurred_at, idempotency_key, payload_hash)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.item_id)
+        .bind(input.channel_id)
+        .bind(input.event_type)
+        .bind(input.dwell_ms)
+        .bind(input.trace_id)
+        .bind(input.occurred_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn record_user_feedback(&self, input: NewNewsUserFeedback) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_user_feedback
+                (id, tenant_id, user_id, target_type, target_id, feedback_type, reason, created_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.target_type)
+        .bind(input.target_id)
+        .bind(input.feedback_type)
+        .bind(input.reason)
+        .bind(input.created_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn mark_favorite(&self, input: NewNewsFavorite) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_favorite
+                (id, tenant_id, user_id, item_id, status, created_at, deleted_at)
+            VALUES
+                (?, ?, ?, ?, 'active', ?, NULL)
+            ON CONFLICT (tenant_id, user_id, item_id)
+            DO UPDATE SET status = 'active',
+                          deleted_at = NULL
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.item_id)
+        .bind(input.created_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn upsert_reaction(&self, input: NewNewsReaction) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_reaction
+                (id, tenant_id, user_id, item_id, reaction_type, status, created_at, updated_at)
+            VALUES
+                (?, ?, ?, ?, ?, 'active', ?, ?)
+            ON CONFLICT (tenant_id, user_id, item_id)
+            DO UPDATE SET reaction_type = excluded.reaction_type,
+                          status = 'active',
+                          updated_at = excluded.updated_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.item_id)
+        .bind(input.reaction_type)
+        .bind(&input.updated_at)
+        .bind(&input.updated_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn upsert_trending_metric(&self, input: NewNewsTrendingMetric) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_trending_metric
+                (id, tenant_id, item_id, metric_window, score, rank, computed_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (tenant_id, item_id, metric_window)
+            DO UPDATE SET score = excluded.score,
+                          rank = excluded.rank,
+                          computed_at = excluded.computed_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.item_id)
+        .bind(input.metric_window)
+        .bind(input.score)
+        .bind(input.rank)
+        .bind(input.computed_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_trending(
+        &self,
+        tenant_id: &str,
+        metric_window: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredTrendingMetric>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT item_id, metric_window, score, rank, computed_at
+            FROM news_trending_metric
+            WHERE tenant_id = ?
+              AND metric_window = ?
+            ORDER BY rank ASC, score DESC, computed_at DESC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(metric_window)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredTrendingMetric {
+                item_id: string_cell(row, "item_id"),
+                metric_window: string_cell(row, "metric_window"),
+                score: integer_cell(row, "score"),
+                rank: integer_cell(row, "rank"),
+                computed_at: string_cell(row, "computed_at"),
+            })
+            .collect())
+    }
+
     async fn item_from_row(&self, row: sqlx::sqlite::SqliteRow) -> Result<NewsStoredItem, sqlx::Error> {
         let item_id = string_cell(&row, "id");
         let tags = self.item_tags(&item_id).await?;
@@ -384,6 +716,33 @@ pub fn news_database_tables() -> Vec<&'static str> {
         "news_editorial_audit",
         "news_schema_version",
         "news_migration_lock",
+        "news_source",
+        "news_author",
+        "news_item_version",
+        "news_media_asset",
+        "news_item_media",
+        "news_topic",
+        "news_item_topic",
+        "news_channel",
+        "news_channel_item",
+        "news_feed_stream",
+        "news_feed_cursor",
+        "news_recommendation_event",
+        "news_user_feedback",
+        "news_trending_metric",
+        "news_search_projection",
+        "news_experiment",
+        "news_experiment_assignment",
+        "news_comment",
+        "news_comment_moderation",
+        "news_reaction",
+        "news_favorite",
+        "news_share_event",
+        "news_follow",
+        "news_report",
+        "news_moderation_case",
+        "news_content_risk_signal",
+        "news_takedown_event",
     ]
 }
 
@@ -399,26 +758,108 @@ pub fn news_database_indexes() -> Vec<&'static str> {
         "idx_news_publication_event_item",
         "idx_news_read_state_user_item",
         "idx_news_editorial_audit_item",
+        "idx_news_source_tenant_status",
+        "idx_news_author_tenant_source",
+        "idx_news_item_version_item",
+        "idx_news_media_asset_tenant_kind",
+        "idx_news_item_media_item_role",
+        "idx_news_topic_tenant_status_priority",
+        "idx_news_item_topic_topic",
+        "idx_news_channel_tenant_status_priority",
+        "idx_news_channel_item_channel_rank",
+        "idx_news_feed_stream_tenant_type",
+        "idx_news_feed_cursor_user_stream",
+        "idx_news_recommendation_event_user_time",
+        "idx_news_recommendation_event_item_type",
+        "idx_news_user_feedback_user_target",
+        "idx_news_trending_metric_window_rank",
+        "idx_news_search_projection_status",
+        "idx_news_experiment_surface_status",
+        "idx_news_experiment_assignment_user",
+        "idx_news_comment_item_status_time",
+        "idx_news_comment_parent",
+        "idx_news_comment_moderation_comment",
+        "idx_news_reaction_user_item",
+        "idx_news_favorite_user_time",
+        "idx_news_share_event_item_time",
+        "idx_news_follow_user_target",
+        "idx_news_report_target_status",
+        "idx_news_moderation_case_status_priority",
+        "idx_news_content_risk_signal_target",
+        "idx_news_takedown_event_item_time",
     ]
 }
 
 pub fn news_migration_names() -> Vec<&'static str> {
-    vec!["0001_news_foundation.sql"]
+    vec!["0001_news_foundation.sql", "0002_news_industry_foundation.sql"]
 }
 
 pub fn news_initial_migration_sql() -> &'static str {
     include_str!("../migrations/0001_news_foundation.sql")
 }
 
+pub fn news_industry_migration_sql() -> &'static str {
+    include_str!("../migrations/0002_news_industry_foundation.sql")
+}
+
 pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
-    vec![migration(
-        1,
-        "0001_news_foundation.sql",
-        "news",
-        "migrations/0001_news_foundation.sql",
-        news_initial_migration_sql(),
-        news_database_tables(),
-    )]
+    vec![
+        migration(
+            1,
+            "0001_news_foundation.sql",
+            "news",
+            "migrations/0001_news_foundation.sql",
+            news_initial_migration_sql(),
+            vec![
+                "news_category",
+                "news_item",
+                "news_item_body",
+                "news_tag",
+                "news_item_tag",
+                "news_publication_event",
+                "news_read_state",
+                "news_editorial_audit",
+                "news_schema_version",
+                "news_migration_lock",
+            ],
+        ),
+        migration(
+            2,
+            "0002_news_industry_foundation.sql",
+            "news",
+            "migrations/0002_news_industry_foundation.sql",
+            news_industry_migration_sql(),
+            vec![
+                "news_source",
+                "news_author",
+                "news_item_version",
+                "news_media_asset",
+                "news_item_media",
+                "news_topic",
+                "news_item_topic",
+                "news_channel",
+                "news_channel_item",
+                "news_feed_stream",
+                "news_feed_cursor",
+                "news_recommendation_event",
+                "news_user_feedback",
+                "news_trending_metric",
+                "news_search_projection",
+                "news_experiment",
+                "news_experiment_assignment",
+                "news_comment",
+                "news_comment_moderation",
+                "news_reaction",
+                "news_favorite",
+                "news_share_event",
+                "news_follow",
+                "news_report",
+                "news_moderation_case",
+                "news_content_risk_signal",
+                "news_takedown_event",
+            ],
+        ),
+    ]
 }
 
 pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
@@ -441,13 +882,67 @@ pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
             "news.audit.repository",
             vec!["news_editorial_audit"],
         ),
+        binding(
+            "news",
+            "news.channel.repository",
+            vec!["news_channel", "news_channel_item"],
+        ),
+        binding(
+            "news",
+            "news.topic.repository",
+            vec!["news_topic", "news_item_topic"],
+        ),
+        binding(
+            "news",
+            "news.media.repository",
+            vec!["news_media_asset", "news_item_media"],
+        ),
+        binding(
+            "news",
+            "news.feed.repository",
+            vec![
+                "news_feed_stream",
+                "news_feed_cursor",
+                "news_recommendation_event",
+                "news_user_feedback",
+                "news_trending_metric",
+                "news_search_projection",
+            ],
+        ),
+        binding(
+            "news",
+            "news.engagement.repository",
+            vec![
+                "news_comment",
+                "news_comment_moderation",
+                "news_reaction",
+                "news_favorite",
+                "news_share_event",
+                "news_follow",
+                "news_report",
+            ],
+        ),
+        binding(
+            "news",
+            "news.moderation.repository",
+            vec![
+                "news_moderation_case",
+                "news_content_risk_signal",
+                "news_takedown_event",
+            ],
+        ),
+        binding(
+            "news",
+            "news.experiment.repository",
+            vec!["news_experiment", "news_experiment_assignment"],
+        ),
     ]
 }
 
 pub fn news_storage_capability_manifest() -> NewsStorageCapabilityManifest {
     NewsStorageCapabilityManifest {
         name: "sdkwork-news-storage-sqlx",
-        schema_version: "news.storage.v1",
+        schema_version: "news.storage.v2",
         tables: news_database_tables(),
         indexes: news_database_indexes(),
         migrations: news_migration_names(),

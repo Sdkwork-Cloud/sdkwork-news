@@ -11,6 +11,11 @@ fn news_core_manifest_owns_news_domain_contracts() {
     assert_eq!(manifest.statuses, vec!["draft", "published", "scheduled", "archived"]);
     assert!(manifest.operations.contains(&"items.publish"));
     assert!(manifest.operations.contains(&"items.editorialReadiness.retrieve"));
+    assert!(manifest.operations.contains(&"channels.feed.list"));
+    assert!(manifest.operations.contains(&"feed.personalized.list"));
+    assert!(manifest.operations.contains(&"events.create"));
+    assert!(manifest.operations.contains(&"moderation.cases.update"));
+    assert!(manifest.operations.contains(&"experiments.archive"));
 }
 
 #[test]
@@ -36,4 +41,3 @@ fn news_core_evaluates_publish_schedule_archive_readiness() {
     assert!(!archive_readiness.ready);
     assert_eq!(archive_readiness.issues, vec!["unpublished"]);
 }
-

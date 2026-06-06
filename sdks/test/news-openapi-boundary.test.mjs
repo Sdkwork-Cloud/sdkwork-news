@@ -50,7 +50,12 @@ test("news OpenAPI documents are owner-only sdkwork-v3 compatible inputs", () =>
       }
     }
   }
-  assert.equal(operations(open).length, 3);
-  assert.equal(operations(app).length, 5);
-  assert.equal(operations(backend).length, 13);
+  assert.equal(operations(open).length, 10);
+  assert.equal(operations(app).length, 26);
+  assert.equal(operations(backend).length, 48);
+  assert.ok(open.paths["/open/v3/api/news/channels/{channelId}/feed"]?.get, "open channel feed");
+  assert.ok(app.paths["/app/v3/api/news/events"]?.post, "app event ingestion");
+  assert.ok(app.paths["/app/v3/api/news/items/{itemId}/comments"]?.post, "app comments");
+  assert.ok(backend.paths["/backend/v3/api/news/moderation/cases/{caseId}"]?.patch, "backend moderation");
+  assert.ok(backend.paths["/backend/v3/api/news/experiments/{experimentId}/archive"]?.post, "backend experiments");
 });

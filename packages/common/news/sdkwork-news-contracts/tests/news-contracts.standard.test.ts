@@ -7,9 +7,12 @@ import {
   NEWS_OWNER,
   NEWS_STATUS_VALUES,
   NEWS_TAG,
+  createNewsFeedEventDigest,
   createNewsItemDigest,
   evaluateNewsEditorialReadiness,
   filterNewsItems,
+  type SdkworkNewsChannel,
+  type SdkworkNewsRecommendationEvent,
   type SdkworkNewsItem,
 } from "../src/index.ts";
 
@@ -57,12 +60,40 @@ describe("sdkwork-news contracts", () => {
       "items.retrieve",
       "items.bySlug.retrieve",
       "overview.retrieve",
+      "channels.list",
+      "channels.feed.list",
+      "topics.list",
+      "topics.items.list",
+      "feed.personalized.list",
+      "items.related.list",
+      "trending.list",
+      "search.list",
+      "events.create",
+      "favorites.list",
+      "favorites.create",
+      "favorites.delete",
+      "reactions.upsert",
+      "comments.list",
+      "comments.create",
+      "reports.create",
+      "feedback.create",
+      "history.list",
+      "follows.list",
+      "follows.create",
+      "follows.delete",
     ]);
     expect(NEWS_APP_API_ROUTES.every((route) => route.public === false)).toBe(true);
     expect(NEWS_OPEN_API_ROUTES.map((route) => route.operationId)).toEqual([
       "items.list",
       "items.retrieve",
       "items.bySlug.retrieve",
+      "channels.list",
+      "channels.feed.list",
+      "topics.list",
+      "topics.items.list",
+      "items.related.list",
+      "trending.list",
+      "search.list",
     ]);
     expect(NEWS_OPEN_API_ROUTES.every((route) => route.public === true)).toBe(true);
     expect(NEWS_BACKEND_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -79,6 +110,41 @@ describe("sdkwork-news contracts", () => {
       "items.archive",
       "items.feature",
       "items.editorialReadiness.retrieve",
+      "sources.management.list",
+      "sources.create",
+      "sources.update",
+      "sources.delete",
+      "authors.management.list",
+      "authors.create",
+      "authors.update",
+      "authors.delete",
+      "channels.management.list",
+      "channels.create",
+      "channels.update",
+      "channels.delete",
+      "topics.management.list",
+      "topics.create",
+      "topics.update",
+      "topics.delete",
+      "items.versions.list",
+      "items.versions.create",
+      "items.media.list",
+      "items.media.attach",
+      "items.media.delete",
+      "moderation.cases.list",
+      "moderation.cases.retrieve",
+      "moderation.cases.update",
+      "comments.moderation.list",
+      "comments.moderation.update",
+      "reports.management.list",
+      "reports.update",
+      "trending.metrics.list",
+      "trending.metrics.upsert",
+      "search.projections.rebuild",
+      "experiments.management.list",
+      "experiments.create",
+      "experiments.update",
+      "experiments.archive",
     ]);
   });
 
@@ -107,5 +173,27 @@ describe("sdkwork-news contracts", () => {
       issues: [],
       ready: true,
     });
+  });
+
+  it("models industry news channels and recommendation events", () => {
+    const channel: SdkworkNewsChannel = {
+      id: "channel_top",
+      slug: "top",
+      status: "active",
+      tenantId: "tenant_1",
+      title: "Top News",
+      type: "editorial",
+    };
+    const event: SdkworkNewsRecommendationEvent = {
+      eventType: "impression",
+      id: "event_1",
+      itemId: "item_1",
+      occurredAt: "2026-06-06T08:00:00.000Z",
+      tenantId: "tenant_1",
+      userId: "user_1",
+    };
+
+    expect(channel.type).toBe("editorial");
+    expect(createNewsFeedEventDigest(event)).toEqual("impression:item_1:user_1");
   });
 });

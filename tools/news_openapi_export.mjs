@@ -58,6 +58,275 @@ const schemas = {
       updatedAt: { type: "string", format: "date-time" },
     },
   },
+  MediaResource: {
+    type: "object",
+    additionalProperties: true,
+    required: ["kind", "source"],
+    properties: {
+      id: { type: "string" },
+      kind: { type: "string", enum: ["image", "video", "audio", "voice", "document", "archive", "other"] },
+      source: { type: "string", enum: ["drive", "external_url", "provider_asset", "generated"] },
+      uri: { type: "string" },
+      url: { type: "string", format: "uri" },
+      publicUrl: { type: "string", format: "uri" },
+      mimeType: { type: "string" },
+      sizeBytes: { type: "string", pattern: "^[0-9]+$" },
+      width: { type: "integer", minimum: 0 },
+      height: { type: "integer", minimum: 0 },
+      durationSeconds: { type: "number", minimum: 0 },
+      altText: { type: "string" },
+      title: { type: "string" },
+      metadata: { type: "object", additionalProperties: true },
+    },
+  },
+  NewsChannel: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "slug", "title", "type", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      slug: { type: "string" },
+      title: { type: "string" },
+      description: { type: "string" },
+      type: { type: "string", enum: ["editorial", "algorithmic", "topic", "following", "hot"] },
+      status: { type: "string", enum: ["active", "inactive", "archived"] },
+      priority: { type: "integer" },
+    },
+  },
+  NewsTopic: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "slug", "title", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      slug: { type: "string" },
+      title: { type: "string" },
+      description: { type: "string" },
+      status: { type: "string", enum: ["active", "inactive", "archived"] },
+      priority: { type: "integer" },
+    },
+  },
+  NewsSource: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "slug", "title", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      slug: { type: "string" },
+      title: { type: "string" },
+      sourceType: { type: "string" },
+      trustTier: { type: "string" },
+      status: { type: "string" },
+      locale: { type: "string" },
+      region: { type: "string" },
+      homepageUrl: { type: "string", format: "uri" },
+    },
+  },
+  NewsAuthor: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "slug", "displayName", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      sourceId: { type: "string" },
+      userId: { type: "string" },
+      slug: { type: "string" },
+      displayName: { type: "string" },
+      bio: { type: "string" },
+      status: { type: "string" },
+    },
+  },
+  NewsFeedItem: {
+    type: "object",
+    additionalProperties: false,
+    required: ["item"],
+    properties: {
+      item: ref("NewsItem"),
+      channelId: { type: "string" },
+      rank: { type: "integer" },
+      reason: { type: "string" },
+      traceId: { type: "string" },
+    },
+  },
+  NewsFeedPage: pageOf("NewsFeedItem"),
+  NewsItemPage: pageOf("NewsItem"),
+  NewsCommentPage: pageOf("NewsComment"),
+  NewsFavoritePage: pageOf("NewsFavorite"),
+  NewsFollowPage: pageOf("NewsFollow"),
+  NewsSearchResultPage: pageOf("NewsSearchResult"),
+  NewsRecommendationEventCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["itemId", "eventType", "occurredAt"],
+    properties: {
+      itemId: { type: "string" },
+      channelId: { type: "string" },
+      eventType: { type: "string", enum: ["impression", "click", "dwell", "complete", "dismiss", "share"] },
+      dwellMs: { type: "integer", minimum: 0 },
+      traceId: { type: "string" },
+      occurredAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsUserFeedbackCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["targetType", "targetId", "feedbackType"],
+    properties: {
+      targetType: { type: "string", enum: ["item", "source", "author", "topic", "channel"] },
+      targetId: { type: "string" },
+      feedbackType: { type: "string", enum: ["not_interested", "block_source", "less_like_this", "more_like_this", "quality"] },
+      reason: { type: "string" },
+    },
+  },
+  NewsFavorite: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "userId", "itemId", "createdAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      itemId: { type: "string" },
+      createdAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsReactionCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["reactionType"],
+    properties: {
+      reactionType: { type: "string", enum: ["like", "dislike", "laugh", "sad", "angry", "wow"] },
+    },
+  },
+  NewsReaction: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "userId", "itemId", "reactionType", "updatedAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      itemId: { type: "string" },
+      reactionType: { type: "string" },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsComment: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "itemId", "userId", "body", "moderationStatus", "createdAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      parentId: { type: "string" },
+      userId: { type: "string" },
+      body: { type: "string" },
+      moderationStatus: { type: "string", enum: ["pending", "approved", "rejected", "hidden"] },
+      createdAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsCommentCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["body"],
+    properties: {
+      body: { type: "string" },
+      parentId: { type: "string" },
+    },
+  },
+  NewsReportCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["targetType", "targetId", "reason"],
+    properties: {
+      targetType: { type: "string", enum: ["item", "comment", "media", "source"] },
+      targetId: { type: "string" },
+      reason: { type: "string" },
+    },
+  },
+  NewsFollow: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "userId", "targetType", "targetId", "createdAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel"] },
+      targetId: { type: "string" },
+      createdAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsFollowCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["targetType", "targetId"],
+    properties: {
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel"] },
+      targetId: { type: "string" },
+    },
+  },
+  NewsTrendingMetric: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "itemId", "metricWindow", "score", "rank", "computedAt"],
+    properties: {
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      metricWindow: { type: "string", enum: ["hour", "day", "week"] },
+      score: { type: "integer" },
+      rank: { type: "integer" },
+      computedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsSearchResult: {
+    type: "object",
+    additionalProperties: false,
+    required: ["item", "score"],
+    properties: {
+      item: ref("NewsItem"),
+      score: { type: "number" },
+      highlight: { type: "string" },
+    },
+  },
+  NewsModerationCase: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "targetType", "targetId", "reason", "priority", "status", "createdAt"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      targetType: { type: "string" },
+      targetId: { type: "string" },
+      reason: { type: "string" },
+      priority: { type: "integer" },
+      status: { type: "string", enum: ["open", "reviewing", "resolved", "rejected"] },
+      createdAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsExperiment: {
+    type: "object",
+    additionalProperties: false,
+    required: ["id", "tenantId", "experimentKey", "title", "surface", "status"],
+    properties: {
+      id: { type: "string" },
+      tenantId: { type: "string" },
+      experimentKey: { type: "string" },
+      title: { type: "string" },
+      surface: { type: "string" },
+      status: { type: "string", enum: ["draft", "active", "paused", "archived"] },
+      allocation: { type: "integer" },
+    },
+  },
+  NewsGenericCommand: {
+    type: "object",
+    additionalProperties: true,
+  },
   NewsItemStatus: {
     type: "string",
     enum: ["draft", "published", "scheduled", "archived"],
@@ -132,12 +401,40 @@ const appRoutes = [
   route("get", "/app/v3/api/news/items/{itemId}", "items.retrieve", { schema: ref("NewsItem") }, false, [pathParam("itemId")]),
   route("get", "/app/v3/api/news/items/by_slug/{slug}", "items.bySlug.retrieve", { schema: ref("NewsItem") }, false, [pathParam("slug")]),
   route("get", "/app/v3/api/news/overview", "overview.retrieve", { schema: ref("NewsOverview") }, false),
+  route("get", "/app/v3/api/news/channels", "channels.list", { schema: arrayOf("NewsChannel") }, false, pageParams()),
+  route("get", "/app/v3/api/news/channels/{channelId}/feed", "channels.feed.list", { schema: ref("NewsFeedPage") }, false, [pathParam("channelId"), ...feedParams()]),
+  route("get", "/app/v3/api/news/topics", "topics.list", { schema: arrayOf("NewsTopic") }, false, pageParams()),
+  route("get", "/app/v3/api/news/topics/{topicId}/items", "topics.items.list", { schema: ref("NewsItemPage") }, false, [pathParam("topicId"), ...feedParams()]),
+  route("get", "/app/v3/api/news/feed/personalized", "feed.personalized.list", { schema: ref("NewsFeedPage") }, false, feedParams()),
+  route("get", "/app/v3/api/news/items/{itemId}/related", "items.related.list", { schema: ref("NewsItemPage") }, false, [pathParam("itemId"), ...pageParams()]),
+  route("get", "/app/v3/api/news/trending", "trending.list", { schema: arrayOf("NewsTrendingMetric") }, false, pageParams()),
+  route("get", "/app/v3/api/news/search", "search.list", { schema: ref("NewsSearchResultPage") }, false, searchParams()),
+  route("post", "/app/v3/api/news/events", "events.create", { schema: ref("NewsApiResult") }, false, [], "NewsRecommendationEventCommand"),
+  route("get", "/app/v3/api/news/favorites", "favorites.list", { schema: ref("NewsFavoritePage") }, false, pageParams()),
+  route("post", "/app/v3/api/news/items/{itemId}/favorites", "favorites.create", { schema: ref("NewsFavorite") }, false, [pathParam("itemId")]),
+  route("delete", "/app/v3/api/news/items/{itemId}/favorites", "favorites.delete", { schema: ref("NewsApiResult") }, false, [pathParam("itemId")]),
+  route("put", "/app/v3/api/news/items/{itemId}/reactions", "reactions.upsert", { schema: ref("NewsReaction") }, false, [pathParam("itemId")], "NewsReactionCommand"),
+  route("get", "/app/v3/api/news/items/{itemId}/comments", "comments.list", { schema: ref("NewsCommentPage") }, false, [pathParam("itemId"), ...pageParams()]),
+  route("post", "/app/v3/api/news/items/{itemId}/comments", "comments.create", { schema: ref("NewsComment") }, false, [pathParam("itemId")], "NewsCommentCommand"),
+  route("post", "/app/v3/api/news/reports", "reports.create", { schema: ref("NewsApiResult") }, false, [], "NewsReportCommand"),
+  route("post", "/app/v3/api/news/feedback", "feedback.create", { schema: ref("NewsApiResult") }, false, [], "NewsUserFeedbackCommand"),
+  route("get", "/app/v3/api/news/history", "history.list", { schema: ref("NewsItemPage") }, false, pageParams()),
+  route("get", "/app/v3/api/news/follows", "follows.list", { schema: ref("NewsFollowPage") }, false, pageParams()),
+  route("post", "/app/v3/api/news/follows", "follows.create", { schema: ref("NewsFollow") }, false, [], "NewsFollowCommand"),
+  route("delete", "/app/v3/api/news/follows/{followId}", "follows.delete", { schema: ref("NewsApiResult") }, false, [pathParam("followId")]),
 ];
 
 const openRoutes = [
   route("get", "/open/v3/api/news/items", "items.list", { schema: arrayOf("NewsItem") }, true, listParams()),
   route("get", "/open/v3/api/news/items/{itemId}", "items.retrieve", { schema: ref("NewsItem") }, true, [pathParam("itemId")]),
   route("get", "/open/v3/api/news/items/by_slug/{slug}", "items.bySlug.retrieve", { schema: ref("NewsItem") }, true, [pathParam("slug")]),
+  route("get", "/open/v3/api/news/channels", "channels.list", { schema: arrayOf("NewsChannel") }, true, pageParams()),
+  route("get", "/open/v3/api/news/channels/{channelId}/feed", "channels.feed.list", { schema: ref("NewsFeedPage") }, true, [pathParam("channelId"), ...feedParams()]),
+  route("get", "/open/v3/api/news/topics", "topics.list", { schema: arrayOf("NewsTopic") }, true, pageParams()),
+  route("get", "/open/v3/api/news/topics/{topicId}/items", "topics.items.list", { schema: ref("NewsItemPage") }, true, [pathParam("topicId"), ...feedParams()]),
+  route("get", "/open/v3/api/news/items/{itemId}/related", "items.related.list", { schema: ref("NewsItemPage") }, true, [pathParam("itemId"), ...pageParams()]),
+  route("get", "/open/v3/api/news/trending", "trending.list", { schema: arrayOf("NewsTrendingMetric") }, true, pageParams()),
+  route("get", "/open/v3/api/news/search", "search.list", { schema: ref("NewsSearchResultPage") }, true, searchParams()),
 ];
 
 const backendRoutes = [
@@ -154,6 +451,41 @@ const backendRoutes = [
   route("post", "/backend/v3/api/news/items/{itemId}/archive", "items.archive", { schema: ref("NewsItem") }, false, [pathParam("itemId")]),
   route("post", "/backend/v3/api/news/items/{itemId}/feature", "items.feature", { schema: ref("NewsItem") }, false, [pathParam("itemId")]),
   route("get", "/backend/v3/api/news/items/{itemId}/editorial_readiness", "items.editorialReadiness.retrieve", { schema: ref("NewsEditorialReadiness") }, false, [pathParam("itemId")]),
+  route("get", "/backend/v3/api/news/sources", "sources.management.list", { schema: arrayOf("NewsSource") }, false, pageParams()),
+  route("post", "/backend/v3/api/news/sources", "sources.create", { schema: ref("NewsSource") }, false, [], "NewsGenericCommand"),
+  route("patch", "/backend/v3/api/news/sources/{sourceId}", "sources.update", { schema: ref("NewsSource") }, false, [pathParam("sourceId")], "NewsGenericCommand"),
+  route("delete", "/backend/v3/api/news/sources/{sourceId}", "sources.delete", { schema: ref("NewsApiResult") }, false, [pathParam("sourceId")]),
+  route("get", "/backend/v3/api/news/authors", "authors.management.list", { schema: arrayOf("NewsAuthor") }, false, pageParams()),
+  route("post", "/backend/v3/api/news/authors", "authors.create", { schema: ref("NewsAuthor") }, false, [], "NewsGenericCommand"),
+  route("patch", "/backend/v3/api/news/authors/{authorId}", "authors.update", { schema: ref("NewsAuthor") }, false, [pathParam("authorId")], "NewsGenericCommand"),
+  route("delete", "/backend/v3/api/news/authors/{authorId}", "authors.delete", { schema: ref("NewsApiResult") }, false, [pathParam("authorId")]),
+  route("get", "/backend/v3/api/news/channels", "channels.management.list", { schema: arrayOf("NewsChannel") }, false, pageParams()),
+  route("post", "/backend/v3/api/news/channels", "channels.create", { schema: ref("NewsChannel") }, false, [], "NewsGenericCommand"),
+  route("patch", "/backend/v3/api/news/channels/{channelId}", "channels.update", { schema: ref("NewsChannel") }, false, [pathParam("channelId")], "NewsGenericCommand"),
+  route("delete", "/backend/v3/api/news/channels/{channelId}", "channels.delete", { schema: ref("NewsApiResult") }, false, [pathParam("channelId")]),
+  route("get", "/backend/v3/api/news/topics", "topics.management.list", { schema: arrayOf("NewsTopic") }, false, pageParams()),
+  route("post", "/backend/v3/api/news/topics", "topics.create", { schema: ref("NewsTopic") }, false, [], "NewsGenericCommand"),
+  route("patch", "/backend/v3/api/news/topics/{topicId}", "topics.update", { schema: ref("NewsTopic") }, false, [pathParam("topicId")], "NewsGenericCommand"),
+  route("delete", "/backend/v3/api/news/topics/{topicId}", "topics.delete", { schema: ref("NewsApiResult") }, false, [pathParam("topicId")]),
+  route("get", "/backend/v3/api/news/items/{itemId}/versions", "items.versions.list", { schema: arrayOf("NewsItem") }, false, [pathParam("itemId")]),
+  route("post", "/backend/v3/api/news/items/{itemId}/versions", "items.versions.create", { schema: ref("NewsItem") }, false, [pathParam("itemId")], "NewsItemCommand"),
+  route("get", "/backend/v3/api/news/items/{itemId}/media", "items.media.list", { schema: arrayOf("MediaResource") }, false, [pathParam("itemId")]),
+  route("post", "/backend/v3/api/news/items/{itemId}/media", "items.media.attach", { schema: ref("MediaResource") }, false, [pathParam("itemId")], "MediaResource"),
+  route("delete", "/backend/v3/api/news/items/{itemId}/media/{mediaId}", "items.media.delete", { schema: ref("NewsApiResult") }, false, [pathParam("itemId"), pathParam("mediaId")]),
+  route("get", "/backend/v3/api/news/moderation/cases", "moderation.cases.list", { schema: arrayOf("NewsModerationCase") }, false, pageParams()),
+  route("get", "/backend/v3/api/news/moderation/cases/{caseId}", "moderation.cases.retrieve", { schema: ref("NewsModerationCase") }, false, [pathParam("caseId")]),
+  route("patch", "/backend/v3/api/news/moderation/cases/{caseId}", "moderation.cases.update", { schema: ref("NewsModerationCase") }, false, [pathParam("caseId")], "NewsGenericCommand"),
+  route("get", "/backend/v3/api/news/comments/moderation", "comments.moderation.list", { schema: arrayOf("NewsComment") }, false, pageParams()),
+  route("patch", "/backend/v3/api/news/comments/{commentId}/moderation", "comments.moderation.update", { schema: ref("NewsComment") }, false, [pathParam("commentId")], "NewsGenericCommand"),
+  route("get", "/backend/v3/api/news/reports", "reports.management.list", { schema: ref("NewsApiResult") }, false, pageParams()),
+  route("patch", "/backend/v3/api/news/reports/{reportId}", "reports.update", { schema: ref("NewsApiResult") }, false, [pathParam("reportId")], "NewsGenericCommand"),
+  route("get", "/backend/v3/api/news/trending/metrics", "trending.metrics.list", { schema: arrayOf("NewsTrendingMetric") }, false, pageParams()),
+  route("put", "/backend/v3/api/news/trending/metrics", "trending.metrics.upsert", { schema: ref("NewsTrendingMetric") }, false, [], "NewsGenericCommand"),
+  route("post", "/backend/v3/api/news/search/projections/rebuild", "search.projections.rebuild", { schema: ref("NewsApiResult") }, false),
+  route("get", "/backend/v3/api/news/experiments", "experiments.management.list", { schema: arrayOf("NewsExperiment") }, false, pageParams()),
+  route("post", "/backend/v3/api/news/experiments", "experiments.create", { schema: ref("NewsExperiment") }, false, [], "NewsGenericCommand"),
+  route("patch", "/backend/v3/api/news/experiments/{experimentId}", "experiments.update", { schema: ref("NewsExperiment") }, false, [pathParam("experimentId")], "NewsGenericCommand"),
+  route("post", "/backend/v3/api/news/experiments/{experimentId}/archive", "experiments.archive", { schema: ref("NewsExperiment") }, false, [pathParam("experimentId")]),
 ];
 
 function ref(name) {
@@ -162,6 +494,20 @@ function ref(name) {
 
 function arrayOf(name) {
   return { type: "array", items: ref(name) };
+}
+
+function pageOf(name) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["items", "hasMore", "limit"],
+    properties: {
+      items: { type: "array", items: ref(name) },
+      cursor: { type: "string" },
+      hasMore: { type: "boolean" },
+      limit: { type: "integer", minimum: 1, maximum: 100 },
+    },
+  };
 }
 
 function pathParam(name) {
@@ -184,6 +530,18 @@ function queryParam(name) {
 
 function listParams() {
   return [queryParam("categoryId"), queryParam("q"), queryParam("status")];
+}
+
+function pageParams() {
+  return [queryParam("cursor"), queryParam("limit")];
+}
+
+function feedParams() {
+  return [queryParam("cursor"), queryParam("limit"), queryParam("trace_id")];
+}
+
+function searchParams() {
+  return [queryParam("q"), queryParam("cursor"), queryParam("limit")];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {

@@ -19,8 +19,28 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 13,
+  "ownerOnlyOperationCount": 48,
   "operations": [
+    {
+      "method": "POST",
+      "operationId": "authors.create",
+      "path": "/backend/v3/api/news/authors"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "authors.delete",
+      "path": "/backend/v3/api/news/authors/{authorId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "authors.management.list",
+      "path": "/backend/v3/api/news/authors"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "authors.update",
+      "path": "/backend/v3/api/news/authors/{authorId}"
+    },
     {
       "method": "POST",
       "operationId": "categories.create",
@@ -40,6 +60,56 @@
       "method": "PATCH",
       "operationId": "categories.update",
       "path": "/backend/v3/api/news/categories/{categoryId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "channels.create",
+      "path": "/backend/v3/api/news/channels"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "channels.delete",
+      "path": "/backend/v3/api/news/channels/{channelId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "channels.management.list",
+      "path": "/backend/v3/api/news/channels"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "channels.update",
+      "path": "/backend/v3/api/news/channels/{channelId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "comments.moderation.list",
+      "path": "/backend/v3/api/news/comments/moderation"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "comments.moderation.update",
+      "path": "/backend/v3/api/news/comments/{commentId}/moderation"
+    },
+    {
+      "method": "POST",
+      "operationId": "experiments.archive",
+      "path": "/backend/v3/api/news/experiments/{experimentId}/archive"
+    },
+    {
+      "method": "POST",
+      "operationId": "experiments.create",
+      "path": "/backend/v3/api/news/experiments"
+    },
+    {
+      "method": "GET",
+      "operationId": "experiments.management.list",
+      "path": "/backend/v3/api/news/experiments"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "experiments.update",
+      "path": "/backend/v3/api/news/experiments/{experimentId}"
     },
     {
       "method": "POST",
@@ -73,6 +143,21 @@
     },
     {
       "method": "POST",
+      "operationId": "items.media.attach",
+      "path": "/backend/v3/api/news/items/{itemId}/media"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "items.media.delete",
+      "path": "/backend/v3/api/news/items/{itemId}/media/{mediaId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.media.list",
+      "path": "/backend/v3/api/news/items/{itemId}/media"
+    },
+    {
+      "method": "POST",
       "operationId": "items.publish",
       "path": "/backend/v3/api/news/items/{itemId}/publish"
     },
@@ -85,6 +170,96 @@
       "method": "PATCH",
       "operationId": "items.update",
       "path": "/backend/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.versions.create",
+      "path": "/backend/v3/api/news/items/{itemId}/versions"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.versions.list",
+      "path": "/backend/v3/api/news/items/{itemId}/versions"
+    },
+    {
+      "method": "GET",
+      "operationId": "moderation.cases.list",
+      "path": "/backend/v3/api/news/moderation/cases"
+    },
+    {
+      "method": "GET",
+      "operationId": "moderation.cases.retrieve",
+      "path": "/backend/v3/api/news/moderation/cases/{caseId}"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "moderation.cases.update",
+      "path": "/backend/v3/api/news/moderation/cases/{caseId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "reports.management.list",
+      "path": "/backend/v3/api/news/reports"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "reports.update",
+      "path": "/backend/v3/api/news/reports/{reportId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "search.projections.rebuild",
+      "path": "/backend/v3/api/news/search/projections/rebuild"
+    },
+    {
+      "method": "POST",
+      "operationId": "sources.create",
+      "path": "/backend/v3/api/news/sources"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "sources.delete",
+      "path": "/backend/v3/api/news/sources/{sourceId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "sources.management.list",
+      "path": "/backend/v3/api/news/sources"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "sources.update",
+      "path": "/backend/v3/api/news/sources/{sourceId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "topics.create",
+      "path": "/backend/v3/api/news/topics"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "topics.delete",
+      "path": "/backend/v3/api/news/topics/{topicId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "topics.management.list",
+      "path": "/backend/v3/api/news/topics"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "topics.update",
+      "path": "/backend/v3/api/news/topics/{topicId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "trending.metrics.list",
+      "path": "/backend/v3/api/news/trending/metrics"
+    },
+    {
+      "method": "PUT",
+      "operationId": "trending.metrics.upsert",
+      "path": "/backend/v3/api/news/trending/metrics"
     }
   ],
   "managedBy": "tools/news_sdk_generator_runner.mjs"

@@ -3,10 +3,21 @@ export const NEWS_DOMAIN = "news" as const;
 export const NEWS_TAG = "news" as const;
 
 export const NEWS_STATUS_VALUES = ["draft", "published", "scheduled", "archived"] as const;
+export const NEWS_CHANNEL_STATUS_VALUES = ["active", "inactive", "archived"] as const;
+export const NEWS_CHANNEL_TYPE_VALUES = ["editorial", "algorithmic", "topic", "following", "hot"] as const;
+export const NEWS_FEED_EVENT_VALUES = ["impression", "click", "dwell", "complete", "dismiss", "share"] as const;
 
 export type SdkworkNewsItemStatus = (typeof NEWS_STATUS_VALUES)[number];
+export type SdkworkNewsChannelStatus = (typeof NEWS_CHANNEL_STATUS_VALUES)[number];
+export type SdkworkNewsChannelType = (typeof NEWS_CHANNEL_TYPE_VALUES)[number];
+export type SdkworkNewsFeedEventType = (typeof NEWS_FEED_EVENT_VALUES)[number];
 export type SdkworkNewsEditorMode = "topic" | "url";
 export type SdkworkNewsEditorialAction = "archive" | "feature" | "publish" | "schedule";
+export type SdkworkNewsMediaKind = "image" | "video" | "audio" | "voice" | "document" | "archive" | "other";
+export type SdkworkNewsMediaSource = "drive" | "external_url" | "provider_asset" | "generated";
+export type SdkworkNewsFeedbackType = "not_interested" | "block_source" | "less_like_this" | "more_like_this" | "quality";
+export type SdkworkNewsReactionType = "like" | "dislike" | "laugh" | "sad" | "angry" | "wow";
+export type SdkworkNewsModerationStatus = "pending" | "approved" | "rejected" | "hidden";
 
 export interface SdkworkNewsCategory {
   description?: string;
@@ -34,6 +45,135 @@ export interface SdkworkNewsItem {
   tenantId: string;
   title: string;
   updatedAt?: string;
+}
+
+export interface SdkworkNewsMediaResource {
+  id?: string;
+  kind: SdkworkNewsMediaKind;
+  source: SdkworkNewsMediaSource;
+  uri?: string;
+  url?: string;
+  publicUrl?: string;
+  mimeType?: string;
+  sizeBytes?: string;
+  width?: number;
+  height?: number;
+  durationSeconds?: number;
+  altText?: string;
+  title?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SdkworkNewsChannel {
+  description?: string;
+  id: string;
+  priority?: number;
+  slug: string;
+  status: SdkworkNewsChannelStatus;
+  tenantId: string;
+  title: string;
+  type: SdkworkNewsChannelType;
+}
+
+export interface SdkworkNewsTopic {
+  description?: string;
+  id: string;
+  slug: string;
+  status: "active" | "inactive" | "archived";
+  tenantId: string;
+  title: string;
+}
+
+export interface SdkworkNewsFeedItem {
+  channelId?: string;
+  item: SdkworkNewsItem;
+  rank?: number;
+  reason?: string;
+  traceId?: string;
+}
+
+export interface SdkworkNewsPage<T> {
+  cursor?: string;
+  hasMore: boolean;
+  items: readonly T[];
+  limit: number;
+}
+
+export interface SdkworkNewsRecommendationEvent {
+  channelId?: string;
+  dwellMs?: number;
+  eventType: SdkworkNewsFeedEventType;
+  id: string;
+  itemId: string;
+  occurredAt: string;
+  tenantId: string;
+  traceId?: string;
+  userId?: string;
+}
+
+export interface SdkworkNewsUserFeedback {
+  createdAt: string;
+  feedbackType: SdkworkNewsFeedbackType;
+  id: string;
+  reason?: string;
+  targetId: string;
+  targetType: "item" | "source" | "author" | "topic" | "channel";
+  tenantId: string;
+  userId: string;
+}
+
+export interface SdkworkNewsFavorite {
+  createdAt: string;
+  id: string;
+  itemId: string;
+  tenantId: string;
+  userId: string;
+}
+
+export interface SdkworkNewsReaction {
+  id: string;
+  itemId: string;
+  reactionType: SdkworkNewsReactionType;
+  tenantId: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface SdkworkNewsComment {
+  body: string;
+  createdAt: string;
+  id: string;
+  itemId: string;
+  moderationStatus: SdkworkNewsModerationStatus;
+  parentId?: string;
+  tenantId: string;
+  userId: string;
+}
+
+export interface SdkworkNewsTrendingMetric {
+  computedAt: string;
+  itemId: string;
+  metricWindow: "hour" | "day" | "week";
+  rank: number;
+  score: number;
+  tenantId: string;
+}
+
+export interface SdkworkNewsSearchResult {
+  highlight?: string;
+  item: SdkworkNewsItem;
+  score: number;
+}
+
+export interface SdkworkNewsModerationCase {
+  createdAt: string;
+  id: string;
+  priority: number;
+  reason: string;
+  status: "open" | "reviewing" | "resolved" | "rejected";
+  targetId: string;
+  targetType: "item" | "comment" | "media" | "source";
+  tenantId: string;
 }
 
 export interface SdkworkNewsApiRoute {
@@ -89,12 +229,40 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/app/v3/api/news/items/{itemId}", "items.retrieve", false),
   route("GET", "/app/v3/api/news/items/by_slug/{slug}", "items.bySlug.retrieve", false),
   route("GET", "/app/v3/api/news/overview", "overview.retrieve", false),
+  route("GET", "/app/v3/api/news/channels", "channels.list", false),
+  route("GET", "/app/v3/api/news/channels/{channelId}/feed", "channels.feed.list", false),
+  route("GET", "/app/v3/api/news/topics", "topics.list", false),
+  route("GET", "/app/v3/api/news/topics/{topicId}/items", "topics.items.list", false),
+  route("GET", "/app/v3/api/news/feed/personalized", "feed.personalized.list", false),
+  route("GET", "/app/v3/api/news/items/{itemId}/related", "items.related.list", false),
+  route("GET", "/app/v3/api/news/trending", "trending.list", false),
+  route("GET", "/app/v3/api/news/search", "search.list", false),
+  route("POST", "/app/v3/api/news/events", "events.create", false),
+  route("GET", "/app/v3/api/news/favorites", "favorites.list", false),
+  route("POST", "/app/v3/api/news/items/{itemId}/favorites", "favorites.create", false),
+  route("DELETE", "/app/v3/api/news/items/{itemId}/favorites", "favorites.delete", false),
+  route("PUT", "/app/v3/api/news/items/{itemId}/reactions", "reactions.upsert", false),
+  route("GET", "/app/v3/api/news/items/{itemId}/comments", "comments.list", false),
+  route("POST", "/app/v3/api/news/items/{itemId}/comments", "comments.create", false),
+  route("POST", "/app/v3/api/news/reports", "reports.create", false),
+  route("POST", "/app/v3/api/news/feedback", "feedback.create", false),
+  route("GET", "/app/v3/api/news/history", "history.list", false),
+  route("GET", "/app/v3/api/news/follows", "follows.list", false),
+  route("POST", "/app/v3/api/news/follows", "follows.create", false),
+  route("DELETE", "/app/v3/api/news/follows/{followId}", "follows.delete", false),
 ];
 
 export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/open/v3/api/news/items", "items.list", true),
   route("GET", "/open/v3/api/news/items/{itemId}", "items.retrieve", true),
   route("GET", "/open/v3/api/news/items/by_slug/{slug}", "items.bySlug.retrieve", true),
+  route("GET", "/open/v3/api/news/channels", "channels.list", true),
+  route("GET", "/open/v3/api/news/channels/{channelId}/feed", "channels.feed.list", true),
+  route("GET", "/open/v3/api/news/topics", "topics.list", true),
+  route("GET", "/open/v3/api/news/topics/{topicId}/items", "topics.items.list", true),
+  route("GET", "/open/v3/api/news/items/{itemId}/related", "items.related.list", true),
+  route("GET", "/open/v3/api/news/trending", "trending.list", true),
+  route("GET", "/open/v3/api/news/search", "search.list", true),
 ];
 
 export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -111,6 +279,41 @@ export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("POST", "/backend/v3/api/news/items/{itemId}/archive", "items.archive", false),
   route("POST", "/backend/v3/api/news/items/{itemId}/feature", "items.feature", false),
   route("GET", "/backend/v3/api/news/items/{itemId}/editorial_readiness", "items.editorialReadiness.retrieve", false),
+  route("GET", "/backend/v3/api/news/sources", "sources.management.list", false),
+  route("POST", "/backend/v3/api/news/sources", "sources.create", false),
+  route("PATCH", "/backend/v3/api/news/sources/{sourceId}", "sources.update", false),
+  route("DELETE", "/backend/v3/api/news/sources/{sourceId}", "sources.delete", false),
+  route("GET", "/backend/v3/api/news/authors", "authors.management.list", false),
+  route("POST", "/backend/v3/api/news/authors", "authors.create", false),
+  route("PATCH", "/backend/v3/api/news/authors/{authorId}", "authors.update", false),
+  route("DELETE", "/backend/v3/api/news/authors/{authorId}", "authors.delete", false),
+  route("GET", "/backend/v3/api/news/channels", "channels.management.list", false),
+  route("POST", "/backend/v3/api/news/channels", "channels.create", false),
+  route("PATCH", "/backend/v3/api/news/channels/{channelId}", "channels.update", false),
+  route("DELETE", "/backend/v3/api/news/channels/{channelId}", "channels.delete", false),
+  route("GET", "/backend/v3/api/news/topics", "topics.management.list", false),
+  route("POST", "/backend/v3/api/news/topics", "topics.create", false),
+  route("PATCH", "/backend/v3/api/news/topics/{topicId}", "topics.update", false),
+  route("DELETE", "/backend/v3/api/news/topics/{topicId}", "topics.delete", false),
+  route("GET", "/backend/v3/api/news/items/{itemId}/versions", "items.versions.list", false),
+  route("POST", "/backend/v3/api/news/items/{itemId}/versions", "items.versions.create", false),
+  route("GET", "/backend/v3/api/news/items/{itemId}/media", "items.media.list", false),
+  route("POST", "/backend/v3/api/news/items/{itemId}/media", "items.media.attach", false),
+  route("DELETE", "/backend/v3/api/news/items/{itemId}/media/{mediaId}", "items.media.delete", false),
+  route("GET", "/backend/v3/api/news/moderation/cases", "moderation.cases.list", false),
+  route("GET", "/backend/v3/api/news/moderation/cases/{caseId}", "moderation.cases.retrieve", false),
+  route("PATCH", "/backend/v3/api/news/moderation/cases/{caseId}", "moderation.cases.update", false),
+  route("GET", "/backend/v3/api/news/comments/moderation", "comments.moderation.list", false),
+  route("PATCH", "/backend/v3/api/news/comments/{commentId}/moderation", "comments.moderation.update", false),
+  route("GET", "/backend/v3/api/news/reports", "reports.management.list", false),
+  route("PATCH", "/backend/v3/api/news/reports/{reportId}", "reports.update", false),
+  route("GET", "/backend/v3/api/news/trending/metrics", "trending.metrics.list", false),
+  route("PUT", "/backend/v3/api/news/trending/metrics", "trending.metrics.upsert", false),
+  route("POST", "/backend/v3/api/news/search/projections/rebuild", "search.projections.rebuild", false),
+  route("GET", "/backend/v3/api/news/experiments", "experiments.management.list", false),
+  route("POST", "/backend/v3/api/news/experiments", "experiments.create", false),
+  route("PATCH", "/backend/v3/api/news/experiments/{experimentId}", "experiments.update", false),
+  route("POST", "/backend/v3/api/news/experiments/{experimentId}/archive", "experiments.archive", false),
 ];
 
 function route(
@@ -246,4 +449,8 @@ export function evaluateNewsEditorialReadiness(
     issues,
     ready: issues.length === 0,
   };
+}
+
+export function createNewsFeedEventDigest(event: SdkworkNewsRecommendationEvent): string {
+  return `${event.eventType}:${event.itemId}:${event.userId ?? "anonymous"}`;
 }

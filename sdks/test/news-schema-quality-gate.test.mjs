@@ -15,5 +15,5 @@ test("news schema quality gate uses generated OpenAPI defaults", () => {
 
   const gateResult = runNode(["tools/news_schema_quality_gate.mjs"]);
   assert.equal(gateResult.status, 0, gateResult.stderr);
-  assert.match(gateResult.stdout, /ok app=5 backend=13 open=3/u);
+  assert.match(gateResult.stdout, /ok app=26 backend=48 open=10/u);
 });

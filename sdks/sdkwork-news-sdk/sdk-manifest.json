@@ -19,8 +19,18 @@
   "baseUrl": "http://127.0.0.1:18082",
   "standardProfile": null,
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 3,
+  "ownerOnlyOperationCount": 10,
   "operations": [
+    {
+      "method": "GET",
+      "operationId": "channels.feed.list",
+      "path": "/open/v3/api/news/channels/{channelId}/feed"
+    },
+    {
+      "method": "GET",
+      "operationId": "channels.list",
+      "path": "/open/v3/api/news/channels"
+    },
     {
       "method": "GET",
       "operationId": "items.bySlug.retrieve",
@@ -33,8 +43,33 @@
     },
     {
       "method": "GET",
+      "operationId": "items.related.list",
+      "path": "/open/v3/api/news/items/{itemId}/related"
+    },
+    {
+      "method": "GET",
       "operationId": "items.retrieve",
       "path": "/open/v3/api/news/items/{itemId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "search.list",
+      "path": "/open/v3/api/news/search"
+    },
+    {
+      "method": "GET",
+      "operationId": "topics.items.list",
+      "path": "/open/v3/api/news/topics/{topicId}/items"
+    },
+    {
+      "method": "GET",
+      "operationId": "topics.list",
+      "path": "/open/v3/api/news/topics"
+    },
+    {
+      "method": "GET",
+      "operationId": "trending.list",
+      "path": "/open/v3/api/news/trending"
     }
   ],
   "managedBy": "tools/news_sdk_generator_runner.mjs"

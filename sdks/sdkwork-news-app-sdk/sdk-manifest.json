@@ -19,12 +19,82 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 5,
+  "ownerOnlyOperationCount": 26,
   "operations": [
     {
       "method": "GET",
       "operationId": "categories.list",
       "path": "/app/v3/api/news/categories"
+    },
+    {
+      "method": "GET",
+      "operationId": "channels.feed.list",
+      "path": "/app/v3/api/news/channels/{channelId}/feed"
+    },
+    {
+      "method": "GET",
+      "operationId": "channels.list",
+      "path": "/app/v3/api/news/channels"
+    },
+    {
+      "method": "POST",
+      "operationId": "comments.create",
+      "path": "/app/v3/api/news/items/{itemId}/comments"
+    },
+    {
+      "method": "GET",
+      "operationId": "comments.list",
+      "path": "/app/v3/api/news/items/{itemId}/comments"
+    },
+    {
+      "method": "POST",
+      "operationId": "events.create",
+      "path": "/app/v3/api/news/events"
+    },
+    {
+      "method": "POST",
+      "operationId": "favorites.create",
+      "path": "/app/v3/api/news/items/{itemId}/favorites"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "favorites.delete",
+      "path": "/app/v3/api/news/items/{itemId}/favorites"
+    },
+    {
+      "method": "GET",
+      "operationId": "favorites.list",
+      "path": "/app/v3/api/news/favorites"
+    },
+    {
+      "method": "GET",
+      "operationId": "feed.personalized.list",
+      "path": "/app/v3/api/news/feed/personalized"
+    },
+    {
+      "method": "POST",
+      "operationId": "feedback.create",
+      "path": "/app/v3/api/news/feedback"
+    },
+    {
+      "method": "POST",
+      "operationId": "follows.create",
+      "path": "/app/v3/api/news/follows"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "follows.delete",
+      "path": "/app/v3/api/news/follows/{followId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "follows.list",
+      "path": "/app/v3/api/news/follows"
+    },
+    {
+      "method": "GET",
+      "operationId": "history.list",
+      "path": "/app/v3/api/news/history"
     },
     {
       "method": "GET",
@@ -38,6 +108,11 @@
     },
     {
       "method": "GET",
+      "operationId": "items.related.list",
+      "path": "/app/v3/api/news/items/{itemId}/related"
+    },
+    {
+      "method": "GET",
       "operationId": "items.retrieve",
       "path": "/app/v3/api/news/items/{itemId}"
     },
@@ -45,6 +120,36 @@
       "method": "GET",
       "operationId": "overview.retrieve",
       "path": "/app/v3/api/news/overview"
+    },
+    {
+      "method": "PUT",
+      "operationId": "reactions.upsert",
+      "path": "/app/v3/api/news/items/{itemId}/reactions"
+    },
+    {
+      "method": "POST",
+      "operationId": "reports.create",
+      "path": "/app/v3/api/news/reports"
+    },
+    {
+      "method": "GET",
+      "operationId": "search.list",
+      "path": "/app/v3/api/news/search"
+    },
+    {
+      "method": "GET",
+      "operationId": "topics.items.list",
+      "path": "/app/v3/api/news/topics/{topicId}/items"
+    },
+    {
+      "method": "GET",
+      "operationId": "topics.list",
+      "path": "/app/v3/api/news/topics"
+    },
+    {
+      "method": "GET",
+      "operationId": "trending.list",
+      "path": "/app/v3/api/news/trending"
     }
   ],
   "managedBy": "tools/news_sdk_generator_runner.mjs"

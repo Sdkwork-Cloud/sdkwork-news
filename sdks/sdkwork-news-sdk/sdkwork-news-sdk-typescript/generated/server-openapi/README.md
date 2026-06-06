@@ -27,11 +27,10 @@ client.setApiKey('your-api-key');
 
 // Use the SDK
 const params = {
-  categoryId: 'categoryId',
-  q: 'q',
-  status: 'status',
+  cursor: 'cursor',
+  limit: 'limit',
 };
-const result = await client.news.items.list(params);
+const result = await client.news.channels.list(params);
 ```
 
 ## Authentication Modes (Mutually Exclusive)
@@ -82,13 +81,12 @@ const client = new SdkworkCustomClient({
 ### news
 
 ```typescript
-// News items.list
+// News channels.list
 const params = {
-  categoryId: 'categoryId',
-  q: 'q',
-  status: 'status',
+  cursor: 'cursor',
+  limit: 'limit',
 };
-const result = await client.news.items.list(params);
+const result = await client.news.channels.list(params);
 ```
 
 ## Error Handling
@@ -98,11 +96,10 @@ import { SdkworkCustomClient, NetworkError, TimeoutError, AuthenticationError } 
 
 try {
   const params = {
-    categoryId: 'categoryId',
-    q: 'q',
-    status: 'status',
+    cursor: 'cursor',
+    limit: 'limit',
   };
-  const result = await client.news.items.list(params);
+  const result = await client.news.channels.list(params);
 } catch (error) {
   if (error instanceof AuthenticationError) {
     console.error('Authentication failed:', error.message);
