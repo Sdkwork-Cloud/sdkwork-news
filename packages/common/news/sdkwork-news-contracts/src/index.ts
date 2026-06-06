@@ -6,11 +6,15 @@ export const NEWS_STATUS_VALUES = ["draft", "published", "scheduled", "archived"
 export const NEWS_CHANNEL_STATUS_VALUES = ["active", "inactive", "archived"] as const;
 export const NEWS_CHANNEL_TYPE_VALUES = ["editorial", "algorithmic", "topic", "following", "hot"] as const;
 export const NEWS_FEED_EVENT_VALUES = ["impression", "click", "dwell", "complete", "dismiss", "share"] as const;
+export const NEWS_INTEREST_TARGET_VALUES = ["source", "author", "topic", "channel", "tag"] as const;
+export const NEWS_SUGGESTION_TYPE_VALUES = ["hot", "history", "topic", "source", "correction"] as const;
 
 export type SdkworkNewsItemStatus = (typeof NEWS_STATUS_VALUES)[number];
 export type SdkworkNewsChannelStatus = (typeof NEWS_CHANNEL_STATUS_VALUES)[number];
 export type SdkworkNewsChannelType = (typeof NEWS_CHANNEL_TYPE_VALUES)[number];
 export type SdkworkNewsFeedEventType = (typeof NEWS_FEED_EVENT_VALUES)[number];
+export type SdkworkNewsInterestTargetType = (typeof NEWS_INTEREST_TARGET_VALUES)[number];
+export type SdkworkNewsSuggestionType = (typeof NEWS_SUGGESTION_TYPE_VALUES)[number];
 export type SdkworkNewsEditorMode = "topic" | "url";
 export type SdkworkNewsEditorialAction = "archive" | "feature" | "publish" | "schedule";
 export type SdkworkNewsMediaKind = "image" | "video" | "audio" | "voice" | "document" | "archive" | "other";
@@ -165,6 +169,62 @@ export interface SdkworkNewsSearchResult {
   score: number;
 }
 
+export interface SdkworkNewsUserInterestSignal {
+  affinityScore: number;
+  confidence: number;
+  source: "explicit" | "behavior" | "editorial" | "imported";
+  targetId: string;
+  targetType: SdkworkNewsInterestTargetType;
+  tenantId: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface SdkworkNewsFeedCandidate {
+  generatedAt: string;
+  itemId: string;
+  reasonCode: string;
+  score: number;
+  streamKey: string;
+  tenantId: string;
+  traceId?: string;
+  userId?: string;
+}
+
+export interface SdkworkNewsItemMetricSnapshot {
+  clickCount: number;
+  commentCount: number;
+  computedAt: string;
+  favoriteCount: number;
+  hotScore: number;
+  impressionCount: number;
+  itemId: string;
+  reactionCount: number;
+  reportCount: number;
+  shareCount: number;
+  tenantId: string;
+}
+
+export interface SdkworkNewsSearchSuggestion {
+  displayQuery: string;
+  normalizedQuery: string;
+  rank: number;
+  score: number;
+  suggestionType: SdkworkNewsSuggestionType;
+  tenantId: string;
+}
+
+export interface SdkworkNewsSearchEvent {
+  clickedItemId?: string;
+  displayQuery: string;
+  normalizedQuery: string;
+  occurredAt: string;
+  resultCount: number;
+  tenantId: string;
+  traceId?: string;
+  userId?: string;
+}
+
 export interface SdkworkNewsModerationCase {
   createdAt: string;
   id: string;
@@ -237,6 +297,7 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/app/v3/api/news/items/{itemId}/related", "items.related.list", false),
   route("GET", "/app/v3/api/news/trending", "trending.list", false),
   route("GET", "/app/v3/api/news/search", "search.list", false),
+  route("GET", "/app/v3/api/news/search/suggestions", "search.suggestions.list", false),
   route("POST", "/app/v3/api/news/events", "events.create", false),
   route("GET", "/app/v3/api/news/favorites", "favorites.list", false),
   route("POST", "/app/v3/api/news/items/{itemId}/favorites", "favorites.create", false),
@@ -250,6 +311,8 @@ export const NEWS_APP_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/app/v3/api/news/follows", "follows.list", false),
   route("POST", "/app/v3/api/news/follows", "follows.create", false),
   route("DELETE", "/app/v3/api/news/follows/{followId}", "follows.delete", false),
+  route("GET", "/app/v3/api/news/interests", "interests.list", false),
+  route("PUT", "/app/v3/api/news/interests", "interests.upsert", false),
 ];
 
 export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -263,6 +326,7 @@ export const NEWS_OPEN_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("GET", "/open/v3/api/news/items/{itemId}/related", "items.related.list", true),
   route("GET", "/open/v3/api/news/trending", "trending.list", true),
   route("GET", "/open/v3/api/news/search", "search.list", true),
+  route("GET", "/open/v3/api/news/search/suggestions", "search.suggestions.list", true),
 ];
 
 export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
@@ -309,6 +373,19 @@ export const NEWS_BACKEND_API_ROUTES: readonly SdkworkNewsApiRoute[] = [
   route("PATCH", "/backend/v3/api/news/reports/{reportId}", "reports.update", false),
   route("GET", "/backend/v3/api/news/trending/metrics", "trending.metrics.list", false),
   route("PUT", "/backend/v3/api/news/trending/metrics", "trending.metrics.upsert", false),
+  route("GET", "/backend/v3/api/news/items/metrics", "items.metrics.list", false),
+  route("GET", "/backend/v3/api/news/items/{itemId}/metrics", "items.metrics.retrieve", false),
+  route("POST", "/backend/v3/api/news/items/metrics/rebuild", "items.metrics.rebuild", false),
+  route("GET", "/backend/v3/api/news/feed/candidates", "feed.candidates.list", false),
+  route("PUT", "/backend/v3/api/news/feed/candidates", "feed.candidates.upsert", false),
+  route("DELETE", "/backend/v3/api/news/feed/candidates/{candidateId}", "feed.candidates.delete", false),
+  route("GET", "/backend/v3/api/news/interests", "interests.management.list", false),
+  route("POST", "/backend/v3/api/news/interests/rebuild", "interests.rebuild", false),
+  route("DELETE", "/backend/v3/api/news/interests/{interestId}", "interests.delete", false),
+  route("GET", "/backend/v3/api/news/search/suggestions", "search.suggestions.management.list", false),
+  route("PUT", "/backend/v3/api/news/search/suggestions", "search.suggestions.upsert", false),
+  route("DELETE", "/backend/v3/api/news/search/suggestions/{suggestionId}", "search.suggestions.delete", false),
+  route("GET", "/backend/v3/api/news/search/events", "search.events.list", false),
   route("POST", "/backend/v3/api/news/search/projections/rebuild", "search.projections.rebuild", false),
   route("GET", "/backend/v3/api/news/experiments", "experiments.management.list", false),
   route("POST", "/backend/v3/api/news/experiments", "experiments.create", false),

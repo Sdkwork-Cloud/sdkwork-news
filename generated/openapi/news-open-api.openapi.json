@@ -720,6 +720,87 @@
         "x-sdkwork-resource": "search",
         "x-sdkwork-public": true
       }
+    },
+    "/open/v3/api/news/search/suggestions": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News search.suggestions.list",
+        "operationId": "search.suggestions.list",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsSearchSuggestionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.open",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "search",
+        "x-sdkwork-public": true
+      }
     }
   },
   "components": {
@@ -1305,6 +1386,24 @@
           }
         }
       },
+      "NewsSearchSuggestionListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsSearchSuggestion"
+        }
+      },
+      "NewsUserInterestSignalListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsUserInterestSignal"
+        }
+      },
+      "NewsFeedCandidateListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsFeedCandidate"
+        }
+      },
       "NewsRecommendationEventCommand": {
         "type": "object",
         "additionalProperties": false,
@@ -1649,6 +1748,66 @@
           }
         }
       },
+      "NewsItemMetricSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "itemId",
+          "impressionCount",
+          "clickCount",
+          "shareCount",
+          "commentCount",
+          "favoriteCount",
+          "reactionCount",
+          "reportCount",
+          "hotScore",
+          "computedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "impressionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "clickCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "shareCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "commentCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "favoriteCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reactionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reportCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "hotScore": {
+            "type": "integer"
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "NewsSearchResult": {
         "type": "object",
         "additionalProperties": false,
@@ -1665,6 +1824,307 @@
           },
           "highlight": {
             "type": "string"
+          }
+        }
+      },
+      "NewsSearchSuggestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "normalizedQuery",
+          "displayQuery",
+          "suggestionType",
+          "rank",
+          "score"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "suggestionType": {
+            "type": "string",
+            "enum": [
+              "hot",
+              "history",
+              "topic",
+              "source",
+              "correction"
+            ]
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "locale": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsSearchSuggestionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "normalizedQuery",
+          "displayQuery",
+          "suggestionType",
+          "rank",
+          "score",
+          "computedAt"
+        ],
+        "properties": {
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "suggestionType": {
+            "type": "string",
+            "enum": [
+              "hot",
+              "history",
+              "topic",
+              "source",
+              "correction"
+            ]
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsSearchEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "normalizedQuery",
+          "displayQuery",
+          "resultCount",
+          "occurredAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "resultCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "clickedItemId": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsUserInterestSignal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "userId",
+          "targetType",
+          "targetId",
+          "affinityScore",
+          "confidence",
+          "source",
+          "updatedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "affinityScore": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "integer"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "behavior",
+              "editorial",
+              "imported"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsUserInterestCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId",
+          "affinityScore",
+          "confidence",
+          "source"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "affinityScore": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "integer"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "behavior",
+              "editorial",
+              "imported"
+            ]
+          }
+        }
+      },
+      "NewsFeedCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "streamKey",
+          "itemId",
+          "score",
+          "reasonCode",
+          "generatedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "streamKey": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsFeedCandidateCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "streamKey",
+          "itemId",
+          "score",
+          "reasonCode",
+          "generatedAt"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "streamKey": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

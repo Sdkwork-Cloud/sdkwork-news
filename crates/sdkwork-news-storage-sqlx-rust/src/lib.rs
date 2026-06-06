@@ -137,6 +137,117 @@ pub struct NewNewsTrendingMetric {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsUserInterestSignal {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: String,
+    pub target_type: String,
+    pub target_id: String,
+    pub affinity_score: i64,
+    pub confidence: i64,
+    pub source: String,
+    pub updated_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredUserInterestSignal {
+    pub target_type: String,
+    pub target_id: String,
+    pub affinity_score: i64,
+    pub confidence: i64,
+    pub source: String,
+    pub updated_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsFeedCandidate {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: Option<String>,
+    pub stream_key: String,
+    pub item_id: String,
+    pub score: i64,
+    pub reason_code: String,
+    pub trace_id: Option<String>,
+    pub generated_at: String,
+    pub expires_at: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredFeedCandidate {
+    pub item_id: String,
+    pub score: i64,
+    pub reason_code: String,
+    pub trace_id: Option<String>,
+    pub generated_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsItemMetricSnapshot {
+    pub id: String,
+    pub tenant_id: String,
+    pub item_id: String,
+    pub impression_count: i64,
+    pub click_count: i64,
+    pub share_count: i64,
+    pub comment_count: i64,
+    pub favorite_count: i64,
+    pub reaction_count: i64,
+    pub report_count: i64,
+    pub hot_score: i64,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredItemMetricSnapshot {
+    pub item_id: String,
+    pub impression_count: i64,
+    pub click_count: i64,
+    pub share_count: i64,
+    pub comment_count: i64,
+    pub favorite_count: i64,
+    pub reaction_count: i64,
+    pub report_count: i64,
+    pub hot_score: i64,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsSearchSuggestion {
+    pub id: String,
+    pub tenant_id: String,
+    pub normalized_query: String,
+    pub display_query: String,
+    pub suggestion_type: String,
+    pub rank: i64,
+    pub score: i64,
+    pub locale: Option<String>,
+    pub computed_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewsStoredSearchSuggestion {
+    pub normalized_query: String,
+    pub display_query: String,
+    pub suggestion_type: String,
+    pub rank: i64,
+    pub score: i64,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct NewNewsSearchEvent {
+    pub id: String,
+    pub tenant_id: String,
+    pub user_id: Option<String>,
+    pub normalized_query: String,
+    pub display_query: String,
+    pub result_count: i64,
+    pub clicked_item_id: Option<String>,
+    pub trace_id: Option<String>,
+    pub occurred_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NewsStoredItem {
     pub id: String,
     pub tenant_id: String,
@@ -180,6 +291,9 @@ impl SqliteNewsStore {
             .execute(&self.pool)
             .await?;
         sqlx::raw_sql(news_industry_migration_sql())
+            .execute(&self.pool)
+            .await?;
+        sqlx::raw_sql(news_personalization_migration_sql())
             .execute(&self.pool)
             .await?;
         Ok(())
@@ -664,6 +778,325 @@ impl SqliteNewsStore {
             .collect())
     }
 
+    pub async fn upsert_user_interest_signal(
+        &self,
+        input: NewNewsUserInterestSignal,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_user_interest_signal
+                (id, tenant_id, user_id, target_type, target_id, affinity_score, confidence,
+                 source, status, created_at, updated_at, version, deleted_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, 0, NULL)
+            ON CONFLICT (tenant_id, user_id, target_type, target_id)
+            DO UPDATE SET affinity_score = excluded.affinity_score,
+                          confidence = excluded.confidence,
+                          source = excluded.source,
+                          status = 'active',
+                          updated_at = excluded.updated_at,
+                          version = news_user_interest_signal.version + 1,
+                          deleted_at = NULL
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.target_type)
+        .bind(input.target_id)
+        .bind(input.affinity_score)
+        .bind(input.confidence)
+        .bind(input.source)
+        .bind(&input.updated_at)
+        .bind(&input.updated_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_user_interest_signals(
+        &self,
+        tenant_id: &str,
+        user_id: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredUserInterestSignal>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT target_type, target_id, affinity_score, confidence, source, updated_at
+            FROM news_user_interest_signal
+            WHERE tenant_id = ?
+              AND user_id = ?
+              AND status = 'active'
+            ORDER BY affinity_score DESC, confidence DESC, updated_at DESC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(user_id)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredUserInterestSignal {
+                target_type: string_cell(row, "target_type"),
+                target_id: string_cell(row, "target_id"),
+                affinity_score: integer_cell(row, "affinity_score"),
+                confidence: integer_cell(row, "confidence"),
+                source: string_cell(row, "source"),
+                updated_at: string_cell(row, "updated_at"),
+            })
+            .collect())
+    }
+
+    pub async fn upsert_feed_candidate(&self, input: NewNewsFeedCandidate) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_feed_candidate
+                (id, tenant_id, user_id, stream_key, item_id, score, reason_code, trace_id,
+                 status, generated_at, expires_at, updated_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?)
+            ON CONFLICT (tenant_id, user_id, stream_key, item_id)
+            DO UPDATE SET score = excluded.score,
+                          reason_code = excluded.reason_code,
+                          trace_id = excluded.trace_id,
+                          status = 'active',
+                          generated_at = excluded.generated_at,
+                          expires_at = excluded.expires_at,
+                          updated_at = excluded.updated_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.stream_key)
+        .bind(input.item_id)
+        .bind(input.score)
+        .bind(input.reason_code)
+        .bind(input.trace_id)
+        .bind(&input.generated_at)
+        .bind(input.expires_at)
+        .bind(&input.generated_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_feed_candidates(
+        &self,
+        tenant_id: &str,
+        user_id: Option<&str>,
+        stream_key: &str,
+        now: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredFeedCandidate>, sqlx::Error> {
+        let rows = sqlx::query(
+            r#"
+            SELECT item_id, score, reason_code, trace_id, generated_at
+            FROM news_feed_candidate
+            WHERE tenant_id = ?
+              AND (? IS NULL OR user_id = ?)
+              AND stream_key = ?
+              AND status = 'active'
+              AND (expires_at IS NULL OR expires_at > ?)
+            ORDER BY score DESC, generated_at DESC, item_id ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(user_id)
+        .bind(user_id)
+        .bind(stream_key)
+        .bind(now)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredFeedCandidate {
+                item_id: string_cell(row, "item_id"),
+                score: integer_cell(row, "score"),
+                reason_code: string_cell(row, "reason_code"),
+                trace_id: optional_string_cell(row, "trace_id"),
+                generated_at: string_cell(row, "generated_at"),
+            })
+            .collect())
+    }
+
+    pub async fn upsert_item_metric_snapshot(
+        &self,
+        input: NewNewsItemMetricSnapshot,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_item_metric_snapshot
+                (id, tenant_id, item_id, impression_count, click_count, share_count, comment_count,
+                 favorite_count, reaction_count, report_count, hot_score, computed_at, updated_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (tenant_id, item_id)
+            DO UPDATE SET impression_count = excluded.impression_count,
+                          click_count = excluded.click_count,
+                          share_count = excluded.share_count,
+                          comment_count = excluded.comment_count,
+                          favorite_count = excluded.favorite_count,
+                          reaction_count = excluded.reaction_count,
+                          report_count = excluded.report_count,
+                          hot_score = excluded.hot_score,
+                          computed_at = excluded.computed_at,
+                          updated_at = excluded.updated_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.item_id)
+        .bind(input.impression_count)
+        .bind(input.click_count)
+        .bind(input.share_count)
+        .bind(input.comment_count)
+        .bind(input.favorite_count)
+        .bind(input.reaction_count)
+        .bind(input.report_count)
+        .bind(input.hot_score)
+        .bind(&input.computed_at)
+        .bind(&input.computed_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn retrieve_item_metric_snapshot(
+        &self,
+        tenant_id: &str,
+        item_id: &str,
+    ) -> Result<Option<NewsStoredItemMetricSnapshot>, sqlx::Error> {
+        let row = sqlx::query(
+            r#"
+            SELECT item_id, impression_count, click_count, share_count, comment_count,
+                   favorite_count, reaction_count, report_count, hot_score, computed_at
+            FROM news_item_metric_snapshot
+            WHERE tenant_id = ?
+              AND item_id = ?
+            LIMIT 1
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(item_id)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(row.as_ref().map(|row| NewsStoredItemMetricSnapshot {
+            item_id: string_cell(row, "item_id"),
+            impression_count: integer_cell(row, "impression_count"),
+            click_count: integer_cell(row, "click_count"),
+            share_count: integer_cell(row, "share_count"),
+            comment_count: integer_cell(row, "comment_count"),
+            favorite_count: integer_cell(row, "favorite_count"),
+            reaction_count: integer_cell(row, "reaction_count"),
+            report_count: integer_cell(row, "report_count"),
+            hot_score: integer_cell(row, "hot_score"),
+            computed_at: string_cell(row, "computed_at"),
+        }))
+    }
+
+    pub async fn upsert_search_suggestion(
+        &self,
+        input: NewNewsSearchSuggestion,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_search_suggestion
+                (id, tenant_id, normalized_query, display_query, suggestion_type, rank, score,
+                 locale, status, computed_at, updated_at)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
+            ON CONFLICT (tenant_id, normalized_query, suggestion_type, locale)
+            DO UPDATE SET display_query = excluded.display_query,
+                          rank = excluded.rank,
+                          score = excluded.score,
+                          status = 'active',
+                          computed_at = excluded.computed_at,
+                          updated_at = excluded.updated_at
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.normalized_query)
+        .bind(input.display_query)
+        .bind(input.suggestion_type)
+        .bind(input.rank)
+        .bind(input.score)
+        .bind(input.locale)
+        .bind(&input.computed_at)
+        .bind(&input.computed_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn list_search_suggestions(
+        &self,
+        tenant_id: &str,
+        query_prefix: &str,
+        limit: i64,
+    ) -> Result<Vec<NewsStoredSearchSuggestion>, sqlx::Error> {
+        let prefix = format!("{}%", query_prefix.trim().to_ascii_lowercase());
+        let rows = sqlx::query(
+            r#"
+            SELECT normalized_query, display_query, suggestion_type, rank, score
+            FROM news_search_suggestion
+            WHERE tenant_id = ?
+              AND status = 'active'
+              AND normalized_query LIKE ?
+            ORDER BY rank ASC, score DESC, normalized_query ASC
+            LIMIT ?
+            "#,
+        )
+        .bind(tenant_id)
+        .bind(prefix)
+        .bind(limit.max(1))
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(rows
+            .iter()
+            .map(|row| NewsStoredSearchSuggestion {
+                normalized_query: string_cell(row, "normalized_query"),
+                display_query: string_cell(row, "display_query"),
+                suggestion_type: string_cell(row, "suggestion_type"),
+                rank: integer_cell(row, "rank"),
+                score: integer_cell(row, "score"),
+            })
+            .collect())
+    }
+
+    pub async fn record_search_event(&self, input: NewNewsSearchEvent) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            r#"
+            INSERT INTO news_search_event
+                (id, tenant_id, user_id, normalized_query, display_query, result_count,
+                 clicked_item_id, trace_id, occurred_at, idempotency_key, payload_hash)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
+            "#,
+        )
+        .bind(input.id)
+        .bind(input.tenant_id)
+        .bind(input.user_id)
+        .bind(input.normalized_query)
+        .bind(input.display_query)
+        .bind(input.result_count)
+        .bind(input.clicked_item_id)
+        .bind(input.trace_id)
+        .bind(input.occurred_at)
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
     async fn item_from_row(&self, row: sqlx::sqlite::SqliteRow) -> Result<NewsStoredItem, sqlx::Error> {
         let item_id = string_cell(&row, "id");
         let tags = self.item_tags(&item_id).await?;
@@ -743,6 +1176,11 @@ pub fn news_database_tables() -> Vec<&'static str> {
         "news_moderation_case",
         "news_content_risk_signal",
         "news_takedown_event",
+        "news_user_interest_signal",
+        "news_feed_candidate",
+        "news_item_metric_snapshot",
+        "news_search_suggestion",
+        "news_search_event",
     ]
 }
 
@@ -787,11 +1225,22 @@ pub fn news_database_indexes() -> Vec<&'static str> {
         "idx_news_moderation_case_status_priority",
         "idx_news_content_risk_signal_target",
         "idx_news_takedown_event_item_time",
+        "idx_news_user_interest_signal_user_target",
+        "idx_news_feed_candidate_stream_score",
+        "idx_news_feed_candidate_user_stream_score",
+        "idx_news_item_metric_snapshot_hot",
+        "idx_news_search_suggestion_query_rank",
+        "idx_news_search_event_query_time",
+        "idx_news_search_event_user_time",
     ]
 }
 
 pub fn news_migration_names() -> Vec<&'static str> {
-    vec!["0001_news_foundation.sql", "0002_news_industry_foundation.sql"]
+    vec![
+        "0001_news_foundation.sql",
+        "0002_news_industry_foundation.sql",
+        "0003_news_personalization_foundation.sql",
+    ]
 }
 
 pub fn news_initial_migration_sql() -> &'static str {
@@ -800,6 +1249,10 @@ pub fn news_initial_migration_sql() -> &'static str {
 
 pub fn news_industry_migration_sql() -> &'static str {
     include_str!("../migrations/0002_news_industry_foundation.sql")
+}
+
+pub fn news_personalization_migration_sql() -> &'static str {
+    include_str!("../migrations/0003_news_personalization_foundation.sql")
 }
 
 pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
@@ -857,6 +1310,20 @@ pub fn news_migration_plan() -> Vec<NewsStorageMigration> {
                 "news_moderation_case",
                 "news_content_risk_signal",
                 "news_takedown_event",
+            ],
+        ),
+        migration(
+            3,
+            "0003_news_personalization_foundation.sql",
+            "news",
+            "migrations/0003_news_personalization_foundation.sql",
+            news_personalization_migration_sql(),
+            vec![
+                "news_user_interest_signal",
+                "news_feed_candidate",
+                "news_item_metric_snapshot",
+                "news_search_suggestion",
+                "news_search_event",
             ],
         ),
     ]
@@ -936,13 +1403,32 @@ pub fn news_repository_bindings() -> Vec<NewsRepositoryBinding> {
             "news.experiment.repository",
             vec!["news_experiment", "news_experiment_assignment"],
         ),
+        binding(
+            "news",
+            "news.personalization.repository",
+            vec!["news_user_interest_signal", "news_feed_candidate"],
+        ),
+        binding(
+            "news",
+            "news.metrics.repository",
+            vec!["news_item_metric_snapshot"],
+        ),
+        binding(
+            "news",
+            "news.search.repository",
+            vec![
+                "news_search_projection",
+                "news_search_suggestion",
+                "news_search_event",
+            ],
+        ),
     ]
 }
 
 pub fn news_storage_capability_manifest() -> NewsStorageCapabilityManifest {
     NewsStorageCapabilityManifest {
         name: "sdkwork-news-storage-sqlx",
-        schema_version: "news.storage.v2",
+        schema_version: "news.storage.v3",
         tables: news_database_tables(),
         indexes: news_database_indexes(),
         migrations: news_migration_names(),

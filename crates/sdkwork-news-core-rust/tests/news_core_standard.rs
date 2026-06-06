@@ -13,7 +13,11 @@ fn news_core_manifest_owns_news_domain_contracts() {
     assert!(manifest.operations.contains(&"items.editorialReadiness.retrieve"));
     assert!(manifest.operations.contains(&"channels.feed.list"));
     assert!(manifest.operations.contains(&"feed.personalized.list"));
+    assert!(manifest.operations.contains(&"feed.candidates.upsert"));
     assert!(manifest.operations.contains(&"events.create"));
+    assert!(manifest.operations.contains(&"interests.upsert"));
+    assert!(manifest.operations.contains(&"search.suggestions.list"));
+    assert!(manifest.operations.contains(&"items.metrics.retrieve"));
     assert!(manifest.operations.contains(&"moderation.cases.update"));
     assert!(manifest.operations.contains(&"experiments.archive"));
 }

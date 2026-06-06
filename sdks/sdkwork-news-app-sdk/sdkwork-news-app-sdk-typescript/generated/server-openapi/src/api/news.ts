@@ -1,8 +1,36 @@
 import { appApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsComment, NewsCommentCommand, NewsCommentPage, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsUserFeedbackCommand, TopicsListResponse, TrendingListResponse } from '../types';
+import type { CategoriesListResponse, ChannelsListResponse, ItemsListResponse, NewsApiResult, NewsComment, NewsCommentCommand, NewsCommentPage, NewsFavorite, NewsFavoritePage, NewsFeedPage, NewsFollow, NewsFollowCommand, NewsFollowPage, NewsItem, NewsItemPage, NewsOverview, NewsReaction, NewsReactionCommand, NewsRecommendationEventCommand, NewsReportCommand, NewsSearchResultPage, NewsSearchSuggestionListResponse, NewsUserFeedbackCommand, NewsUserInterestCommand, NewsUserInterestSignal, NewsUserInterestSignalListResponse, TopicsListResponse, TrendingListResponse } from '../types';
 
+
+export interface NewsInterestsListParams {
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsInterestsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News interests.list */
+  async list(params?: NewsInterestsListParams): Promise<NewsUserInterestSignalListResponse> {
+    const query = buildQueryString([
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsUserInterestSignalListResponse>(appendQueryString(appApiPath(`/news/interests`), query));
+  }
+
+/** News interests.upsert */
+  async upsert(body: NewsUserInterestCommand): Promise<NewsUserInterestSignal> {
+    return this.client.put<NewsUserInterestSignal>(appApiPath(`/news/interests`), body, undefined, undefined, 'application/json');
+  }
+}
 
 export interface NewsFollowsListParams {
   cursor?: string;
@@ -177,6 +205,33 @@ export class NewsEventsApi {
   }
 }
 
+export interface NewsSearchSuggestionsListParams {
+  q?: string;
+  cursor?: string;
+  limit?: string;
+  locale?: string;
+}
+
+export class NewsSearchSuggestionsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News search.suggestions.list */
+  async list(params?: NewsSearchSuggestionsListParams): Promise<NewsSearchSuggestionListResponse> {
+    const query = buildQueryString([
+      { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsSearchSuggestionListResponse>(appendQueryString(appApiPath(`/news/search/suggestions`), query));
+  }
+}
+
 export interface NewsSearchListParams {
   q?: string;
   cursor?: string;
@@ -185,9 +240,11 @@ export interface NewsSearchListParams {
 
 export class NewsSearchApi {
   private client: HttpClient;
+  public readonly suggestions: NewsSearchSuggestionsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
+    this.suggestions = new NewsSearchSuggestionsApi(client);
   }
 
 
@@ -478,6 +535,7 @@ export class NewsApi {
   public readonly feedback: NewsFeedbackApi;
   public readonly history: NewsHistoryApi;
   public readonly follows: NewsFollowsApi;
+  public readonly interests: NewsInterestsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -497,6 +555,7 @@ export class NewsApi {
     this.feedback = new NewsFeedbackApi(client);
     this.history = new NewsHistoryApi(client);
     this.follows = new NewsFollowsApi(client);
+    this.interests = new NewsInterestsApi(client);
   }
 
 }

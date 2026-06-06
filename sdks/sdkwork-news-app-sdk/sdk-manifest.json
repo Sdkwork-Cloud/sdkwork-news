@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 26,
+  "ownerOnlyOperationCount": 29,
   "operations": [
     {
       "method": "GET",
@@ -98,6 +98,16 @@
     },
     {
       "method": "GET",
+      "operationId": "interests.list",
+      "path": "/app/v3/api/news/interests"
+    },
+    {
+      "method": "PUT",
+      "operationId": "interests.upsert",
+      "path": "/app/v3/api/news/interests"
+    },
+    {
+      "method": "GET",
       "operationId": "items.bySlug.retrieve",
       "path": "/app/v3/api/news/items/by_slug/{slug}"
     },
@@ -135,6 +145,11 @@
       "method": "GET",
       "operationId": "search.list",
       "path": "/app/v3/api/news/search"
+    },
+    {
+      "method": "GET",
+      "operationId": "search.suggestions.list",
+      "path": "/app/v3/api/news/search/suggestions"
     },
     {
       "method": "GET",

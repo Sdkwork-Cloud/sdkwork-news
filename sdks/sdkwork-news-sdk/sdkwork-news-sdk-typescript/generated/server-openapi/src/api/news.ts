@@ -1,8 +1,35 @@
 import { customApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { ChannelsListResponse, ItemsListResponse, NewsFeedPage, NewsItem, NewsItemPage, NewsSearchResultPage, TopicsListResponse, TrendingListResponse } from '../types';
+import type { ChannelsListResponse, ItemsListResponse, NewsFeedPage, NewsItem, NewsItemPage, NewsSearchResultPage, NewsSearchSuggestionListResponse, TopicsListResponse, TrendingListResponse } from '../types';
 
+
+export interface NewsSearchSuggestionsListParams {
+  q?: string;
+  cursor?: string;
+  limit?: string;
+  locale?: string;
+}
+
+export class NewsSearchSuggestionsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News search.suggestions.list */
+  async list(params?: NewsSearchSuggestionsListParams): Promise<NewsSearchSuggestionListResponse> {
+    const query = buildQueryString([
+      { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsSearchSuggestionListResponse>(appendQueryString(customApiPath(`/news/search/suggestions`), query));
+  }
+}
 
 export interface NewsSearchListParams {
   q?: string;
@@ -12,9 +39,11 @@ export interface NewsSearchListParams {
 
 export class NewsSearchApi {
   private client: HttpClient;
+  public readonly suggestions: NewsSearchSuggestionsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
+    this.suggestions = new NewsSearchSuggestionsApi(client);
   }
 
 

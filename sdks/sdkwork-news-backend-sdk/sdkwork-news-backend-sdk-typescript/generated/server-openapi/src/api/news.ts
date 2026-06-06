@@ -1,7 +1,7 @@
 import { backendApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsEditorialReadiness, NewsExperiment, NewsGenericCommand, NewsItem, NewsItemCommand, NewsModerationCase, NewsScheduleCommand, NewsSource, NewsTopic, NewsTrendingMetric, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
+import type { AuthorsManagementListResponse, CategoriesManagementListResponse, ChannelsManagementListResponse, CommentsModerationListResponse, ExperimentsManagementListResponse, ItemsManagementListResponse, ItemsMediaListResponse, ItemsMetricsListResponse, ItemsVersionsListResponse, MediaResource, ModerationCasesListResponse, NewsApiResult, NewsAuthor, NewsCategory, NewsCategoryCommand, NewsChannel, NewsComment, NewsEditorialReadiness, NewsExperiment, NewsFeedCandidate, NewsFeedCandidateCommand, NewsFeedCandidateListResponse, NewsGenericCommand, NewsItem, NewsItemCommand, NewsItemMetricSnapshot, NewsModerationCase, NewsScheduleCommand, NewsSearchSuggestion, NewsSearchSuggestionCommand, NewsSearchSuggestionListResponse, NewsSource, NewsTopic, NewsTrendingMetric, NewsUserInterestSignalListResponse, SearchEventsListResponse, SourcesManagementListResponse, TopicsManagementListResponse, TrendingMetricsListResponse } from '../types';
 
 
 export interface NewsExperimentsManagementListParams {
@@ -67,13 +67,188 @@ export class NewsSearchProjectionsApi {
   }
 }
 
+export interface NewsSearchEventsListParams {
+  q?: string;
+  userId?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsSearchEventsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News search.events.list */
+  async list(params?: NewsSearchEventsListParams): Promise<SearchEventsListResponse> {
+    const query = buildQueryString([
+      { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
+      { name: 'user_id', value: params?.userId, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<SearchEventsListResponse>(appendQueryString(backendApiPath(`/news/search/events`), query));
+  }
+}
+
+export interface NewsSearchSuggestionsManagementListParams {
+  q?: string;
+  cursor?: string;
+  limit?: string;
+  locale?: string;
+}
+
+export class NewsSearchSuggestionsManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News search.suggestions.management.list */
+  async list(params?: NewsSearchSuggestionsManagementListParams): Promise<NewsSearchSuggestionListResponse> {
+    const query = buildQueryString([
+      { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsSearchSuggestionListResponse>(appendQueryString(backendApiPath(`/news/search/suggestions`), query));
+  }
+}
+
+export class NewsSearchSuggestionsApi {
+  private client: HttpClient;
+  public readonly management: NewsSearchSuggestionsManagementApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsSearchSuggestionsManagementApi(client);
+  }
+
+
+/** News search.suggestions.upsert */
+  async upsert(body: NewsSearchSuggestionCommand): Promise<NewsSearchSuggestion> {
+    return this.client.put<NewsSearchSuggestion>(backendApiPath(`/news/search/suggestions`), body, undefined, undefined, 'application/json');
+  }
+
+/** News search.suggestions.delete */
+  async delete(suggestionId: string): Promise<NewsApiResult> {
+    return this.client.delete<NewsApiResult>(backendApiPath(`/news/search/suggestions/${serializePathParameter(suggestionId, { name: 'suggestionId', style: 'simple', explode: false })}`));
+  }
+}
+
 export class NewsSearchApi {
   private client: HttpClient;
+  public readonly suggestions: NewsSearchSuggestionsApi;
+  public readonly events: NewsSearchEventsApi;
   public readonly projections: NewsSearchProjectionsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
+    this.suggestions = new NewsSearchSuggestionsApi(client);
+    this.events = new NewsSearchEventsApi(client);
     this.projections = new NewsSearchProjectionsApi(client);
+  }
+
+}
+
+export interface NewsInterestsManagementListParams {
+  userId?: string;
+  targetType?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsInterestsManagementApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News interests.management.list */
+  async list(params?: NewsInterestsManagementListParams): Promise<NewsUserInterestSignalListResponse> {
+    const query = buildQueryString([
+      { name: 'user_id', value: params?.userId, style: 'form', explode: true, allowReserved: false },
+      { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsUserInterestSignalListResponse>(appendQueryString(backendApiPath(`/news/interests`), query));
+  }
+}
+
+export class NewsInterestsApi {
+  private client: HttpClient;
+  public readonly management: NewsInterestsManagementApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.management = new NewsInterestsManagementApi(client);
+  }
+
+
+/** News interests.rebuild */
+  async rebuild(body: NewsGenericCommand): Promise<NewsApiResult> {
+    return this.client.post<NewsApiResult>(backendApiPath(`/news/interests/rebuild`), body, undefined, undefined, 'application/json');
+  }
+
+/** News interests.delete */
+  async delete(interestId: string): Promise<NewsApiResult> {
+    return this.client.delete<NewsApiResult>(backendApiPath(`/news/interests/${serializePathParameter(interestId, { name: 'interestId', style: 'simple', explode: false })}`));
+  }
+}
+
+export interface NewsFeedCandidatesListParams {
+  streamKey?: string;
+  userId?: string;
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsFeedCandidatesApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News feed.candidates.list */
+  async list(params?: NewsFeedCandidatesListParams): Promise<NewsFeedCandidateListResponse> {
+    const query = buildQueryString([
+      { name: 'stream_key', value: params?.streamKey, style: 'form', explode: true, allowReserved: false },
+      { name: 'user_id', value: params?.userId, style: 'form', explode: true, allowReserved: false },
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<NewsFeedCandidateListResponse>(appendQueryString(backendApiPath(`/news/feed/candidates`), query));
+  }
+
+/** News feed.candidates.upsert */
+  async upsert(body: NewsFeedCandidateCommand): Promise<NewsFeedCandidate> {
+    return this.client.put<NewsFeedCandidate>(backendApiPath(`/news/feed/candidates`), body, undefined, undefined, 'application/json');
+  }
+
+/** News feed.candidates.delete */
+  async delete(candidateId: string): Promise<NewsApiResult> {
+    return this.client.delete<NewsApiResult>(backendApiPath(`/news/feed/candidates/${serializePathParameter(candidateId, { name: 'candidateId', style: 'simple', explode: false })}`));
+  }
+}
+
+export class NewsFeedApi {
+  private client: HttpClient;
+  public readonly candidates: NewsFeedCandidatesApi;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+    this.candidates = new NewsFeedCandidatesApi(client);
   }
 
 }
@@ -435,6 +610,39 @@ export class NewsSourcesApi {
   }
 }
 
+export interface NewsItemsMetricsListParams {
+  cursor?: string;
+  limit?: string;
+}
+
+export class NewsItemsMetricsApi {
+  private client: HttpClient;
+
+  constructor(client: HttpClient) {
+    this.client = client;
+  }
+
+
+/** News items.metrics.list */
+  async list(params?: NewsItemsMetricsListParams): Promise<ItemsMetricsListResponse> {
+    const query = buildQueryString([
+      { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
+      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+    ]);
+    return this.client.get<ItemsMetricsListResponse>(appendQueryString(backendApiPath(`/news/items/metrics`), query));
+  }
+
+/** News items.metrics.retrieve */
+  async retrieve(itemId: string): Promise<NewsItemMetricSnapshot> {
+    return this.client.get<NewsItemMetricSnapshot>(backendApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/metrics`));
+  }
+
+/** News items.metrics.rebuild */
+  async rebuild(body: NewsGenericCommand): Promise<NewsApiResult> {
+    return this.client.post<NewsApiResult>(backendApiPath(`/news/items/metrics/rebuild`), body, undefined, undefined, 'application/json');
+  }
+}
+
 export class NewsItemsMediaApi {
   private client: HttpClient;
 
@@ -523,6 +731,7 @@ export class NewsItemsApi {
   public readonly editorialReadiness: NewsItemsEditorialReadinessApi;
   public readonly versions: NewsItemsVersionsApi;
   public readonly media: NewsItemsMediaApi;
+  public readonly metrics: NewsItemsMetricsApi;
 
   constructor(client: HttpClient) {
     this.client = client;
@@ -530,6 +739,7 @@ export class NewsItemsApi {
     this.editorialReadiness = new NewsItemsEditorialReadinessApi(client);
     this.versions = new NewsItemsVersionsApi(client);
     this.media = new NewsItemsMediaApi(client);
+    this.metrics = new NewsItemsMetricsApi(client);
   }
 
 
@@ -621,6 +831,8 @@ export class NewsApi {
   public readonly comments: NewsCommentsApi;
   public readonly reports: NewsReportsApi;
   public readonly trending: NewsTrendingApi;
+  public readonly feed: NewsFeedApi;
+  public readonly interests: NewsInterestsApi;
   public readonly search: NewsSearchApi;
   public readonly experiments: NewsExperimentsApi;
 
@@ -636,6 +848,8 @@ export class NewsApi {
     this.comments = new NewsCommentsApi(client);
     this.reports = new NewsReportsApi(client);
     this.trending = new NewsTrendingApi(client);
+    this.feed = new NewsFeedApi(client);
+    this.interests = new NewsInterestsApi(client);
     this.search = new NewsSearchApi(client);
     this.experiments = new NewsExperimentsApi(client);
   }

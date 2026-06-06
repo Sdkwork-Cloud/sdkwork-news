@@ -70,6 +70,11 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
         ),
         route(HttpMethod::Get, "/app/v3/api/news/trending", "trending.list"),
         route(HttpMethod::Get, "/app/v3/api/news/search", "search.list"),
+        route(
+            HttpMethod::Get,
+            "/app/v3/api/news/search/suggestions",
+            "search.suggestions.list",
+        ),
         route(HttpMethod::Post, "/app/v3/api/news/events", "events.create"),
         route(HttpMethod::Get, "/app/v3/api/news/favorites", "favorites.list"),
         route(
@@ -107,6 +112,8 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
             "/app/v3/api/news/follows/{followId}",
             "follows.delete",
         ),
+        route(HttpMethod::Get, "/app/v3/api/news/interests", "interests.list"),
+        route(HttpMethod::Put, "/app/v3/api/news/interests", "interests.upsert"),
     ]
 }
 
@@ -138,6 +145,11 @@ pub fn open_routes() -> Vec<NewsHttpRoute> {
         ),
         route(HttpMethod::Get, "/open/v3/api/news/trending", "trending.list"),
         route(HttpMethod::Get, "/open/v3/api/news/search", "search.list"),
+        route(
+            HttpMethod::Get,
+            "/open/v3/api/news/search/suggestions",
+            "search.suggestions.list",
+        ),
     ]
 }
 
@@ -337,6 +349,71 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
             HttpMethod::Put,
             "/backend/v3/api/news/trending/metrics",
             "trending.metrics.upsert",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/items/metrics",
+            "items.metrics.list",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/items/{itemId}/metrics",
+            "items.metrics.retrieve",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/items/metrics/rebuild",
+            "items.metrics.rebuild",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/feed/candidates",
+            "feed.candidates.list",
+        ),
+        route(
+            HttpMethod::Put,
+            "/backend/v3/api/news/feed/candidates",
+            "feed.candidates.upsert",
+        ),
+        route(
+            HttpMethod::Delete,
+            "/backend/v3/api/news/feed/candidates/{candidateId}",
+            "feed.candidates.delete",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/interests",
+            "interests.management.list",
+        ),
+        route(
+            HttpMethod::Post,
+            "/backend/v3/api/news/interests/rebuild",
+            "interests.rebuild",
+        ),
+        route(
+            HttpMethod::Delete,
+            "/backend/v3/api/news/interests/{interestId}",
+            "interests.delete",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/search/suggestions",
+            "search.suggestions.management.list",
+        ),
+        route(
+            HttpMethod::Put,
+            "/backend/v3/api/news/search/suggestions",
+            "search.suggestions.upsert",
+        ),
+        route(
+            HttpMethod::Delete,
+            "/backend/v3/api/news/search/suggestions/{suggestionId}",
+            "search.suggestions.delete",
+        ),
+        route(
+            HttpMethod::Get,
+            "/backend/v3/api/news/search/events",
+            "search.events.list",
         ),
         route(
             HttpMethod::Post,

@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18082",
   "standardProfile": null,
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 10,
+  "ownerOnlyOperationCount": 11,
   "operations": [
     {
       "method": "GET",
@@ -55,6 +55,11 @@
       "method": "GET",
       "operationId": "search.list",
       "path": "/open/v3/api/news/search"
+    },
+    {
+      "method": "GET",
+      "operationId": "search.suggestions.list",
+      "path": "/open/v3/api/news/search/suggestions"
     },
     {
       "method": "GET",

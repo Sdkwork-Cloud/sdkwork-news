@@ -158,6 +158,9 @@ const schemas = {
   NewsFavoritePage: pageOf("NewsFavorite"),
   NewsFollowPage: pageOf("NewsFollow"),
   NewsSearchResultPage: pageOf("NewsSearchResult"),
+  NewsSearchSuggestionListResponse: arrayOf("NewsSearchSuggestion"),
+  NewsUserInterestSignalListResponse: arrayOf("NewsUserInterestSignal"),
+  NewsFeedCandidateListResponse: arrayOf("NewsFeedCandidate"),
   NewsRecommendationEventCommand: {
     type: "object",
     additionalProperties: false,
@@ -284,6 +287,36 @@ const schemas = {
       computedAt: { type: "string", format: "date-time" },
     },
   },
+  NewsItemMetricSnapshot: {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "tenantId",
+      "itemId",
+      "impressionCount",
+      "clickCount",
+      "shareCount",
+      "commentCount",
+      "favoriteCount",
+      "reactionCount",
+      "reportCount",
+      "hotScore",
+      "computedAt",
+    ],
+    properties: {
+      tenantId: { type: "string" },
+      itemId: { type: "string" },
+      impressionCount: { type: "integer", minimum: 0 },
+      clickCount: { type: "integer", minimum: 0 },
+      shareCount: { type: "integer", minimum: 0 },
+      commentCount: { type: "integer", minimum: 0 },
+      favoriteCount: { type: "integer", minimum: 0 },
+      reactionCount: { type: "integer", minimum: 0 },
+      reportCount: { type: "integer", minimum: 0 },
+      hotScore: { type: "integer" },
+      computedAt: { type: "string", format: "date-time" },
+    },
+  },
   NewsSearchResult: {
     type: "object",
     additionalProperties: false,
@@ -292,6 +325,107 @@ const schemas = {
       item: ref("NewsItem"),
       score: { type: "number" },
       highlight: { type: "string" },
+    },
+  },
+  NewsSearchSuggestion: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "normalizedQuery", "displayQuery", "suggestionType", "rank", "score"],
+    properties: {
+      tenantId: { type: "string" },
+      normalizedQuery: { type: "string" },
+      displayQuery: { type: "string" },
+      suggestionType: { type: "string", enum: ["hot", "history", "topic", "source", "correction"] },
+      rank: { type: "integer" },
+      score: { type: "integer" },
+      locale: { type: "string" },
+    },
+  },
+  NewsSearchSuggestionCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["normalizedQuery", "displayQuery", "suggestionType", "rank", "score", "computedAt"],
+    properties: {
+      normalizedQuery: { type: "string" },
+      displayQuery: { type: "string" },
+      suggestionType: { type: "string", enum: ["hot", "history", "topic", "source", "correction"] },
+      rank: { type: "integer" },
+      score: { type: "integer" },
+      locale: { type: "string" },
+      computedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsSearchEvent: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "normalizedQuery", "displayQuery", "resultCount", "occurredAt"],
+    properties: {
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      normalizedQuery: { type: "string" },
+      displayQuery: { type: "string" },
+      resultCount: { type: "integer", minimum: 0 },
+      clickedItemId: { type: "string" },
+      traceId: { type: "string" },
+      occurredAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsUserInterestSignal: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "userId", "targetType", "targetId", "affinityScore", "confidence", "source", "updatedAt"],
+    properties: {
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      affinityScore: { type: "integer" },
+      confidence: { type: "integer" },
+      source: { type: "string", enum: ["explicit", "behavior", "editorial", "imported"] },
+      updatedAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsUserInterestCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["targetType", "targetId", "affinityScore", "confidence", "source"],
+    properties: {
+      targetType: { type: "string", enum: ["source", "author", "topic", "channel", "tag"] },
+      targetId: { type: "string" },
+      affinityScore: { type: "integer" },
+      confidence: { type: "integer" },
+      source: { type: "string", enum: ["explicit", "behavior", "editorial", "imported"] },
+    },
+  },
+  NewsFeedCandidate: {
+    type: "object",
+    additionalProperties: false,
+    required: ["tenantId", "streamKey", "itemId", "score", "reasonCode", "generatedAt"],
+    properties: {
+      tenantId: { type: "string" },
+      userId: { type: "string" },
+      streamKey: { type: "string" },
+      itemId: { type: "string" },
+      score: { type: "integer" },
+      reasonCode: { type: "string" },
+      traceId: { type: "string" },
+      generatedAt: { type: "string", format: "date-time" },
+      expiresAt: { type: "string", format: "date-time" },
+    },
+  },
+  NewsFeedCandidateCommand: {
+    type: "object",
+    additionalProperties: false,
+    required: ["streamKey", "itemId", "score", "reasonCode", "generatedAt"],
+    properties: {
+      userId: { type: "string" },
+      streamKey: { type: "string" },
+      itemId: { type: "string" },
+      score: { type: "integer" },
+      reasonCode: { type: "string" },
+      traceId: { type: "string" },
+      generatedAt: { type: "string", format: "date-time" },
+      expiresAt: { type: "string", format: "date-time" },
     },
   },
   NewsModerationCase: {
@@ -409,6 +543,7 @@ const appRoutes = [
   route("get", "/app/v3/api/news/items/{itemId}/related", "items.related.list", { schema: ref("NewsItemPage") }, false, [pathParam("itemId"), ...pageParams()]),
   route("get", "/app/v3/api/news/trending", "trending.list", { schema: arrayOf("NewsTrendingMetric") }, false, pageParams()),
   route("get", "/app/v3/api/news/search", "search.list", { schema: ref("NewsSearchResultPage") }, false, searchParams()),
+  route("get", "/app/v3/api/news/search/suggestions", "search.suggestions.list", { schema: ref("NewsSearchSuggestionListResponse") }, false, suggestionParams()),
   route("post", "/app/v3/api/news/events", "events.create", { schema: ref("NewsApiResult") }, false, [], "NewsRecommendationEventCommand"),
   route("get", "/app/v3/api/news/favorites", "favorites.list", { schema: ref("NewsFavoritePage") }, false, pageParams()),
   route("post", "/app/v3/api/news/items/{itemId}/favorites", "favorites.create", { schema: ref("NewsFavorite") }, false, [pathParam("itemId")]),
@@ -422,6 +557,8 @@ const appRoutes = [
   route("get", "/app/v3/api/news/follows", "follows.list", { schema: ref("NewsFollowPage") }, false, pageParams()),
   route("post", "/app/v3/api/news/follows", "follows.create", { schema: ref("NewsFollow") }, false, [], "NewsFollowCommand"),
   route("delete", "/app/v3/api/news/follows/{followId}", "follows.delete", { schema: ref("NewsApiResult") }, false, [pathParam("followId")]),
+  route("get", "/app/v3/api/news/interests", "interests.list", { schema: ref("NewsUserInterestSignalListResponse") }, false, pageParams()),
+  route("put", "/app/v3/api/news/interests", "interests.upsert", { schema: ref("NewsUserInterestSignal") }, false, [], "NewsUserInterestCommand"),
 ];
 
 const openRoutes = [
@@ -435,6 +572,7 @@ const openRoutes = [
   route("get", "/open/v3/api/news/items/{itemId}/related", "items.related.list", { schema: ref("NewsItemPage") }, true, [pathParam("itemId"), ...pageParams()]),
   route("get", "/open/v3/api/news/trending", "trending.list", { schema: arrayOf("NewsTrendingMetric") }, true, pageParams()),
   route("get", "/open/v3/api/news/search", "search.list", { schema: ref("NewsSearchResultPage") }, true, searchParams()),
+  route("get", "/open/v3/api/news/search/suggestions", "search.suggestions.list", { schema: ref("NewsSearchSuggestionListResponse") }, true, suggestionParams()),
 ];
 
 const backendRoutes = [
@@ -481,6 +619,19 @@ const backendRoutes = [
   route("patch", "/backend/v3/api/news/reports/{reportId}", "reports.update", { schema: ref("NewsApiResult") }, false, [pathParam("reportId")], "NewsGenericCommand"),
   route("get", "/backend/v3/api/news/trending/metrics", "trending.metrics.list", { schema: arrayOf("NewsTrendingMetric") }, false, pageParams()),
   route("put", "/backend/v3/api/news/trending/metrics", "trending.metrics.upsert", { schema: ref("NewsTrendingMetric") }, false, [], "NewsGenericCommand"),
+  route("get", "/backend/v3/api/news/items/metrics", "items.metrics.list", { schema: arrayOf("NewsItemMetricSnapshot") }, false, pageParams()),
+  route("get", "/backend/v3/api/news/items/{itemId}/metrics", "items.metrics.retrieve", { schema: ref("NewsItemMetricSnapshot") }, false, [pathParam("itemId")]),
+  route("post", "/backend/v3/api/news/items/metrics/rebuild", "items.metrics.rebuild", { schema: ref("NewsApiResult") }, false, [], "NewsGenericCommand"),
+  route("get", "/backend/v3/api/news/feed/candidates", "feed.candidates.list", { schema: ref("NewsFeedCandidateListResponse") }, false, candidateParams()),
+  route("put", "/backend/v3/api/news/feed/candidates", "feed.candidates.upsert", { schema: ref("NewsFeedCandidate") }, false, [], "NewsFeedCandidateCommand"),
+  route("delete", "/backend/v3/api/news/feed/candidates/{candidateId}", "feed.candidates.delete", { schema: ref("NewsApiResult") }, false, [pathParam("candidateId")]),
+  route("get", "/backend/v3/api/news/interests", "interests.management.list", { schema: ref("NewsUserInterestSignalListResponse") }, false, interestParams()),
+  route("post", "/backend/v3/api/news/interests/rebuild", "interests.rebuild", { schema: ref("NewsApiResult") }, false, [], "NewsGenericCommand"),
+  route("delete", "/backend/v3/api/news/interests/{interestId}", "interests.delete", { schema: ref("NewsApiResult") }, false, [pathParam("interestId")]),
+  route("get", "/backend/v3/api/news/search/suggestions", "search.suggestions.management.list", { schema: ref("NewsSearchSuggestionListResponse") }, false, suggestionParams()),
+  route("put", "/backend/v3/api/news/search/suggestions", "search.suggestions.upsert", { schema: ref("NewsSearchSuggestion") }, false, [], "NewsSearchSuggestionCommand"),
+  route("delete", "/backend/v3/api/news/search/suggestions/{suggestionId}", "search.suggestions.delete", { schema: ref("NewsApiResult") }, false, [pathParam("suggestionId")]),
+  route("get", "/backend/v3/api/news/search/events", "search.events.list", { schema: arrayOf("NewsSearchEvent") }, false, searchEventParams()),
   route("post", "/backend/v3/api/news/search/projections/rebuild", "search.projections.rebuild", { schema: ref("NewsApiResult") }, false),
   route("get", "/backend/v3/api/news/experiments", "experiments.management.list", { schema: arrayOf("NewsExperiment") }, false, pageParams()),
   route("post", "/backend/v3/api/news/experiments", "experiments.create", { schema: ref("NewsExperiment") }, false, [], "NewsGenericCommand"),
@@ -542,6 +693,22 @@ function feedParams() {
 
 function searchParams() {
   return [queryParam("q"), queryParam("cursor"), queryParam("limit")];
+}
+
+function suggestionParams() {
+  return [queryParam("q"), queryParam("cursor"), queryParam("limit"), queryParam("locale")];
+}
+
+function candidateParams() {
+  return [queryParam("stream_key"), queryParam("user_id"), queryParam("cursor"), queryParam("limit")];
+}
+
+function interestParams() {
+  return [queryParam("user_id"), queryParam("target_type"), queryParam("cursor"), queryParam("limit")];
+}
+
+function searchEventParams() {
+  return [queryParam("q"), queryParam("user_id"), queryParam("cursor"), queryParam("limit")];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {

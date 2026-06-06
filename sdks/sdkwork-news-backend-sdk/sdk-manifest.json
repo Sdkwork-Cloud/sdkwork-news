@@ -19,7 +19,7 @@
   "baseUrl": "http://127.0.0.1:18080",
   "standardProfile": "sdkwork-v3",
   "fixedSdkVersion": "0.1.0",
-  "ownerOnlyOperationCount": 48,
+  "ownerOnlyOperationCount": 61,
   "operations": [
     {
       "method": "POST",
@@ -112,6 +112,36 @@
       "path": "/backend/v3/api/news/experiments/{experimentId}"
     },
     {
+      "method": "DELETE",
+      "operationId": "feed.candidates.delete",
+      "path": "/backend/v3/api/news/feed/candidates/{candidateId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "feed.candidates.list",
+      "path": "/backend/v3/api/news/feed/candidates"
+    },
+    {
+      "method": "PUT",
+      "operationId": "feed.candidates.upsert",
+      "path": "/backend/v3/api/news/feed/candidates"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "interests.delete",
+      "path": "/backend/v3/api/news/interests/{interestId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "interests.management.list",
+      "path": "/backend/v3/api/news/interests"
+    },
+    {
+      "method": "POST",
+      "operationId": "interests.rebuild",
+      "path": "/backend/v3/api/news/interests/rebuild"
+    },
+    {
       "method": "POST",
       "operationId": "items.archive",
       "path": "/backend/v3/api/news/items/{itemId}/archive"
@@ -155,6 +185,21 @@
       "method": "GET",
       "operationId": "items.media.list",
       "path": "/backend/v3/api/news/items/{itemId}/media"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.metrics.list",
+      "path": "/backend/v3/api/news/items/metrics"
+    },
+    {
+      "method": "POST",
+      "operationId": "items.metrics.rebuild",
+      "path": "/backend/v3/api/news/items/metrics/rebuild"
+    },
+    {
+      "method": "GET",
+      "operationId": "items.metrics.retrieve",
+      "path": "/backend/v3/api/news/items/{itemId}/metrics"
     },
     {
       "method": "POST",
@@ -207,9 +252,29 @@
       "path": "/backend/v3/api/news/reports/{reportId}"
     },
     {
+      "method": "GET",
+      "operationId": "search.events.list",
+      "path": "/backend/v3/api/news/search/events"
+    },
+    {
       "method": "POST",
       "operationId": "search.projections.rebuild",
       "path": "/backend/v3/api/news/search/projections/rebuild"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "search.suggestions.delete",
+      "path": "/backend/v3/api/news/search/suggestions/{suggestionId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "search.suggestions.management.list",
+      "path": "/backend/v3/api/news/search/suggestions"
+    },
+    {
+      "method": "PUT",
+      "operationId": "search.suggestions.upsert",
+      "path": "/backend/v3/api/news/search/suggestions"
     },
     {
       "method": "POST",

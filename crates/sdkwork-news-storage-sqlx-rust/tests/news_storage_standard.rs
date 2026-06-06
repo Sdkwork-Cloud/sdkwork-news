@@ -1,8 +1,9 @@
 use sdkwork_news_storage_sqlx::{
     news_database_tables, news_migration_names, news_storage_capability_manifest,
-    NewNewsCategory, NewNewsChannel, NewNewsChannelItem, NewNewsFavorite, NewNewsItem,
-    NewNewsReaction, NewNewsRecommendationEvent, NewNewsTrendingMetric, NewNewsUserFeedback,
-    SqliteNewsStore,
+    NewNewsCategory, NewNewsChannel, NewNewsChannelItem, NewNewsFavorite, NewNewsFeedCandidate,
+    NewNewsItem, NewNewsItemMetricSnapshot, NewNewsReaction, NewNewsRecommendationEvent,
+    NewNewsSearchEvent, NewNewsSearchSuggestion, NewNewsTrendingMetric, NewNewsUserFeedback,
+    NewNewsUserInterestSignal, SqliteNewsStore,
 };
 use sqlx::sqlite::SqlitePoolOptions;
 
@@ -10,7 +11,7 @@ use sqlx::sqlite::SqlitePoolOptions;
 fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     let manifest = news_storage_capability_manifest();
     assert_eq!(manifest.name, "sdkwork-news-storage-sqlx");
-    assert_eq!(manifest.schema_version, "news.storage.v2");
+    assert_eq!(manifest.schema_version, "news.storage.v3");
     assert_eq!(news_database_tables(), manifest.tables);
     assert_eq!(news_migration_names(), manifest.migrations);
     for table in [
@@ -51,6 +52,11 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
         "news_moderation_case",
         "news_content_risk_signal",
         "news_takedown_event",
+        "news_user_interest_signal",
+        "news_feed_candidate",
+        "news_item_metric_snapshot",
+        "news_search_suggestion",
+        "news_search_event",
     ] {
         assert!(manifest.tables.contains(&table), "missing table {table}");
     }
@@ -62,10 +68,17 @@ fn news_storage_manifest_declares_complete_news_tables_and_migrations() {
     assert!(manifest.indexes.contains(&"idx_news_user_feedback_user_target"));
     assert!(manifest.indexes.contains(&"idx_news_trending_metric_window_rank"));
     assert!(manifest.indexes.contains(&"idx_news_comment_item_status_time"));
+    assert!(manifest.indexes.contains(&"idx_news_user_interest_signal_user_target"));
+    assert!(manifest.indexes.contains(&"idx_news_feed_candidate_stream_score"));
+    assert!(manifest.indexes.contains(&"idx_news_item_metric_snapshot_hot"));
+    assert!(manifest.indexes.contains(&"idx_news_search_suggestion_query_rank"));
+    assert!(manifest.indexes.contains(&"idx_news_search_event_query_time"));
     assert_eq!(manifest.migration_plan[0].name, "0001_news_foundation.sql");
     assert_eq!(manifest.migration_plan[1].name, "0002_news_industry_foundation.sql");
+    assert_eq!(manifest.migration_plan[2].name, "0003_news_personalization_foundation.sql");
     assert!(manifest.migration_plan[0].sql.contains("CREATE TABLE news_item"));
     assert!(manifest.migration_plan[1].sql.contains("CREATE TABLE news_channel"));
+    assert!(manifest.migration_plan[2].sql.contains("CREATE TABLE news_feed_candidate"));
 }
 
 #[test]
@@ -88,6 +101,9 @@ fn news_storage_repositories_bind_to_news_tables() {
         "news.engagement.repository",
         "news.moderation.repository",
         "news.experiment.repository",
+        "news.personalization.repository",
+        "news.metrics.repository",
+        "news.search.repository",
     ]);
 }
 
@@ -322,4 +338,125 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     assert_eq!(trending.len(), 1);
     assert_eq!(trending[0].item_id, "item_world");
     assert_eq!(trending[0].rank, 1);
+}
+
+#[tokio::test]
+async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_suggestions() {
+    let pool = SqlitePoolOptions::new()
+        .max_connections(1)
+        .connect("sqlite::memory:")
+        .await
+        .expect("sqlite pool");
+    let store = SqliteNewsStore::new(pool);
+    store.migrate().await.expect("news migration");
+
+    store
+        .upsert_user_interest_signal(NewNewsUserInterestSignal {
+            id: "interest_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            user_id: "user_1".to_owned(),
+            target_type: "topic".to_owned(),
+            target_id: "topic_ai".to_owned(),
+            affinity_score: 92,
+            confidence: 80,
+            source: "explicit".to_owned(),
+            updated_at: "2026-06-06T01:00:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert interest");
+
+    let interests = store
+        .list_user_interest_signals("tenant_1", "user_1", 10)
+        .await
+        .expect("list interests");
+    assert_eq!(interests.len(), 1);
+    assert_eq!(interests[0].target_id, "topic_ai");
+    assert_eq!(interests[0].affinity_score, 92);
+
+    store
+        .upsert_feed_candidate(NewNewsFeedCandidate {
+            id: "candidate_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            user_id: Some("user_1".to_owned()),
+            stream_key: "for_you".to_owned(),
+            item_id: "item_ai".to_owned(),
+            score: 990,
+            reason_code: "interest_topic".to_owned(),
+            trace_id: Some("trace_1".to_owned()),
+            generated_at: "2026-06-06T01:01:00Z".to_owned(),
+            expires_at: Some("2026-06-07T01:01:00Z".to_owned()),
+        })
+        .await
+        .expect("upsert candidate");
+
+    let candidates = store
+        .list_feed_candidates("tenant_1", Some("user_1"), "for_you", "2026-06-06T01:02:00Z", 10)
+        .await
+        .expect("list candidates");
+    assert_eq!(candidates.len(), 1);
+    assert_eq!(candidates[0].item_id, "item_ai");
+    assert_eq!(candidates[0].reason_code, "interest_topic");
+
+    store
+        .upsert_item_metric_snapshot(NewNewsItemMetricSnapshot {
+            id: "metric_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            item_id: "item_ai".to_owned(),
+            impression_count: 1000,
+            click_count: 330,
+            share_count: 24,
+            comment_count: 18,
+            favorite_count: 42,
+            reaction_count: 88,
+            report_count: 1,
+            hot_score: 765,
+            computed_at: "2026-06-06T01:03:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert item metrics");
+
+    let metrics = store
+        .retrieve_item_metric_snapshot("tenant_1", "item_ai")
+        .await
+        .expect("retrieve metrics")
+        .expect("metrics");
+    assert_eq!(metrics.hot_score, 765);
+    assert_eq!(metrics.click_count, 330);
+
+    store
+        .upsert_search_suggestion(NewNewsSearchSuggestion {
+            id: "suggestion_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            normalized_query: "ai".to_owned(),
+            display_query: "AI".to_owned(),
+            suggestion_type: "hot".to_owned(),
+            rank: 1,
+            score: 950,
+            locale: Some("zh-CN".to_owned()),
+            computed_at: "2026-06-06T01:04:00Z".to_owned(),
+        })
+        .await
+        .expect("upsert suggestion");
+
+    let suggestions = store
+        .list_search_suggestions("tenant_1", "a", 10)
+        .await
+        .expect("list suggestions");
+    assert_eq!(suggestions.len(), 1);
+    assert_eq!(suggestions[0].display_query, "AI");
+
+    store
+        .record_search_event(NewNewsSearchEvent {
+            id: "search_event_1".to_owned(),
+            tenant_id: "tenant_1".to_owned(),
+            user_id: Some("user_1".to_owned()),
+            normalized_query: "ai".to_owned(),
+            display_query: "AI".to_owned(),
+            result_count: 20,
+            clicked_item_id: Some("item_ai".to_owned()),
+            trace_id: Some("trace_1".to_owned()),
+            occurred_at: "2026-06-06T01:05:00Z".to_owned(),
+        })
+        .await
+        .expect("record search event");
 }

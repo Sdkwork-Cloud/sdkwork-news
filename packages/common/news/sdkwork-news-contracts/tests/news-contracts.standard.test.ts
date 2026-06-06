@@ -68,6 +68,7 @@ describe("sdkwork-news contracts", () => {
       "items.related.list",
       "trending.list",
       "search.list",
+      "search.suggestions.list",
       "events.create",
       "favorites.list",
       "favorites.create",
@@ -81,6 +82,8 @@ describe("sdkwork-news contracts", () => {
       "follows.list",
       "follows.create",
       "follows.delete",
+      "interests.list",
+      "interests.upsert",
     ]);
     expect(NEWS_APP_API_ROUTES.every((route) => route.public === false)).toBe(true);
     expect(NEWS_OPEN_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -94,6 +97,7 @@ describe("sdkwork-news contracts", () => {
       "items.related.list",
       "trending.list",
       "search.list",
+      "search.suggestions.list",
     ]);
     expect(NEWS_OPEN_API_ROUTES.every((route) => route.public === true)).toBe(true);
     expect(NEWS_BACKEND_API_ROUTES.map((route) => route.operationId)).toEqual([
@@ -140,6 +144,19 @@ describe("sdkwork-news contracts", () => {
       "reports.update",
       "trending.metrics.list",
       "trending.metrics.upsert",
+      "items.metrics.list",
+      "items.metrics.retrieve",
+      "items.metrics.rebuild",
+      "feed.candidates.list",
+      "feed.candidates.upsert",
+      "feed.candidates.delete",
+      "interests.management.list",
+      "interests.rebuild",
+      "interests.delete",
+      "search.suggestions.management.list",
+      "search.suggestions.upsert",
+      "search.suggestions.delete",
+      "search.events.list",
       "search.projections.rebuild",
       "experiments.management.list",
       "experiments.create",
