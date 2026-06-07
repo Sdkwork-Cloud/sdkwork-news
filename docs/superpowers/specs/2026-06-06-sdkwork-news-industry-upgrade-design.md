@@ -8,7 +8,7 @@ This upgrade keeps `sdkwork-news` as the owner of news capabilities and keeps ap
 
 ## Standards Read
 
-The implementation follows `D:\javasource\spring-ai-plus\spring-ai-plus-business\specs`:
+The implementation follows `../../../../sdkwork-specs`:
 
 - `API_SPEC.md`: OpenAPI 3.1.2 is the HTTP source of truth; app-api uses `/app/v3/api`; backend-api uses `/backend/v3/api`; public operations explicitly use `security: []`; protected app/backend operations require `AuthToken` and `AccessToken`; operationIds use dotted lowerCamelCase resource style; query parameters use `q`, `cursor`, `limit`, and lower_snake_case for multi-word names.
 - `DATABASE_SPEC.md`: new business tables target L2 where they are tenant scoped, append/event, cross-service, or user scoped. Tables must use explicit tenant/organization/user ownership, audit/lifecycle columns, indexes for high-frequency queries, and avoid putting core query fields only in JSON.

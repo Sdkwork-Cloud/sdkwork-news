@@ -65,7 +65,7 @@
         "title": "Unified package check",
         "required": true,
         "rationale": "Validate the generated package with the unified publish helper. Triggered by: api-surface, models.",
-        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
         "command": "node",
         "args": [
           "./bin/publish-core.mjs",
@@ -83,7 +83,7 @@
         "title": "Unified package build",
         "required": true,
         "rationale": "Run the full package build because this language uses a lighter check path than the final build. Triggered by: api-surface, models.",
-        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
         "command": "node",
         "args": [
           "./bin/publish-core.mjs",
@@ -108,7 +108,7 @@
         "title": "Unified package check",
         "required": true,
         "rationale": "Validate the generated package with the unified publish helper. Triggered by: api-surface, models.",
-        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
         "command": "node",
         "args": [
           "./bin/publish-core.mjs",
@@ -126,7 +126,7 @@
         "title": "Unified package build",
         "required": true,
         "rationale": "Run the full package build because this language uses a lighter check path than the final build. Triggered by: api-surface, models.",
-        "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+        "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
         "command": "node",
         "args": [
           "./bin/publish-core.mjs",
@@ -146,7 +146,7 @@
     "version": "0.1.0",
     "language": "typescript",
     "sdkType": "app",
-    "outputPath": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+    "outputPath": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
     "packageName": "sdkwork-news-app-sdk-generated-typescript"
   },
   "versioning": {
@@ -328,7 +328,7 @@
           "title": "Unified package check",
           "required": true,
           "rationale": "Validate the generated package with the unified publish helper. Triggered by: api-surface, models.",
-          "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+          "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
           "command": "node",
           "args": [
             "./bin/publish-core.mjs",
@@ -346,7 +346,7 @@
           "title": "Unified package build",
           "required": true,
           "rationale": "Run the full package build because this language uses a lighter check path than the final build. Triggered by: api-surface, models.",
-          "workingDirectory": "D:\\sdkwork-opensource\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
+          "workingDirectory": "E:\\sdkwork-space\\sdkwork-news\\sdks\\sdkwork-news-app-sdk\\sdkwork-news-app-sdk-typescript\\generated\\server-openapi",
           "command": "node",
           "args": [
             "./bin/publish-core.mjs",
