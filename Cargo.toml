@@ -10,3 +10,9 @@ resolver = "2"
 edition = "2021"
 version = "0.1.0"
 
+[workspace.dependencies]
+# Internal SDKWork workspace members - declared once at workspace root
+sdkwork-news-core-rust = { path = "crates/sdkwork-news-core-rust" }
+sdkwork-news-storage-sqlx-rust = { path = "crates/sdkwork-news-storage-sqlx-rust" }
+sdkwork-news-http-rust = { path = "crates/sdkwork-news-http-rust" }
+

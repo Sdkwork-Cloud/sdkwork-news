@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-sdkwork-news-core-rust = { path = "../sdkwork-news-core-rust" }
+sdkwork-news-core-rust.workspace = true
 
 [lib]
 name = "sdkwork_news_http"
