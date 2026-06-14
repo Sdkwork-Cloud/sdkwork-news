@@ -6,7 +6,7 @@
   "sdkFamily": "sdkwork-news-app-sdk",
   "sdkType": "app",
   "apiPrefix": "/app/v3/api",
-  "generationInputSpec": "../../generated/openapi/news-app-api.openapi.json",
+  "generationInputSpec": "../../apis/app-api/content/news-app-api.openapi.json",
   "generatedPackages": {
     "typescript": {
       "language": "typescript",

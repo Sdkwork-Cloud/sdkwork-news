@@ -1,8 +1,11 @@
 [workspace]
 members = [
-    "crates/sdkwork-news-core-rust",
-    "crates/sdkwork-news-storage-sqlx-rust",
-    "crates/sdkwork-news-http-rust",
+    "crates/sdkwork-content-news-service",
+    "crates/sdkwork-content-news-repository-sqlx",
+    "crates/sdkwork-content-news-worker",
+    "crates/sdkwork-router-news-open-api",
+    "crates/sdkwork-router-news-app-api",
+    "crates/sdkwork-router-news-backend-api",
 ]
 resolver = "2"
 
@@ -12,7 +15,10 @@ version = "0.1.0"
 
 [workspace.dependencies]
 # Internal SDKWork workspace members - declared once at workspace root
-sdkwork-news-core-rust = { path = "crates/sdkwork-news-core-rust" }
-sdkwork-news-storage-sqlx-rust = { path = "crates/sdkwork-news-storage-sqlx-rust" }
-sdkwork-news-http-rust = { path = "crates/sdkwork-news-http-rust" }
+sdkwork-content-news-service = { path = "crates/sdkwork-content-news-service" }
+sdkwork-content-news-repository-sqlx = { path = "crates/sdkwork-content-news-repository-sqlx" }
+sdkwork-content-news-worker = { path = "crates/sdkwork-content-news-worker" }
+sdkwork-router-news-open-api = { path = "crates/sdkwork-router-news-open-api" }
+sdkwork-router-news-app-api = { path = "crates/sdkwork-router-news-app-api" }
+sdkwork-router-news-backend-api = { path = "crates/sdkwork-router-news-backend-api" }
 

@@ -1,0 +1,21 @@
+# SdkWork News - Server Development Configuration
+# This file is auto-initialized on first run.
+# Edit [database] section for your target environment.
+
+# Server/service deployments use external PostgreSQL by default.
+
+[database]
+engine = "postgresql"
+host = "localhost"
+port = 5432
+database = "sdkwork_news_dev"
+username = "sdkwork_news_dev"
+# password = "change-me"
+ssl_mode = "disable"
+max_connections = 16
+
+[paths]
+data_directory = "/var/lib/sdkwork/news"
+
+[runtime]
+deployment_mode = "server"

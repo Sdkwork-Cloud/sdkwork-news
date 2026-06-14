@@ -1,6 +1,10 @@
 export const NEWS_OWNER = "sdkwork-news" as const;
 export const NEWS_DOMAIN = "news" as const;
 export const NEWS_TAG = "news" as const;
+export * from "./professional-api.ts";
+export * from "./professional-integrations.ts";
+export * from "./professional-modules.ts";
+export * from "./professional-schema.ts";
 
 export const NEWS_STATUS_VALUES = ["draft", "published", "scheduled", "archived"] as const;
 export const NEWS_CHANNEL_STATUS_VALUES = ["active", "inactive", "archived"] as const;

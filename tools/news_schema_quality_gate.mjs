@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const HTTP_METHODS = new Set(["get", "post", "put", "patch", "delete"]);
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
-const generatedOpenapiDir = path.join(workspaceRoot, "generated", "openapi");
+const apiRoot = path.join(workspaceRoot, "apis");
 
 function fail(message) {
   process.stderr.write(`[news_schema_quality_gate] ${message}\n`);
@@ -71,9 +71,9 @@ function getArg(args, name, defaultValue) {
 }
 
 const args = process.argv.slice(2);
-const app = getArg(args, "--app-openapi", path.join(generatedOpenapiDir, "news-app-api.openapi.json"));
-const backend = getArg(args, "--backend-openapi", path.join(generatedOpenapiDir, "news-backend-api.openapi.json"));
-const open = getArg(args, "--open-openapi", path.join(generatedOpenapiDir, "news-open-api.openapi.json"));
+const app = getArg(args, "--app-openapi", path.join(apiRoot, "app-api", "content", "news-app-api.openapi.json"));
+const backend = getArg(args, "--backend-openapi", path.join(apiRoot, "backend-api", "content", "news-backend-api.openapi.json"));
+const open = getArg(args, "--open-openapi", path.join(apiRoot, "open-api", "content", "news-open-api.openapi.json"));
 
 const counts = {
   app: checkDocument(app, "sdkwork-news.app", "/app/v3/api"),

@@ -2,7 +2,31 @@
 
 SDKWork news domain workspace.
 
-This repository owns news contracts, application and backend API surfaces, SDK generation inputs, Rust storage/runtime crates, and PC React news workspace logic.
+This repository owns news contracts, open/app/backend API surfaces, SDK generation inputs, Rust service and SQLx repository crates, route metadata crates, and PC React news workspace logic.
+
+## Project Structure
+
+- `apis/`: authored and materialized News OpenAPI inputs for open-api, app-api, and backend-api surfaces.
+- `apps/`: PC News app-surface packages.
+- `crates/`: Rust service, repository-sqlx, and route crates.
+- `sdks/`: generated SDK family workspaces and SDK ownership manifests.
+- `jobs/`: job definitions and schedules when News background processing is added.
+- `tools/`: deterministic OpenAPI, SDK, and schema validation tooling.
+- `plugins/`: runtime/application plugins owned by this repository when added.
+- `examples/`: runnable or copyable API/SDK examples.
+- `configs/`: safe checked-in config templates and schemas.
+- `deployments/`: deployment descriptors and release handoff docs.
+- `scripts/`: thin build, verification, generation, and migration entrypoints.
+- `docs/`: architecture notes, plans, and runbooks.
+- `tests/`: cross-package/static/integration verification fixtures.
+
+## Rust Crate Responsibilities
+
+- `crates/sdkwork-content-news-service`: News business service contracts, domain models, and use-case rules.
+- `crates/sdkwork-content-news-repository-sqlx`: SQLx persistence, migrations, table catalog, and repository implementation contracts.
+- `crates/sdkwork-router-news-open-api`: News open-api route metadata.
+- `crates/sdkwork-router-news-app-api`: News app-api route metadata.
+- `crates/sdkwork-router-news-backend-api`: News backend-api route metadata.
 
 ## SDKWork Documentation Contract
 

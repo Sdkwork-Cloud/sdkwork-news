@@ -1,0 +1,33 @@
+{
+  "name": "@sdkwork/news-pc-admin-shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@sdkwork/news-pc-core": "workspace:*",
+    "@sdkwork/news-pc-commons": "workspace:*",
+    "@sdkwork/news-pc-admin-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0 <20.0.0",
+    "react-dom": ">=18.2.0 <20.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "sdkwork": {
+    "workspace": "sdkwork-news",
+    "architecture": "pc-admin-shell",
+    "domain": "news",
+    "capability": "admin-shell",
+    "status": "ready"
+  }
+}

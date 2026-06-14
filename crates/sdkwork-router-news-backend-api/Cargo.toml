@@ -1,0 +1,8 @@
+[package]
+name = "sdkwork-router-news-backend-api"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "sdkwork_router_news_backend_api"
+path = "src/lib.rs"

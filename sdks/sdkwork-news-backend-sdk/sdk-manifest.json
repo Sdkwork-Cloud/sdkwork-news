@@ -6,7 +6,7 @@
   "sdkFamily": "sdkwork-news-backend-sdk",
   "sdkType": "backend",
   "apiPrefix": "/backend/v3/api",
-  "generationInputSpec": "../../generated/openapi/news-backend-api.openapi.json",
+  "generationInputSpec": "../../apis/backend-api/content/news-backend-api.openapi.json",
   "generatedPackages": {
     "typescript": {
       "language": "typescript",

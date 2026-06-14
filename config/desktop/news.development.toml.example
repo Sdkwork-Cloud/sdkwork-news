@@ -1,0 +1,17 @@
+# SdkWork News - Desktop Development Configuration
+# This file is auto-initialized on first run.
+# Edit [database] section for your target environment.
+
+# Desktop deployments default to a local SQLite database.
+# Default SQLite file: ~/.sdkwork/news/data/news.sqlite
+
+[database]
+engine = "sqlite"
+url = "sqlite:~/.sdkwork/news/data/news.sqlite"
+max_connections = 8
+
+[paths]
+data_directory = "~/.sdkwork/news/data"
+
+[runtime]
+deployment_mode = "desktop"

@@ -4,7 +4,7 @@
 
 **Goal:** Upgrade `sdkwork-news` from a basic publishing module into an industry-grade news platform foundation with schema, Rust storage, OpenAPI contracts, and generated SDK support for channels, topics, media, feeds, events, engagement, moderation, trending, search, and experiments.
 
-**Architecture:** Keep the existing workspace shape. Add migration `0002_news_industry_foundation.sql`, extend Rust storage manifests and selected repository methods, expand TypeScript contracts and route catalogs, expand OpenAPI exporter as the source of SDK generation, then regenerate SDKs.
+**Architecture:** Use the current SDKWork standard project-root shape. Add migration `0002_news_industry_foundation.sql`, extend Rust repository manifests and selected repository methods, expand TypeScript contracts and route catalogs, expand OpenAPI exporter as the source of SDK generation, then regenerate SDKs.
 
 **Tech Stack:** Rust SQLx SQLite, TypeScript contracts, OpenAPI 3.1.2, SDKWork SDK generator wrappers, Vitest, Node test runner, Cargo tests.
 
@@ -14,8 +14,8 @@
 
 **Files:**
 - Modify: `packages/common/news/sdkwork-news-contracts/tests/news-contracts.standard.test.ts`
-- Modify: `crates/sdkwork-news-core-rust/tests/news_core_standard.rs`
-- Modify: `crates/sdkwork-news-http-rust/tests/news_http_standard.rs`
+- Modify: `crates/sdkwork-content-news-service/tests/news_core_standard.rs`
+- Modify: `crates/sdkwork-router-news-app-api/tests/route_standard.rs`
 - Modify: `sdks/test/news-openapi-boundary.test.mjs`
 - Modify: `sdks/test/news-schema-quality-gate.test.mjs`
 
@@ -38,9 +38,9 @@ Expected: tests fail because route catalogs, OpenAPI counts, and manifests are s
 ### Task 2: Add Database Migration And Storage Manifest
 
 **Files:**
-- Create: `crates/sdkwork-news-storage-sqlx-rust/migrations/0002_news_industry_foundation.sql`
-- Modify: `crates/sdkwork-news-storage-sqlx-rust/src/lib.rs`
-- Modify: `crates/sdkwork-news-storage-sqlx-rust/tests/news_storage_standard.rs`
+- Create: `crates/sdkwork-content-news-repository-sqlx/migrations/0002_news_industry_foundation.sql`
+- Modify: `crates/sdkwork-content-news-repository-sqlx/src/lib.rs`
+- Modify: `crates/sdkwork-content-news-repository-sqlx/tests/news_storage_standard.rs`
 
 - [x] **Step 1: Write failing storage tests**
 
@@ -51,7 +51,7 @@ Assert v2 schema, new migration name, new table/index lists, repository bindings
 Run:
 
 ```powershell
-cargo test -p sdkwork-news-storage-sqlx --test news_storage_standard
+cargo test -p sdkwork-content-news-repository-sqlx --test news_storage_standard
 ```
 
 Expected: missing migration/table/method failures.
@@ -72,8 +72,10 @@ Run the same cargo storage test. Expected: pass.
 
 **Files:**
 - Modify: `packages/common/news/sdkwork-news-contracts/src/index.ts`
-- Modify: `crates/sdkwork-news-core-rust/src/lib.rs`
-- Modify: `crates/sdkwork-news-http-rust/src/lib.rs`
+- Modify: `crates/sdkwork-content-news-service/src/lib.rs`
+- Modify: `crates/sdkwork-router-news-open-api/src/lib.rs`
+- Modify: `crates/sdkwork-router-news-app-api/src/lib.rs`
+- Modify: `crates/sdkwork-router-news-backend-api/src/lib.rs`
 
 - [x] **Step 1: Implement contract types and route catalogs**
 
@@ -89,7 +91,7 @@ Run:
 
 ```powershell
 pnpm test:vitest
-cargo test -p sdkwork-news-core-rust -p sdkwork-news-http-rust
+cargo test -p sdkwork-content-news-service -p sdkwork-router-news-open-api -p sdkwork-router-news-app-api -p sdkwork-router-news-backend-api
 ```
 
 Expected: pass.
@@ -128,7 +130,7 @@ Expected: pass after exporter and gate match.
 ### Task 5: Regenerate SDKs And Verify Generated Families
 
 **Files:**
-- Generated under: `generated/openapi`
+- API inputs under: `apis/open-api/content`, `apis/app-api/content`, and `apis/backend-api/content`
 - Generated under: `sdks/sdkwork-news-sdk`
 - Generated under: `sdks/sdkwork-news-app-sdk`
 - Generated under: `sdks/sdkwork-news-backend-sdk`

@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
-const openPath = path.join(workspaceRoot, "generated", "openapi", "news-open-api.openapi.json");
-const appPath = path.join(workspaceRoot, "generated", "openapi", "news-app-api.openapi.json");
-const backendPath = path.join(workspaceRoot, "generated", "openapi", "news-backend-api.openapi.json");
+const openPath = path.join(workspaceRoot, "apis", "open-api", "content", "news-open-api.openapi.json");
+const appPath = path.join(workspaceRoot, "apis", "app-api", "content", "news-app-api.openapi.json");
+const backendPath = path.join(workspaceRoot, "apis", "backend-api", "content", "news-backend-api.openapi.json");
 
 function run(script, args) {
   const result = spawnSync("node", [path.join(workspaceRoot, script), ...args], {

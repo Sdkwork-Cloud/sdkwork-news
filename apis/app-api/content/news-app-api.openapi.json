@@ -1,0 +1,5650 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "SDKWork News App API",
+    "version": "1.0.0",
+    "x-sdkwork-owner": "sdkwork-news",
+    "x-sdkwork-api-authority": "sdkwork-news.app"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:18080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "news",
+      "description": "News API resources.",
+      "x-sdk-nested-resource-surface": true
+    }
+  ],
+  "paths": {
+    "/app/v3/api/news/categories": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News categories.list",
+        "operationId": "categories.list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsCategory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "categories",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News items.list",
+        "operationId": "items.list",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "items",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News items.retrieve",
+        "operationId": "items.retrieve",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "items",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/by_slug/{slug}": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News items.bySlug.retrieve",
+        "operationId": "items.bySlug.retrieve",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "items",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/overview": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News overview.retrieve",
+        "operationId": "overview.retrieve",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsOverview"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "overview",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/channels": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News channels.list",
+        "operationId": "channels.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsChannel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "channels",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/channels/{channelId}/feed": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News channels.feed.list",
+        "operationId": "channels.feed.list",
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFeedPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "channels",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/topics": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News topics.list",
+        "operationId": "topics.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsTopic"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "topics",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/topics/{topicId}/items": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News topics.items.list",
+        "operationId": "topics.items.list",
+        "parameters": [
+          {
+            "name": "topicId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItemPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "topics",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/feed/personalized": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News feed.personalized.list",
+        "operationId": "feed.personalized.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFeedPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "feed",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}/related": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News items.related.list",
+        "operationId": "items.related.list",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItemPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "items",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/trending": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News trending.list",
+        "operationId": "trending.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsTrendingMetric"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "trending",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/search": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News search.list",
+        "operationId": "search.list",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsSearchResultPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "search",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/search/suggestions": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News search.suggestions.list",
+        "operationId": "search.suggestions.list",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsSearchSuggestionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "search",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/events": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News events.create",
+        "operationId": "events.create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsRecommendationEventCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "events",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/favorites": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News favorites.list",
+        "operationId": "favorites.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFavoritePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "favorites",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}/favorites": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News favorites.create",
+        "operationId": "favorites.create",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFavorite"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "favorites",
+        "x-sdkwork-public": false
+      },
+      "delete": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News favorites.delete",
+        "operationId": "favorites.delete",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "favorites",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}/reactions": {
+      "put": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News reactions.upsert",
+        "operationId": "reactions.upsert",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsReactionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsReaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "reactions",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}/comments": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News comments.list",
+        "operationId": "comments.list",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsCommentPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "comments",
+        "x-sdkwork-public": false
+      },
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News comments.create",
+        "operationId": "comments.create",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsCommentCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsComment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "comments",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/reports": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News reports.create",
+        "operationId": "reports.create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsReportCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "reports",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/feedback": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News feedback.create",
+        "operationId": "feedback.create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsUserFeedbackCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "feedback",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/history": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News history.list",
+        "operationId": "history.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItemPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "history",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/follows": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News follows.list",
+        "operationId": "follows.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFollowPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "follows",
+        "x-sdkwork-public": false
+      },
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News follows.create",
+        "operationId": "follows.create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsFollowCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFollow"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "follows",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/follows/{followId}": {
+      "delete": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News follows.delete",
+        "operationId": "follows.delete",
+        "parameters": [
+          {
+            "name": "followId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "follows",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/interests": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News interests.list",
+        "operationId": "interests.list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsUserInterestSignalListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "interests",
+        "x-sdkwork-public": false
+      },
+      "put": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News interests.upsert",
+        "operationId": "interests.upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsUserInterestCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsUserInterestSignal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "interests",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/notification/subscriptions": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News notification.subscriptions.list",
+        "operationId": "notification.subscriptions.list",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsNotificationSubscriptionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "notification",
+        "x-sdkwork-public": false
+      },
+      "put": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News notification.subscriptions.upsert",
+        "operationId": "notification.subscriptions.upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsNotificationSubscriptionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsNotificationSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "notification",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/notification/subscriptions/{subscriptionId}": {
+      "delete": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News notification.subscriptions.delete",
+        "operationId": "notification.subscriptions.delete",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsApiResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "notification",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/alerts/breaking": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News alerts.breaking.list",
+        "operationId": "alerts.breaking.list",
+        "parameters": [
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsBreakingAlertListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "alerts",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/digests": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News digests.list",
+        "operationId": "digests.list",
+        "parameters": [
+          {
+            "name": "digest_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsDigestIssueListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "digests",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/items/{itemId}/trust": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News trust.item.retrieve",
+        "operationId": "trust.item.retrieve",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsItemTrustSnapshot"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "trust",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/fact_checks": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News factChecks.list",
+        "operationId": "factChecks.list",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "verdict",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsFactCheckListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "factChecks",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/corrections": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News corrections.list",
+        "operationId": "corrections.list",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "correction_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsCorrectionNoticeListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "corrections",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/live/events": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News live.events.list",
+        "operationId": "live.events.list",
+        "parameters": [
+          {
+            "name": "event_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsLiveEventListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "live",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/live/events/{eventId}": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News live.events.retrieve",
+        "operationId": "live.events.retrieve",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsLiveEvent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "live",
+        "x-sdkwork-public": false
+      }
+    },
+    "/app/v3/api/news/live/events/{eventId}/updates": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "News live.updates.list",
+        "operationId": "live.updates.list",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsLiveUpdateListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem detail",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AuthToken": [],
+            "AccessToken": []
+          }
+        ],
+        "x-sdkwork-owner": "sdkwork-news",
+        "x-sdkwork-api-authority": "sdkwork-news.app",
+        "x-sdkwork-domain": "news",
+        "x-sdkwork-resource": "live",
+        "x-sdkwork-public": false
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AuthToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "AccessToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Access-Token"
+      },
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "NewsApiResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "data": {}
+        }
+      },
+      "NewsCategory": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "title",
+          "priority",
+          "enabled"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NewsItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "categoryId",
+          "slug",
+          "title",
+          "summary",
+          "status",
+          "priority"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/NewsItemStatus"
+          },
+          "authorName": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "estimatedReadMinutes": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scheduledFor": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MediaResource": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "kind",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "image",
+              "video",
+              "audio",
+              "voice",
+              "document",
+              "archive",
+              "other"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "drive",
+              "external_url",
+              "provider_asset",
+              "generated"
+            ]
+          },
+          "uri": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "publicUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "altText": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "NewsChannel": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "title",
+          "type",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "editorial",
+              "algorithmic",
+              "topic",
+              "following",
+              "hot"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "archived"
+            ]
+          },
+          "priority": {
+            "type": "integer"
+          }
+        }
+      },
+      "NewsTopic": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "archived"
+            ]
+          },
+          "priority": {
+            "type": "integer"
+          }
+        }
+      },
+      "NewsSource": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "trustTier": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "homepageUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "NewsAuthor": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "displayName",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsFeedItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/NewsItem"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsFeedPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsFeedItem"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsItemPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsItem"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsCommentPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsComment"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsFavoritePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsFavorite"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsFollowPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsFollow"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsSearchResultPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "hasMore",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsSearchResult"
+            }
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "NewsSearchSuggestionListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsSearchSuggestion"
+        }
+      },
+      "NewsUserInterestSignalListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsUserInterestSignal"
+        }
+      },
+      "NewsFeedCandidateListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsFeedCandidate"
+        }
+      },
+      "NewsRecommendationEventCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "itemId",
+          "eventType",
+          "occurredAt"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "impression",
+              "click",
+              "dwell",
+              "complete",
+              "dismiss",
+              "share"
+            ]
+          },
+          "dwellMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsUserFeedbackCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId",
+          "feedbackType"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "item",
+              "source",
+              "author",
+              "topic",
+              "channel"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "feedbackType": {
+            "type": "string",
+            "enum": [
+              "not_interested",
+              "block_source",
+              "less_like_this",
+              "more_like_this",
+              "quality"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsFavorite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "userId",
+          "itemId",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsReactionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reactionType"
+        ],
+        "properties": {
+          "reactionType": {
+            "type": "string",
+            "enum": [
+              "like",
+              "dislike",
+              "laugh",
+              "sad",
+              "angry",
+              "wow"
+            ]
+          }
+        }
+      },
+      "NewsReaction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "userId",
+          "itemId",
+          "reactionType",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "reactionType": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsComment": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "itemId",
+          "userId",
+          "body",
+          "moderationStatus",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "moderationStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "hidden"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsCommentCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsReportCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId",
+          "reason"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "item",
+              "comment",
+              "media",
+              "source"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsFollow": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "userId",
+          "targetType",
+          "targetId",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsFollowCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsTrendingMetric": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "itemId",
+          "metricWindow",
+          "score",
+          "rank",
+          "computedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "metricWindow": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week"
+            ]
+          },
+          "score": {
+            "type": "integer"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsItemMetricSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "itemId",
+          "impressionCount",
+          "clickCount",
+          "shareCount",
+          "commentCount",
+          "favoriteCount",
+          "reactionCount",
+          "reportCount",
+          "hotScore",
+          "computedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "impressionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "clickCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "shareCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "commentCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "favoriteCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reactionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reportCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "hotScore": {
+            "type": "integer"
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsSearchResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item",
+          "score"
+        ],
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/NewsItem"
+          },
+          "score": {
+            "type": "number"
+          },
+          "highlight": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsSearchSuggestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "normalizedQuery",
+          "displayQuery",
+          "suggestionType",
+          "rank",
+          "score"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "suggestionType": {
+            "type": "string",
+            "enum": [
+              "hot",
+              "history",
+              "topic",
+              "source",
+              "correction"
+            ]
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "locale": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsSearchSuggestionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "normalizedQuery",
+          "displayQuery",
+          "suggestionType",
+          "rank",
+          "score",
+          "computedAt"
+        ],
+        "properties": {
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "suggestionType": {
+            "type": "string",
+            "enum": [
+              "hot",
+              "history",
+              "topic",
+              "source",
+              "correction"
+            ]
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsSearchEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "normalizedQuery",
+          "displayQuery",
+          "resultCount",
+          "occurredAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "normalizedQuery": {
+            "type": "string"
+          },
+          "displayQuery": {
+            "type": "string"
+          },
+          "resultCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "clickedItemId": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsUserInterestSignal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "userId",
+          "targetType",
+          "targetId",
+          "affinityScore",
+          "confidence",
+          "source",
+          "updatedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "affinityScore": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "integer"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "behavior",
+              "editorial",
+              "imported"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsUserInterestCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId",
+          "affinityScore",
+          "confidence",
+          "source"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "affinityScore": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "integer"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "behavior",
+              "editorial",
+              "imported"
+            ]
+          }
+        }
+      },
+      "NewsFeedCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "streamKey",
+          "itemId",
+          "score",
+          "reasonCode",
+          "generatedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "streamKey": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsFeedCandidateCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "streamKey",
+          "itemId",
+          "score",
+          "reasonCode",
+          "generatedAt"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "streamKey": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsNotificationSubscription": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "userId",
+          "targetType",
+          "targetId",
+          "channel",
+          "frequency",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "push",
+              "email",
+              "in_app",
+              "sms"
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "breaking",
+              "daily",
+              "weekly",
+              "silent"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "disabled"
+            ]
+          },
+          "quietStart": {
+            "type": "string"
+          },
+          "quietEnd": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsNotificationSubscriptionListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsNotificationSubscription"
+        }
+      },
+      "NewsNotificationSubscriptionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetType",
+          "targetId",
+          "channel",
+          "frequency"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "push",
+              "email",
+              "in_app",
+              "sms"
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "breaking",
+              "daily",
+              "weekly",
+              "silent"
+            ]
+          },
+          "quietStart": {
+            "type": "string"
+          },
+          "quietEnd": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsBreakingAlert": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "title",
+          "summary",
+          "severity",
+          "audienceType",
+          "priority",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "breaking",
+              "important",
+              "watch"
+            ]
+          },
+          "audienceType": {
+            "type": "string",
+            "enum": [
+              "all",
+              "subscribers",
+              "targeted"
+            ]
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "scheduled",
+              "published",
+              "cancelled",
+              "expired"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsBreakingAlertListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsBreakingAlert"
+        }
+      },
+      "NewsBreakingAlertCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "summary",
+          "severity",
+          "audienceType",
+          "priority"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "breaking",
+              "important",
+              "watch"
+            ]
+          },
+          "audienceType": {
+            "type": "string",
+            "enum": [
+              "all",
+              "subscribers",
+              "targeted"
+            ]
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "source",
+              "author",
+              "topic",
+              "channel",
+              "tag"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsDigestIssue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "digestKey",
+          "title",
+          "digestType",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "digestKey": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "digestType": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "topic",
+              "editorial"
+            ]
+          },
+          "audienceType": {
+            "type": "string",
+            "enum": [
+              "all",
+              "subscribers",
+              "targeted"
+            ]
+          },
+          "locale": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "scheduled",
+              "published",
+              "archived"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsDigestIssueListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsDigestIssue"
+        }
+      },
+      "NewsDigestIssueCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "digestKey",
+          "title",
+          "digestType"
+        ],
+        "properties": {
+          "digestKey": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "digestType": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "topic",
+              "editorial"
+            ]
+          },
+          "audienceType": {
+            "type": "string",
+            "enum": [
+              "all",
+              "subscribers",
+              "targeted"
+            ]
+          },
+          "locale": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsDigestItemCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "itemId",
+          "rank"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "section": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsSourceTrustProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "sourceId",
+          "trustScore",
+          "trustTier",
+          "credibilityStatus",
+          "correctionCount",
+          "reviewedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "trustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "trustTier": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "standard",
+              "watch",
+              "restricted"
+            ]
+          },
+          "credibilityStatus": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "unverified",
+              "disputed",
+              "restricted"
+            ]
+          },
+          "factCheckRating": {
+            "type": "string"
+          },
+          "correctionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reviewerUserId": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsSourceTrustProfileListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsSourceTrustProfile"
+        }
+      },
+      "NewsSourceTrustProfileCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceId",
+          "trustScore",
+          "trustTier",
+          "credibilityStatus",
+          "correctionCount",
+          "reviewedAt"
+        ],
+        "properties": {
+          "sourceId": {
+            "type": "string"
+          },
+          "trustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "trustTier": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "standard",
+              "watch",
+              "restricted"
+            ]
+          },
+          "credibilityStatus": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "unverified",
+              "disputed",
+              "restricted"
+            ]
+          },
+          "factCheckRating": {
+            "type": "string"
+          },
+          "correctionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reviewerUserId": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsFactCheck": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "claim",
+          "verdict",
+          "summary",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "claim": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "true",
+              "mostly_true",
+              "mixed",
+              "mostly_false",
+              "false",
+              "unverified"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "evidenceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "reviewerUserId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "archived"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsFactCheckListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsFactCheck"
+        }
+      },
+      "NewsFactCheckCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim",
+          "verdict",
+          "summary"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "claim": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "true",
+              "mostly_true",
+              "mixed",
+              "mostly_false",
+              "false",
+              "unverified"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "evidenceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "reviewerUserId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsCorrectionNotice": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "itemId",
+          "correctionType",
+          "title",
+          "body",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "correctionType": {
+            "type": "string",
+            "enum": [
+              "correction",
+              "clarification",
+              "retraction",
+              "update"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "actorUserId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "archived"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsCorrectionNoticeListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsCorrectionNotice"
+        }
+      },
+      "NewsCorrectionNoticeCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "itemId",
+          "correctionType",
+          "title",
+          "body"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "correctionType": {
+            "type": "string",
+            "enum": [
+              "correction",
+              "clarification",
+              "retraction",
+              "update"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "actorUserId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsItemTrustSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "itemId",
+          "trustScore",
+          "correctionCount",
+          "riskLevel",
+          "computedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "trustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "sourceTrustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "factCheckVerdict": {
+            "type": "string",
+            "enum": [
+              "true",
+              "mostly_true",
+              "mixed",
+              "mostly_false",
+              "false",
+              "unverified"
+            ]
+          },
+          "correctionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "riskLevel": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "unknown"
+            ]
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsItemTrustSnapshotCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trustScore",
+          "correctionCount",
+          "riskLevel",
+          "computedAt"
+        ],
+        "properties": {
+          "trustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "sourceTrustScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "factCheckVerdict": {
+            "type": "string",
+            "enum": [
+              "true",
+              "mostly_true",
+              "mixed",
+              "mostly_false",
+              "false",
+              "unverified"
+            ]
+          },
+          "correctionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "riskLevel": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "unknown"
+            ]
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsLiveEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "slug",
+          "title",
+          "summary",
+          "eventType",
+          "priority",
+          "status",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "developing_story",
+              "election",
+              "sports",
+              "market",
+              "weather",
+              "emergency"
+            ]
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+              "archived"
+            ]
+          },
+          "region": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsLiveEventListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsLiveEvent"
+        }
+      },
+      "NewsLiveEventCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "title",
+          "summary",
+          "eventType",
+          "priority"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "developing_story",
+              "election",
+              "sports",
+              "market",
+              "weather",
+              "emergency"
+            ]
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "region": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsLiveUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "liveEventId",
+          "body",
+          "updateType",
+          "importance",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "liveEventId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "updateType": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "video",
+              "quote",
+              "fact_check",
+              "correction"
+            ]
+          },
+          "importance": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "authorId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "archived"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsLiveUpdateListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NewsLiveUpdate"
+        }
+      },
+      "NewsLiveUpdateCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "body",
+          "updateType",
+          "importance"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "updateType": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "video",
+              "quote",
+              "fact_check",
+              "correction"
+            ]
+          },
+          "importance": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "authorId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsLiveEventItemCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "itemId",
+          "relationType",
+          "rank"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "relationType": {
+            "type": "string",
+            "enum": [
+              "source_article",
+              "background",
+              "analysis",
+              "timeline_context",
+              "related"
+            ]
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsModerationCase": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "targetType",
+          "targetId",
+          "reason",
+          "priority",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "reviewing",
+              "resolved",
+              "rejected"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsExperiment": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "experimentKey",
+          "title",
+          "surface",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "experimentKey": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "surface": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "active",
+              "paused",
+              "archived"
+            ]
+          },
+          "allocation": {
+            "type": "integer"
+          }
+        }
+      },
+      "NewsGenericCommand": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "NewsItemStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "published",
+          "scheduled",
+          "archived"
+        ]
+      },
+      "NewsOverview": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "NewsEditorialReadiness": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ready",
+          "canPublish",
+          "canSchedule",
+          "canArchive",
+          "canFeature",
+          "issues"
+        ],
+        "properties": {
+          "ready": {
+            "type": "boolean"
+          },
+          "canPublish": {
+            "type": "boolean"
+          },
+          "canSchedule": {
+            "type": "boolean"
+          },
+          "canArchive": {
+            "type": "boolean"
+          },
+          "canFeature": {
+            "type": "boolean"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NewsCategoryCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NewsItemCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "authorName": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NewsScheduleCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scheduledFor"
+        ],
+        "properties": {
+          "scheduledFor": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProblemDetail": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "type",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "detail": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  },
+  "x-sdkwork-owner": "sdkwork-news",
+  "x-sdkwork-api-authority": "sdkwork-news.app",
+  "x-sdkwork-domain": "news",
+  "x-sdkwork-standard-profile": "sdkwork-v3"
+}

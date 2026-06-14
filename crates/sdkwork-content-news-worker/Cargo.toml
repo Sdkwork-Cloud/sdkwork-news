@@ -1,0 +1,8 @@
+[package]
+name = "sdkwork-content-news-worker"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "sdkwork_content_news_worker"
+path = "src/lib.rs"

@@ -1,0 +1,8 @@
+[package]
+name = "sdkwork-router-news-app-api"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "sdkwork_router_news_app_api"
+path = "src/lib.rs"

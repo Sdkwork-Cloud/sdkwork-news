@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-const app = JSON.parse(readFileSync("generated/openapi/news-app-api.openapi.json", "utf8"));
-const backend = JSON.parse(readFileSync("generated/openapi/news-backend-api.openapi.json", "utf8"));
-const open = JSON.parse(readFileSync("generated/openapi/news-open-api.openapi.json", "utf8"));
+const app = JSON.parse(readFileSync("apis/app-api/content/news-app-api.openapi.json", "utf8"));
+const backend = JSON.parse(readFileSync("apis/backend-api/content/news-backend-api.openapi.json", "utf8"));
+const open = JSON.parse(readFileSync("apis/open-api/content/news-open-api.openapi.json", "utf8"));
 
 function operations(document) {
   return Object.entries(document.paths ?? {}).flatMap(([path, pathItem]) =>

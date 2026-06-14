@@ -1,4 +1,5 @@
 import type { SdkworkNewsCategory, SdkworkNewsItem } from "@sdkwork/news-contracts";
+export * from "./professional.ts";
 
 export interface SdkworkNewsListParams {
   categoryId?: string;

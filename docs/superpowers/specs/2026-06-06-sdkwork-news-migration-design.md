@@ -8,20 +8,20 @@
 
 - Move news PC React logic into `sdkwork-news`.
 - Add framework-independent TypeScript contracts, SDK ports, service, and runtime packages.
-- Add Rust core, SQLx storage contracts, SQL migrations, and HTTP route metadata.
-- Add owner-only OpenAPI 3.1.2 app/backend/open SDK inputs and SDK assembly manifests.
+- Add Rust service, SQLx repository contracts, SQL migrations, and surface-specific HTTP route crates.
+- Add owner-only OpenAPI 3.1.2 app/backend/open API inputs under `apis/` and SDK assembly manifests under `sdks/`.
 - Remove old appbase news package and catalog references after the new owner is present.
 
 ## Architecture
 
-The workspace follows the `sdkwork-commerce` extraction shape:
+The workspace follows the SDKWork standard project-root structure:
 
 - `packages/common/news/*` contains TypeScript contracts and service boundaries.
 - `apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react` contains user-facing PC React reusable logic.
-- `crates/sdkwork-news-core-rust` contains Rust domain contracts.
-- `crates/sdkwork-news-storage-sqlx-rust` owns tables, migration plan, and repository contracts.
-- `crates/sdkwork-news-http-rust` owns HTTP route metadata for `/app/v3/api/news/*` and `/backend/v3/api/news/*`.
-- `generated/openapi` stores owner-only OpenAPI inputs.
+- `crates/sdkwork-content-news-service` contains Rust business rules, domain contracts, and service ports.
+- `crates/sdkwork-content-news-repository-sqlx` owns tables, migration plan, and SQLx repository contracts.
+- `crates/sdkwork-router-news-open-api`, `crates/sdkwork-router-news-app-api`, and `crates/sdkwork-router-news-backend-api` own HTTP route metadata by surface.
+- `apis/open-api/content`, `apis/app-api/content`, and `apis/backend-api/content` store owner-only OpenAPI inputs.
 - `sdks/sdkwork-news-{sdk,app-sdk,backend-sdk}` store SDK assembly metadata and generation wrappers.
 
 ## API Surface

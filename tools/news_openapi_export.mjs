@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
-const outputDir = path.join(workspaceRoot, "generated", "openapi");
+const apiRoot = path.join(workspaceRoot, "apis");
 const OWNER = "sdkwork-news";
 const DOMAIN = "news";
 
@@ -1217,15 +1217,24 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 const docs = [
-  ["news-open-api.openapi.json", documentFor({ authority: "sdkwork-news.open", routes: openRoutes, serverUrl: "http://127.0.0.1:18082", title: "SDKWork News Open API" })],
-  ["news-app-api.openapi.json", documentFor({ authority: "sdkwork-news.app", routes: appRoutes, serverUrl: "http://127.0.0.1:18080", title: "SDKWork News App API" })],
-  ["news-backend-api.openapi.json", documentFor({ authority: "sdkwork-news.backend", routes: backendRoutes, serverUrl: "http://127.0.0.1:18080", title: "SDKWork News Backend API" })],
+  [
+    path.join(apiRoot, "open-api", "content", "news-open-api.openapi.json"),
+    documentFor({ authority: "sdkwork-news.open", routes: openRoutes, serverUrl: "http://127.0.0.1:18082", title: "SDKWork News Open API" }),
+  ],
+  [
+    path.join(apiRoot, "app-api", "content", "news-app-api.openapi.json"),
+    documentFor({ authority: "sdkwork-news.app", routes: appRoutes, serverUrl: "http://127.0.0.1:18080", title: "SDKWork News App API" }),
+  ],
+  [
+    path.join(apiRoot, "backend-api", "content", "news-backend-api.openapi.json"),
+    documentFor({ authority: "sdkwork-news.backend", routes: backendRoutes, serverUrl: "http://127.0.0.1:18080", title: "SDKWork News Backend API" }),
+  ],
 ];
 
 if (!args.check) {
-  mkdirSync(outputDir, { recursive: true });
-  for (const [fileName, document] of docs) {
-    writeFileSync(path.join(outputDir, fileName), `${JSON.stringify(document, null, 2)}\n`, "utf8");
+  for (const [filePath, document] of docs) {
+    mkdirSync(path.dirname(filePath), { recursive: true });
+    writeFileSync(filePath, `${JSON.stringify(document, null, 2)}\n`, "utf8");
   }
 }
 
