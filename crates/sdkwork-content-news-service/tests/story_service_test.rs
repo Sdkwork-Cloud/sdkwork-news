@@ -1,10 +1,13 @@
+mod test_helpers;
+
 use sdkwork_content_news_service::service::story_service::{
     AttachStoryItemCommand, CreateStoryCommand, NewsStoryService, UpdateStoryCommand,
 };
 
-#[test]
-fn create_story_requires_tenant_id() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn create_story_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
         tenant_id: "".to_string(),
         organization_id: None,
@@ -21,9 +24,10 @@ fn create_story_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn create_story_requires_title() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn create_story_requires_title() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
         tenant_id: "t1".to_string(),
         organization_id: None,
@@ -40,9 +44,10 @@ fn create_story_requires_title() {
     assert_eq!(result.unwrap_err().code, "validation/missing-title");
 }
 
-#[test]
-fn create_story_valid_command_passes() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn create_story_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
         tenant_id: "t1".to_string(),
         organization_id: Some("org1".to_string()),
@@ -57,8 +62,8 @@ fn create_story_valid_command_passes() {
     assert!(service.validate_create_story(&cmd).is_ok());
 }
 
-#[test]
-fn generate_slug_from_title() {
+#[tokio::test]
+async fn generate_slug_from_title() {
     assert_eq!(
         NewsStoryService::generate_slug("Hello World"),
         "hello-world"
@@ -70,9 +75,10 @@ fn generate_slug_from_title() {
     assert_eq!(NewsStoryService::generate_slug("  spaces  "), "spaces");
 }
 
-#[test]
-fn update_story_requires_non_negative_version() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn update_story_requires_non_negative_version() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = UpdateStoryCommand {
         title: Some("Updated".to_string()),
         summary: None,
@@ -86,9 +92,10 @@ fn update_story_requires_non_negative_version() {
     assert_eq!(result.unwrap_err().code, "validation/invalid-version");
 }
 
-#[test]
-fn update_story_valid_command_passes() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn update_story_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = UpdateStoryCommand {
         title: Some("Updated".to_string()),
         summary: Some("New summary".to_string()),
@@ -100,37 +107,42 @@ fn update_story_valid_command_passes() {
     assert!(service.validate_update_story(&cmd).is_ok());
 }
 
-#[test]
-fn publish_story_draft_can_be_published() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn publish_story_draft_can_be_published() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     assert!(service.validate_publish_story("draft").is_ok());
 }
 
-#[test]
-fn publish_story_review_can_be_published() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn publish_story_review_can_be_published() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     assert!(service.validate_publish_story("review").is_ok());
 }
 
-#[test]
-fn publish_story_already_published_fails() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn publish_story_already_published_fails() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let result = service.validate_publish_story("published");
     assert!(result.is_err());
     assert_eq!(result.unwrap_err().code, "conflict/already-published");
 }
 
-#[test]
-fn publish_story_closed_fails() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn publish_story_closed_fails() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let result = service.validate_publish_story("closed");
     assert!(result.is_err());
     assert_eq!(result.unwrap_err().code, "conflict/story-closed");
 }
 
-#[test]
-fn attach_item_requires_item_id() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn attach_item_requires_item_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = AttachStoryItemCommand {
         item_id: "".to_string(),
         relation_type: None,
@@ -143,9 +155,10 @@ fn attach_item_requires_item_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-item");
 }
 
-#[test]
-fn attach_item_to_closed_story_fails() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn attach_item_to_closed_story_fails() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = AttachStoryItemCommand {
         item_id: "item1".to_string(),
         relation_type: Some("primary".to_string()),
@@ -158,9 +171,10 @@ fn attach_item_to_closed_story_fails() {
     assert_eq!(result.unwrap_err().code, "conflict/story-closed");
 }
 
-#[test]
-fn attach_item_to_draft_story_passes() {
-    let service = NewsStoryService::new();
+#[tokio::test]
+async fn attach_item_to_draft_story_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
     let cmd = AttachStoryItemCommand {
         item_id: "item1".to_string(),
         relation_type: Some("primary".to_string()),
@@ -171,26 +185,49 @@ fn attach_item_to_draft_story_passes() {
     assert!(service.validate_attach_item("draft", &cmd).is_ok());
 }
 
-#[test]
-fn determine_timeline_type_publish_transition() {
+#[tokio::test]
+async fn determine_timeline_type_publish_transition() {
     assert_eq!(
         NewsStoryService::determine_timeline_type("draft", "published"),
         "publish"
     );
 }
 
-#[test]
-fn determine_timeline_type_close_transition() {
+#[tokio::test]
+async fn determine_timeline_type_close_transition() {
     assert_eq!(
         NewsStoryService::determine_timeline_type("published", "closed"),
         "close"
     );
 }
 
-#[test]
-fn determine_timeline_type_review_transition() {
+#[tokio::test]
+async fn determine_timeline_type_review_transition() {
     assert_eq!(
         NewsStoryService::determine_timeline_type("draft", "review"),
         "submit_review"
     );
+}
+
+#[tokio::test]
+async fn create_story_persists_to_database() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsStoryService::new(repo);
+    let cmd = CreateStoryCommand {
+        tenant_id: "t1".to_string(),
+        organization_id: Some("org1".to_string()),
+        title: "Breaking News".to_string(),
+        slug: None,
+        summary: Some("A breaking story".to_string()),
+        story_type: Some("developing".to_string()),
+        locale: Some("en".to_string()),
+        region: Some("US".to_string()),
+        actor_user_id: Some("user1".to_string()),
+    };
+    
+    let result = service.create_story(cmd).await;
+    assert!(result.is_ok());
+    let story_result = result.unwrap();
+    assert_eq!(story_result.status, "draft");
+    assert!(!story_result.id.is_empty());
 }

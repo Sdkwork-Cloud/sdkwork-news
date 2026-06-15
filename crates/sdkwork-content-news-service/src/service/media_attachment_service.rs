@@ -1,4 +1,8 @@
-pub struct NewsMediaAttachmentService;
+use crate::repository::professional_repository::NewsProfessionalRepository;
+
+pub struct NewsMediaAttachmentService {
+    repo: NewsProfessionalRepository,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AttachDriveMediaCommand {
@@ -43,8 +47,8 @@ const VALID_MEDIA_ROLES: &[&str] = &[
 ];
 
 impl NewsMediaAttachmentService {
-    pub fn new() -> Self {
-        Self
+    pub fn new(repo: NewsProfessionalRepository) -> Self {
+        Self { repo }
     }
 
     pub fn validate_attach_drive_media(
@@ -96,10 +100,8 @@ impl NewsMediaAttachmentService {
     pub fn validate_media_reference(media_id: &str) -> bool {
         !media_id.trim().is_empty() && !media_id.starts_with("http")
     }
-}
 
-impl Default for NewsMediaAttachmentService {
-    fn default() -> Self {
-        Self::new()
+    pub fn repo(&self) -> &NewsProfessionalRepository {
+        &self.repo
     }
 }

@@ -6,6 +6,7 @@ members = [
     "crates/sdkwork-router-news-open-api",
     "crates/sdkwork-router-news-app-api",
     "crates/sdkwork-router-news-backend-api",
+    "crates/sdkwork-news-api-server",
 ]
 resolver = "2"
 
@@ -21,4 +22,5 @@ sdkwork-content-news-worker = { path = "crates/sdkwork-content-news-worker" }
 sdkwork-router-news-open-api = { path = "crates/sdkwork-router-news-open-api" }
 sdkwork-router-news-app-api = { path = "crates/sdkwork-router-news-app-api" }
 sdkwork-router-news-backend-api = { path = "crates/sdkwork-router-news-backend-api" }
+sdkwork-news-api-server = { path = "crates/sdkwork-news-api-server" }
 

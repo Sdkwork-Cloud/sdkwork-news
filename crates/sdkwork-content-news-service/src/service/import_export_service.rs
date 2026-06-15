@@ -1,4 +1,8 @@
-pub struct NewsImportExportService;
+use crate::repository::professional_repository::{NewsProfessionalRepository, NewNewsImportJob, NewNewsExportJob};
+
+pub struct NewsImportExportService {
+    repo: NewsProfessionalRepository,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ImportNinjsCommand {
@@ -53,8 +57,8 @@ impl std::fmt::Display for ImportExportError {
 impl std::error::Error for ImportExportError {}
 
 impl NewsImportExportService {
-    pub fn new() -> Self {
-        Self
+    pub fn new(repo: NewsProfessionalRepository) -> Self {
+        Self { repo }
     }
 
     pub fn validate_import_ninjs(
@@ -76,6 +80,46 @@ impl NewsImportExportService {
         Ok(())
     }
 
+    pub async fn import_ninjs(
+        &self,
+        command: ImportNinjsCommand,
+        now: &str,
+    ) -> Result<ImportExportResult, ImportExportError> {
+        self.validate_import_ninjs(&command)?;
+
+        let payload_hash = Self::compute_payload_hash(&command.payload);
+        let idempotency_key =
+            Self::compute_idempotency_key(&command.tenant_id, "ninjs", &payload_hash);
+        let id = uuid::Uuid::new_v4().to_string();
+
+        let input = NewNewsImportJob {
+            id: id.clone(),
+            tenant_id: command.tenant_id,
+            organization_id: command.organization_id.unwrap_or_default(),
+            source_id: command.source_id,
+            import_format: "ninjs".to_string(),
+            provider: command.provider.unwrap_or_else(|| "manual".to_string()),
+            idempotency_key,
+            provider_payload_hash: payload_hash,
+            now: now.to_string(),
+        };
+
+        self.repo
+            .create_import_job(input)
+            .await
+            .map_err(|e| ImportExportError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
+
+        Ok(ImportExportResult {
+            id,
+            status: "pending".to_string(),
+            item_count: 0,
+            message: Some("Import job created successfully".to_string()),
+        })
+    }
+
     pub fn validate_import_newsml_g2(
         &self,
         command: &ImportNewsmlG2Command,
@@ -95,6 +139,46 @@ impl NewsImportExportService {
         Ok(())
     }
 
+    pub async fn import_newsml_g2(
+        &self,
+        command: ImportNewsmlG2Command,
+        now: &str,
+    ) -> Result<ImportExportResult, ImportExportError> {
+        self.validate_import_newsml_g2(&command)?;
+
+        let payload_hash = Self::compute_payload_hash(&command.payload);
+        let idempotency_key =
+            Self::compute_idempotency_key(&command.tenant_id, "newsml_g2", &payload_hash);
+        let id = uuid::Uuid::new_v4().to_string();
+
+        let input = NewNewsImportJob {
+            id: id.clone(),
+            tenant_id: command.tenant_id,
+            organization_id: command.organization_id.unwrap_or_default(),
+            source_id: command.source_id,
+            import_format: "newsml_g2".to_string(),
+            provider: command.provider.unwrap_or_else(|| "manual".to_string()),
+            idempotency_key,
+            provider_payload_hash: payload_hash,
+            now: now.to_string(),
+        };
+
+        self.repo
+            .create_import_job(input)
+            .await
+            .map_err(|e| ImportExportError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
+
+        Ok(ImportExportResult {
+            id,
+            status: "pending".to_string(),
+            item_count: 0,
+            message: Some("Import job created successfully".to_string()),
+        })
+    }
+
     pub fn validate_export(&self, command: &ExportCommand) -> Result<(), ImportExportError> {
         if command.tenant_id.trim().is_empty() {
             return Err(ImportExportError {
@@ -111,6 +195,42 @@ impl NewsImportExportService {
         Ok(())
     }
 
+    pub async fn export_data(
+        &self,
+        command: ExportCommand,
+        now: &str,
+    ) -> Result<ImportExportResult, ImportExportError> {
+        self.validate_export(&command)?;
+
+        let id = uuid::Uuid::new_v4().to_string();
+
+        let input = NewNewsExportJob {
+            id: id.clone(),
+            tenant_id: command.tenant_id,
+            organization_id: command.organization_id.unwrap_or_default(),
+            export_format: command.format,
+            filter_json: command.filter_json,
+            destination_uri: command.destination_uri,
+            requested_by_user_id: command.actor_user_id,
+            now: now.to_string(),
+        };
+
+        self.repo
+            .create_export_job(input)
+            .await
+            .map_err(|e| ImportExportError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
+
+        Ok(ImportExportResult {
+            id,
+            status: "pending".to_string(),
+            item_count: 0,
+            message: Some("Export job created successfully".to_string()),
+        })
+    }
+
     pub fn compute_payload_hash(payload: &str) -> String {
         let mut hash: u64 = 0xcbf29ce484222325;
         for byte in payload.bytes() {
@@ -122,11 +242,5 @@ impl NewsImportExportService {
 
     pub fn compute_idempotency_key(tenant_id: &str, format: &str, payload_hash: &str) -> String {
         format!("import_{}_{}_{}", tenant_id, format, payload_hash)
-    }
-}
-
-impl Default for NewsImportExportService {
-    fn default() -> Self {
-        Self::new()
     }
 }

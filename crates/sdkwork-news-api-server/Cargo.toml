@@ -1,0 +1,24 @@
+[package]
+name = "sdkwork-news-api-server"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "news-api-server"
+path = "src/main.rs"
+
+[dependencies]
+sdkwork-content-news-service = { path = "../sdkwork-content-news-service" }
+sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
+axum = { version = "0.8", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite"] }
+anyhow = "1"

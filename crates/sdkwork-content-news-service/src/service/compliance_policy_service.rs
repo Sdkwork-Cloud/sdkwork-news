@@ -1,4 +1,8 @@
-pub struct NewsCompliancePolicyService;
+use crate::repository::professional_repository::NewsProfessionalRepository;
+
+pub struct NewsCompliancePolicyService {
+    repo: NewsProfessionalRepository,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApplyLegalHoldCommand {
@@ -42,8 +46,8 @@ impl std::fmt::Display for ComplianceError {
 impl std::error::Error for ComplianceError {}
 
 impl NewsCompliancePolicyService {
-    pub fn new() -> Self {
-        Self
+    pub fn new(repo: NewsProfessionalRepository) -> Self {
+        Self { repo }
     }
 
     pub fn validate_apply_legal_hold(
@@ -110,10 +114,8 @@ impl NewsCompliancePolicyService {
     pub fn compute_retention_expiry(created_at: &str, retention_days: i64) -> String {
         format!("{}+{}d", created_at, retention_days)
     }
-}
 
-impl Default for NewsCompliancePolicyService {
-    fn default() -> Self {
-        Self::new()
+    pub fn repo(&self) -> &NewsProfessionalRepository {
+        &self.repo
     }
 }

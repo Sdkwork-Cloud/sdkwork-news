@@ -1,10 +1,13 @@
+mod test_helpers;
+
 use sdkwork_content_news_service::service::compliance_policy_service::{
     ApplyLegalHoldCommand, EvaluateRetentionPolicyCommand, NewsCompliancePolicyService,
 };
 
-#[test]
-fn apply_legal_hold_requires_tenant_id() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn apply_legal_hold_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
         tenant_id: "".to_string(),
         hold_reason: "Litigation".to_string(),
@@ -18,9 +21,10 @@ fn apply_legal_hold_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn apply_legal_hold_requires_reason() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn apply_legal_hold_requires_reason() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
         tenant_id: "t1".to_string(),
         hold_reason: "".to_string(),
@@ -34,9 +38,10 @@ fn apply_legal_hold_requires_reason() {
     assert_eq!(result.unwrap_err().code, "validation/missing-reason");
 }
 
-#[test]
-fn apply_legal_hold_requires_target() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn apply_legal_hold_requires_target() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
         tenant_id: "t1".to_string(),
         hold_reason: "Litigation".to_string(),
@@ -50,9 +55,10 @@ fn apply_legal_hold_requires_target() {
     assert_eq!(result.unwrap_err().code, "validation/missing-target");
 }
 
-#[test]
-fn apply_legal_hold_valid_command_passes() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn apply_legal_hold_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
         tenant_id: "t1".to_string(),
         hold_reason: "Pending litigation case #123".to_string(),
@@ -64,9 +70,10 @@ fn apply_legal_hold_valid_command_passes() {
     assert!(service.validate_apply_legal_hold(&cmd).is_ok());
 }
 
-#[test]
-fn evaluate_retention_requires_tenant_id() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_retention_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
         tenant_id: "".to_string(),
         target_type: "item".to_string(),
@@ -78,9 +85,10 @@ fn evaluate_retention_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn evaluate_retention_requires_target_type() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_retention_requires_target_type() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
         tenant_id: "t1".to_string(),
         target_type: "".to_string(),
@@ -92,9 +100,10 @@ fn evaluate_retention_requires_target_type() {
     assert_eq!(result.unwrap_err().code, "validation/missing-target-type");
 }
 
-#[test]
-fn evaluate_retention_requires_target_id() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_retention_requires_target_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
         tenant_id: "t1".to_string(),
         target_type: "item".to_string(),
@@ -106,9 +115,10 @@ fn evaluate_retention_requires_target_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-target-id");
 }
 
-#[test]
-fn evaluate_retention_valid_command_passes() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_retention_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
         tenant_id: "t1".to_string(),
         target_type: "story".to_string(),
@@ -118,47 +128,51 @@ fn evaluate_retention_valid_command_passes() {
     assert!(service.validate_evaluate_retention(&cmd).is_ok());
 }
 
-#[test]
-fn evaluate_deletion_eligibility_with_legal_hold() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_deletion_eligibility_with_legal_hold() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let (can_delete, can_archive) = service.evaluate_deletion_eligibility(true, true, true);
     assert!(!can_delete);
     assert!(!can_archive);
 }
 
-#[test]
-fn evaluate_deletion_eligibility_without_hold_retention_expired() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_deletion_eligibility_without_hold_retention_expired() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let (can_delete, can_archive) = service.evaluate_deletion_eligibility(false, true, false);
     assert!(can_delete);
     assert!(can_archive);
 }
 
-#[test]
-fn evaluate_deletion_eligibility_without_hold_retention_not_expired() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_deletion_eligibility_without_hold_retention_not_expired() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let (can_delete, can_archive) = service.evaluate_deletion_eligibility(false, false, true);
     assert!(!can_delete);
     assert!(can_archive);
 }
 
-#[test]
-fn evaluate_deletion_eligibility_archived_no_hold() {
-    let service = NewsCompliancePolicyService::new();
+#[tokio::test]
+async fn evaluate_deletion_eligibility_archived_no_hold() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsCompliancePolicyService::new(repo);
     let (can_delete, can_archive) = service.evaluate_deletion_eligibility(false, true, true);
     assert!(can_delete);
     assert!(can_archive);
 }
 
-#[test]
-fn compute_retention_expiry_format() {
+#[tokio::test]
+async fn compute_retention_expiry_format() {
     let expiry = NewsCompliancePolicyService::compute_retention_expiry("2026-01-01T00:00:00Z", 365);
     assert!(expiry.contains("2026-01-01T00:00:00Z"));
     assert!(expiry.contains("365"));
 }
 
-#[test]
-fn compute_retention_expiry_zero_days() {
+#[tokio::test]
+async fn compute_retention_expiry_zero_days() {
     let expiry = NewsCompliancePolicyService::compute_retention_expiry("2026-06-01T00:00:00Z", 0);
     assert!(expiry.contains("+0d"));
 }

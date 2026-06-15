@@ -1,10 +1,13 @@
+mod test_helpers;
+
 use sdkwork_content_news_service::service::import_export_service::{
     ExportCommand, ImportNewsmlG2Command, ImportNinjsCommand, NewsImportExportService,
 };
 
-#[test]
-fn import_ninjs_requires_tenant_id() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_ninjs_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNinjsCommand {
         tenant_id: "".to_string(),
         organization_id: None,
@@ -18,9 +21,10 @@ fn import_ninjs_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn import_ninjs_requires_payload() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_ninjs_requires_payload() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNinjsCommand {
         tenant_id: "t1".to_string(),
         organization_id: None,
@@ -34,24 +38,25 @@ fn import_ninjs_requires_payload() {
     assert_eq!(result.unwrap_err().code, "validation/missing-payload");
 }
 
-#[test]
-fn import_ninjs_valid_command_passes() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_ninjs_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNinjsCommand {
         tenant_id: "t1".to_string(),
         organization_id: Some("org1".to_string()),
         source_id: Some("source1".to_string()),
         provider: Some("reuters".to_string()),
-        payload: r#"{"headlines":[{"value":"Breaking News"}],"body_text":"Content here"}"#
-            .to_string(),
+        payload: r#"{"headlines":[{"value":"Breaking News"}],"body_text":"Content here"}"#.to_string(),
         actor_user_id: Some("user1".to_string()),
     };
     assert!(service.validate_import_ninjs(&cmd).is_ok());
 }
 
-#[test]
-fn import_newsml_g2_requires_tenant_id() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_newsml_g2_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNewsmlG2Command {
         tenant_id: "".to_string(),
         organization_id: None,
@@ -65,9 +70,10 @@ fn import_newsml_g2_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn import_newsml_g2_requires_payload() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_newsml_g2_requires_payload() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNewsmlG2Command {
         tenant_id: "t1".to_string(),
         organization_id: None,
@@ -81,9 +87,10 @@ fn import_newsml_g2_requires_payload() {
     assert_eq!(result.unwrap_err().code, "validation/missing-payload");
 }
 
-#[test]
-fn import_newsml_g2_valid_command_passes() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn import_newsml_g2_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ImportNewsmlG2Command {
         tenant_id: "t1".to_string(),
         organization_id: Some("org1".to_string()),
@@ -95,9 +102,10 @@ fn import_newsml_g2_valid_command_passes() {
     assert!(service.validate_import_newsml_g2(&cmd).is_ok());
 }
 
-#[test]
-fn export_requires_tenant_id() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn export_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
         tenant_id: "".to_string(),
         organization_id: None,
@@ -111,9 +119,10 @@ fn export_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn export_requires_valid_format() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn export_requires_valid_format() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
         tenant_id: "t1".to_string(),
         organization_id: None,
@@ -127,9 +136,10 @@ fn export_requires_valid_format() {
     assert_eq!(result.unwrap_err().code, "validation/unsupported-format");
 }
 
-#[test]
-fn export_ninjs_valid_command_passes() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn export_ninjs_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
         tenant_id: "t1".to_string(),
         organization_id: Some("org1".to_string()),
@@ -141,9 +151,10 @@ fn export_ninjs_valid_command_passes() {
     assert!(service.validate_export(&cmd).is_ok());
 }
 
-#[test]
-fn export_schema_org_valid_command_passes() {
-    let service = NewsImportExportService::new();
+#[tokio::test]
+async fn export_schema_org_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
         tenant_id: "t1".to_string(),
         organization_id: None,
@@ -155,22 +166,22 @@ fn export_schema_org_valid_command_passes() {
     assert!(service.validate_export(&cmd).is_ok());
 }
 
-#[test]
-fn compute_payload_hash_deterministic() {
+#[tokio::test]
+async fn compute_payload_hash_deterministic() {
     let hash1 = NewsImportExportService::compute_payload_hash("test payload");
     let hash2 = NewsImportExportService::compute_payload_hash("test payload");
     assert_eq!(hash1, hash2);
 }
 
-#[test]
-fn compute_payload_hash_different_for_different_input() {
+#[tokio::test]
+async fn compute_payload_hash_different_for_different_input() {
     let hash1 = NewsImportExportService::compute_payload_hash("payload1");
     let hash2 = NewsImportExportService::compute_payload_hash("payload2");
     assert_ne!(hash1, hash2);
 }
 
-#[test]
-fn compute_idempotency_key_format() {
+#[tokio::test]
+async fn compute_idempotency_key_format() {
     let key = NewsImportExportService::compute_idempotency_key("t1", "ninjs", "hash123");
     assert!(key.contains("t1"));
     assert!(key.contains("ninjs"));

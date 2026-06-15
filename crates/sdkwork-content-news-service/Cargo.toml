@@ -7,3 +7,11 @@ edition.workspace = true
 name = "sdkwork_content_news_service"
 path = "src/lib.rs"
 
+[dependencies]
+sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite"] }

@@ -1,4 +1,8 @@
-pub struct NewsFeedPersonalizationService;
+use crate::repository::professional_repository::NewsProfessionalRepository;
+
+pub struct NewsFeedPersonalizationService {
+    repo: NewsProfessionalRepository,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FeedQuery {
@@ -49,8 +53,8 @@ impl std::fmt::Display for PersonalizationError {
 impl std::error::Error for PersonalizationError {}
 
 impl NewsFeedPersonalizationService {
-    pub fn new() -> Self {
-        Self
+    pub fn new(repo: NewsProfessionalRepository) -> Self {
+        Self { repo }
     }
 
     pub fn validate_feed_query(&self, query: &FeedQuery) -> Result<(), PersonalizationError> {
@@ -106,10 +110,8 @@ impl NewsFeedPersonalizationService {
             None
         }
     }
-}
 
-impl Default for NewsFeedPersonalizationService {
-    fn default() -> Self {
-        Self::new()
+    pub fn repo(&self) -> &NewsProfessionalRepository {
+        &self.repo
     }
 }

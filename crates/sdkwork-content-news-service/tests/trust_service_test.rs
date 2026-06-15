@@ -1,10 +1,13 @@
+mod test_helpers;
+
 use sdkwork_content_news_service::service::trust_service::{
     NewsTrustService, UpsertC2paProvenanceCommand, UpsertItemRightsCommand,
 };
 
-#[test]
-fn upsert_rights_requires_tenant_id() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_rights_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertItemRightsCommand {
         tenant_id: "".to_string(),
         item_id: "item1".to_string(),
@@ -21,9 +24,10 @@ fn upsert_rights_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn upsert_rights_requires_item_id() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_rights_requires_item_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertItemRightsCommand {
         tenant_id: "t1".to_string(),
         item_id: "".to_string(),
@@ -40,9 +44,10 @@ fn upsert_rights_requires_item_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-item");
 }
 
-#[test]
-fn upsert_rights_requires_valid_status() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_rights_requires_valid_status() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertItemRightsCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -59,9 +64,10 @@ fn upsert_rights_requires_valid_status() {
     assert_eq!(result.unwrap_err().code, "validation/invalid-rights-status");
 }
 
-#[test]
-fn upsert_rights_valid_statuses_pass() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_rights_valid_statuses_pass() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     for status in &[
         "draft",
         "cleared",
@@ -89,9 +95,10 @@ fn upsert_rights_valid_statuses_pass() {
     }
 }
 
-#[test]
-fn upsert_c2pa_requires_tenant_id() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "".to_string(),
         item_id: "item1".to_string(),
@@ -106,9 +113,10 @@ fn upsert_c2pa_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn upsert_c2pa_requires_item_id() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_requires_item_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "t1".to_string(),
         item_id: "".to_string(),
@@ -123,9 +131,10 @@ fn upsert_c2pa_requires_item_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-item");
 }
 
-#[test]
-fn upsert_c2pa_requires_valid_status() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_requires_valid_status() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -143,9 +152,10 @@ fn upsert_c2pa_requires_valid_status() {
     );
 }
 
-#[test]
-fn upsert_c2pa_verified_requires_manifest_hash() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_verified_requires_manifest_hash() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -160,9 +170,10 @@ fn upsert_c2pa_verified_requires_manifest_hash() {
     assert_eq!(result.unwrap_err().code, "validation/missing-manifest-hash");
 }
 
-#[test]
-fn upsert_c2pa_verified_with_hash_passes() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_verified_with_hash_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -175,9 +186,10 @@ fn upsert_c2pa_verified_with_hash_passes() {
     assert!(service.validate_upsert_c2pa_provenance(&cmd).is_ok());
 }
 
-#[test]
-fn upsert_c2pa_unverified_passes_without_hash() {
-    let service = NewsTrustService::new();
+#[tokio::test]
+async fn upsert_c2pa_unverified_passes_without_hash() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -190,63 +202,63 @@ fn upsert_c2pa_unverified_passes_without_hash() {
     assert!(service.validate_upsert_c2pa_provenance(&cmd).is_ok());
 }
 
-#[test]
-fn compute_risk_level_high_for_low_trust() {
+#[tokio::test]
+async fn compute_risk_level_high_for_low_trust() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(10), None, 0),
         "high"
     );
 }
 
-#[test]
-fn compute_risk_level_high_for_false_verdict() {
+#[tokio::test]
+async fn compute_risk_level_high_for_false_verdict() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(90), Some("false"), 0),
         "high"
     );
 }
 
-#[test]
-fn compute_risk_level_high_for_many_corrections() {
+#[tokio::test]
+async fn compute_risk_level_high_for_many_corrections() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(90), None, 5),
         "high"
     );
 }
 
-#[test]
-fn compute_risk_level_medium_for_moderate_trust() {
+#[tokio::test]
+async fn compute_risk_level_medium_for_moderate_trust() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(30), None, 0),
         "medium"
     );
 }
 
-#[test]
-fn compute_risk_level_medium_for_mixed_verdict() {
+#[tokio::test]
+async fn compute_risk_level_medium_for_mixed_verdict() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(90), Some("mixed"), 0),
         "medium"
     );
 }
 
-#[test]
-fn compute_risk_level_medium_for_one_correction() {
+#[tokio::test]
+async fn compute_risk_level_medium_for_one_correction() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(90), None, 1),
         "medium"
     );
 }
 
-#[test]
-fn compute_risk_level_low_for_high_trust() {
+#[tokio::test]
+async fn compute_risk_level_low_for_high_trust() {
     assert_eq!(
         NewsTrustService::compute_risk_level(Some(90), None, 0),
         "low"
     );
 }
 
-#[test]
-fn compute_risk_level_low_for_default() {
+#[tokio::test]
+async fn compute_risk_level_low_for_default() {
     assert_eq!(NewsTrustService::compute_risk_level(None, None, 0), "low");
 }

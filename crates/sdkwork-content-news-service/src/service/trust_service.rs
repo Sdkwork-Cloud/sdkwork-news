@@ -1,4 +1,8 @@
-pub struct NewsTrustService;
+use crate::repository::professional_repository::{NewsProfessionalRepository, NewNewsItemRights, NewNewsC2paProvenance};
+
+pub struct NewsTrustService {
+    repo: NewsProfessionalRepository,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UpsertItemRightsCommand {
@@ -58,8 +62,8 @@ const VALID_PROVENANCE_STATUSES: &[&str] =
     &["unverified", "verified", "failed", "tampered", "expired"];
 
 impl NewsTrustService {
-    pub fn new() -> Self {
-        Self
+    pub fn new(repo: NewsProfessionalRepository) -> Self {
+        Self { repo }
     }
 
     pub fn validate_upsert_rights(
@@ -88,6 +92,38 @@ impl NewsTrustService {
             });
         }
         Ok(())
+    }
+
+    pub async fn upsert_item_rights(
+        &self,
+        command: UpsertItemRightsCommand,
+        now: &str,
+    ) -> Result<TrustResult, TrustError> {
+        self.validate_upsert_rights(&command)?;
+
+        let input = NewNewsItemRights {
+            id: uuid::Uuid::new_v4().to_string(),
+            tenant_id: command.tenant_id,
+            item_id: command.item_id.clone(),
+            rights_status: command.rights_status,
+            copyright_holder: command.copyright_holder,
+            license_code: command.license_code,
+            embargo_until: command.embargo_until,
+            usage_terms: command.usage_terms,
+            geography_scope: command.geography_scope,
+            now: now.to_string(),
+        };
+
+        self.repo.upsert_item_rights(input).await.map_err(|e| TrustError {
+            code: "storage/error",
+            message: e.to_string(),
+        })?;
+
+        Ok(TrustResult {
+            id: command.item_id,
+            status: "upserted".to_string(),
+            message: Some("Item rights upserted successfully".to_string()),
+        })
     }
 
     pub fn validate_upsert_c2pa_provenance(
@@ -128,6 +164,37 @@ impl NewsTrustService {
         Ok(())
     }
 
+    pub async fn upsert_c2pa_provenance(
+        &self,
+        command: UpsertC2paProvenanceCommand,
+        now: &str,
+    ) -> Result<TrustResult, TrustError> {
+        self.validate_upsert_c2pa_provenance(&command)?;
+
+        let input = NewNewsC2paProvenance {
+            id: uuid::Uuid::new_v4().to_string(),
+            tenant_id: command.tenant_id,
+            item_id: command.item_id.clone(),
+            media_id: None,
+            provenance_status: command.provenance_status,
+            manifest_uri: command.manifest_uri,
+            manifest_hash: command.manifest_hash,
+            signer: command.signer,
+            now: now.to_string(),
+        };
+
+        self.repo.upsert_c2pa_provenance(input).await.map_err(|e| TrustError {
+            code: "storage/error",
+            message: e.to_string(),
+        })?;
+
+        Ok(TrustResult {
+            id: command.item_id,
+            status: "upserted".to_string(),
+            message: Some("C2PA provenance upserted successfully".to_string()),
+        })
+    }
+
     pub fn compute_risk_level(
         source_trust_score: Option<i64>,
         fact_check_verdict: Option<&str>,
@@ -143,11 +210,5 @@ impl NewsTrustService {
             (_, _, c) if c >= 1 => "medium",
             _ => "low",
         }
-    }
-}
-
-impl Default for NewsTrustService {
-    fn default() -> Self {
-        Self::new()
     }
 }

@@ -1,10 +1,13 @@
+mod test_helpers;
+
 use sdkwork_content_news_service::service::media_attachment_service::{
     AttachDriveMediaCommand, NewsMediaAttachmentService,
 };
 
-#[test]
-fn attach_media_requires_tenant_id() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn attach_media_requires_tenant_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
         tenant_id: "".to_string(),
         item_id: "item1".to_string(),
@@ -18,9 +21,10 @@ fn attach_media_requires_tenant_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-tenant");
 }
 
-#[test]
-fn attach_media_requires_item_id() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn attach_media_requires_item_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
         tenant_id: "t1".to_string(),
         item_id: "".to_string(),
@@ -34,9 +38,10 @@ fn attach_media_requires_item_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-item");
 }
 
-#[test]
-fn attach_media_requires_media_id() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn attach_media_requires_media_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -50,9 +55,10 @@ fn attach_media_requires_media_id() {
     assert_eq!(result.unwrap_err().code, "validation/missing-media");
 }
 
-#[test]
-fn attach_media_requires_valid_role() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn attach_media_requires_valid_role() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -66,19 +72,11 @@ fn attach_media_requires_valid_role() {
     assert_eq!(result.unwrap_err().code, "validation/invalid-media-role");
 }
 
-#[test]
-fn attach_media_valid_roles_pass() {
-    let service = NewsMediaAttachmentService::new();
-    for role in &[
-        "hero",
-        "thumbnail",
-        "inline",
-        "gallery",
-        "video",
-        "audio",
-        "document",
-        "embed",
-    ] {
+#[tokio::test]
+async fn attach_media_valid_roles_pass() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
+    for role in &["hero", "thumbnail", "inline", "gallery", "video", "audio", "document", "embed"] {
         let cmd = AttachDriveMediaCommand {
             tenant_id: "t1".to_string(),
             item_id: "item1".to_string(),
@@ -87,17 +85,14 @@ fn attach_media_valid_roles_pass() {
             sort_order: Some(0),
             actor_user_id: Some("user1".to_string()),
         };
-        assert!(
-            service.validate_attach_drive_media(&cmd).is_ok(),
-            "role '{}' should be valid",
-            role
-        );
+        assert!(service.validate_attach_drive_media(&cmd).is_ok(), "role '{}' should be valid", role);
     }
 }
 
-#[test]
-fn attach_media_valid_command_passes() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn attach_media_valid_command_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
         tenant_id: "t1".to_string(),
         item_id: "item1".to_string(),
@@ -109,35 +104,33 @@ fn attach_media_valid_command_passes() {
     assert!(service.validate_attach_drive_media(&cmd).is_ok());
 }
 
-#[test]
-fn validate_media_reference_rejects_empty() {
+#[tokio::test]
+async fn validate_media_reference_rejects_empty() {
     assert!(!NewsMediaAttachmentService::validate_media_reference(""));
 }
 
-#[test]
-fn validate_media_reference_rejects_http_url() {
-    assert!(!NewsMediaAttachmentService::validate_media_reference(
-        "https://example.com/image.jpg"
-    ));
+#[tokio::test]
+async fn validate_media_reference_rejects_http_url() {
+    assert!(!NewsMediaAttachmentService::validate_media_reference("https://example.com/image.jpg"));
 }
 
-#[test]
-fn validate_media_reference_accepts_drive_id() {
-    assert!(NewsMediaAttachmentService::validate_media_reference(
-        "drive_node_123"
-    ));
+#[tokio::test]
+async fn validate_media_reference_accepts_drive_id() {
+    assert!(NewsMediaAttachmentService::validate_media_reference("drive_node_123"));
 }
 
-#[test]
-fn resolve_media_requires_media_id() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn resolve_media_requires_media_id() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     let result = service.validate_resolve_media("");
     assert!(result.is_err());
     assert_eq!(result.unwrap_err().code, "validation/missing-media");
 }
 
-#[test]
-fn resolve_media_valid_id_passes() {
-    let service = NewsMediaAttachmentService::new();
+#[tokio::test]
+async fn resolve_media_valid_id_passes() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsMediaAttachmentService::new(repo);
     assert!(service.validate_resolve_media("media_123").is_ok());
 }
