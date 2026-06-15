@@ -15,7 +15,7 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
     let _ = dotenvy::dotenv();
 
     // Create database pool using sdkwork-pool
-    let pool = sdkwork_pool_sqlx::create_pool_from_env("NEWS")
+    let pool = sdkwork_database_sqlx::create_pool_from_env("NEWS")
         .await?
         .ok_or_else(|| anyhow::anyhow!("SDKWORK_NEWS_DATABASE_URL not set"))?;
 
