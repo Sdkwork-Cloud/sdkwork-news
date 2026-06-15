@@ -1288,30 +1288,7 @@ name = "sdkwork-content-news-worker"
 version = "0.1.0"
 
 [[package]]
-name = "sdkwork-news-api-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "chrono",
- "dotenvy",
- "sdkwork-content-news-repository-sqlx",
- "sdkwork-content-news-service",
- "sdkwork-pool-config",
- "sdkwork-pool-sqlx",
- "serde",
- "serde_json",
- "sqlx",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "sdkwork-pool-config"
+name = "sdkwork-database-config"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -1322,15 +1299,38 @@ dependencies = [
 ]
 
 [[package]]
-name = "sdkwork-pool-sqlx"
+name = "sdkwork-database-sqlx"
 version = "0.1.0"
 dependencies = [
- "sdkwork-pool-config",
+ "sdkwork-database-config",
  "serde",
  "sqlx",
  "thiserror",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "sdkwork-news-api-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "chrono",
+ "dotenvy",
+ "sdkwork-content-news-repository-sqlx",
+ "sdkwork-content-news-service",
+ "sdkwork-database-config",
+ "sdkwork-database-sqlx",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]

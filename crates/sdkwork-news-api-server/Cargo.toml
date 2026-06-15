@@ -10,8 +10,8 @@ path = "src/main.rs"
 [dependencies]
 sdkwork-content-news-service = { path = "../sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
-sdkwork-database-config = { path = "../../../sdkwork-pool/crates/sdkwork-database-config" }
-sdkwork-database-sqlx = { path = "../../../sdkwork-pool/crates/sdkwork-database-sqlx" }
+sdkwork-database-config = { path = "../../../sdkwork-database/crates/sdkwork-database-config" }
+sdkwork-database-sqlx = { path = "../../../sdkwork-database/crates/sdkwork-database-sqlx" }
 axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
