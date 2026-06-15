@@ -1,5 +1,4 @@
 use axum::Router;
-use sqlx::sqlite::SqlitePoolOptions;
 use sqlx::SqlitePool;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
@@ -12,19 +11,23 @@ pub struct AppState {
 }
 
 pub async fn create_app() -> Result<Router, anyhow::Error> {
-    // Database connection
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite:news.db?mode=rwc".to_string());
+    // Load .env file if present
+    let _ = dotenvy::dotenv();
 
-    let pool = SqlitePoolOptions::new()
-        .max_connections(16)
-        .connect(&database_url)
-        .await?;
+    // Create database pool using sdkwork-pool
+    let pool = sdkwork_pool_sqlx::create_pool_from_env("NEWS")
+        .await?
+        .ok_or_else(|| anyhow::anyhow!("SDKWORK_NEWS_DATABASE_URL not set"))?;
+
+    // Extract SQLite pool
+    let sqlite_pool = pool.as_sqlite()
+        .ok_or_else(|| anyhow::anyhow!("Expected SQLite pool for news service"))?
+        .clone();
 
     // Run migrations
-    run_migrations(&pool).await?;
+    run_migrations(&sqlite_pool).await?;
 
-    let state = Arc::new(AppState { pool });
+    let state = Arc::new(AppState { pool: sqlite_pool });
 
     // Build router
     let app = Router::new()

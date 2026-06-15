@@ -10,6 +10,8 @@ path = "src/main.rs"
 [dependencies]
 sdkwork-content-news-service = { path = "../sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
+sdkwork-pool-config = { path = "../../../sdkwork-pool/crates/sdkwork-pool-config" }
+sdkwork-pool-sqlx = { path = "../../../sdkwork-pool/crates/sdkwork-pool-sqlx" }
 axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
@@ -22,3 +24,4 @@ uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite"] }
 anyhow = "1"
+dotenvy = "0.15"
