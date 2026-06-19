@@ -5,6 +5,7 @@ use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
 use crate::routes;
+use crate::web_bootstrap::wrap_router_with_web_framework_from_env;
 
 pub struct AppState {
     pub pool: SqlitePool,
@@ -39,7 +40,7 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    Ok(app)
+    Ok(wrap_router_with_web_framework_from_env(app).await)
 }
 
 async fn run_migrations(pool: &SqlitePool) -> Result<(), anyhow::Error> {

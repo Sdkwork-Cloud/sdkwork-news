@@ -1,0 +1,107 @@
+use sdkwork_web_core::{HttpMethod, HttpRoute, HttpRouteManifest};
+
+const HTTP_ROUTES: &[HttpRoute] = &[
+    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/items", "news", "items.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/items/{itemId}",
+        "news",
+        "items.retrieve",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/items/by_slug/{slug}",
+        "news",
+        "items.bySlug.retrieve",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/channels",
+        "news",
+        "channels.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/channels/{channelId}/feed",
+        "news",
+        "channels.feed.list",
+    ),
+    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/topics", "news", "topics.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/topics/{topicId}/items",
+        "news",
+        "topics.items.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/items/{itemId}/related",
+        "news",
+        "items.related.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/trending",
+        "news",
+        "trending.list",
+    ),
+    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/search", "news", "search.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/search/suggestions",
+        "news",
+        "search.suggestions.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/alerts/breaking",
+        "news",
+        "alerts.breaking.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/digests",
+        "news",
+        "digests.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/items/{itemId}/trust",
+        "news",
+        "trust.item.retrieve",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/fact_checks",
+        "news",
+        "factChecks.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/corrections",
+        "news",
+        "corrections.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/live/events",
+        "news",
+        "live.events.list",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/live/events/{eventId}",
+        "news",
+        "live.events.retrieve",
+    ),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/live/events/{eventId}/updates",
+        "news",
+        "live.updates.list",
+    ),
+];
+
+pub fn open_route_manifest() -> HttpRouteManifest {
+    HttpRouteManifest::new(HTTP_ROUTES)
+}

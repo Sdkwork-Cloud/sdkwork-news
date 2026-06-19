@@ -1,4 +1,12 @@
 pub mod handlers;
+pub mod http_route_manifest;
+pub mod web_bootstrap;
+
+pub use http_route_manifest::open_route_manifest;
+pub use web_bootstrap::{
+    news_open_api_prefixes, news_open_api_public_path_prefixes, wrap_router_with_web_framework,
+    wrap_router_with_web_framework_from_env,
+};
 
 pub const OPEN_API_PREFIX: &str = "/open/v3/api";
 

@@ -1,7 +1,9 @@
 mod bootstrap;
 mod handlers;
+mod http_route_manifest;
 mod middleware;
 mod routes;
+mod web_bootstrap;
 
 use anyhow::Result;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
