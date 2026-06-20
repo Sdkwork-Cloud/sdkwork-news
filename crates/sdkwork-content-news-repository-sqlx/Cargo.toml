@@ -8,6 +8,9 @@ name = "sdkwork_content_news_repository_sqlx"
 path = "src/lib.rs"
 
 [dependencies]
+sdkwork-news-database-host.workspace = true
+sdkwork-database-config.workspace = true
+sdkwork-database-sqlx.workspace = true
 sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite", "postgres"] }
 toml = "0.8"
 serde = { version = "1", features = ["derive"] }

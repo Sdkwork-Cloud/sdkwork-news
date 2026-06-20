@@ -1,11 +1,244 @@
 schema_version: 1
 kind: sdkwork.database.schema
 module_id: news
-contract_version: 0.1.0
+contract_version: 1.0.0
 owner_team: news-platform
 compliance_level: L2
 engines:
   - postgres
-  - sqlite
 table_prefix: news_
-tables: []
+tables:
+  - name: news_category
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_body
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_tag
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_tag
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_publication_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_read_state
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_editorial_audit
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_schema_version
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_migration_lock
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_source
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_author
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_version
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_media_asset
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_media
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_topic
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_topic
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_channel
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_channel_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_feed_stream
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_feed_cursor
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_recommendation_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_user_feedback
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_trending_metric
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_search_projection
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_experiment
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_experiment_assignment
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_comment
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_comment_moderation
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_reaction
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_favorite
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_share_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_follow
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_report
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_moderation_case
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_content_risk_signal
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_takedown_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_user_interest_signal
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_feed_candidate
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_metric_snapshot
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_search_suggestion
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_search_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_notification_subscription
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_breaking_alert
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_digest_issue
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_digest_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_source_trust_profile
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_fact_check
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_correction_notice
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_trust_snapshot
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_live_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_live_update
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_live_event_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_story
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_story_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_story_timeline
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_body_block
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_rights
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_item_c2pa_provenance
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_editorial_assignment
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_editorial_review_task
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_import_job
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_export_job
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_schema_org_projection
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_api_operation_audit
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_external_feed
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_external_feed_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_newsletter
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_newsletter_item
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_paywall_policy
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_metered_access_event
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_syndication_partner
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_syndication_delivery
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_translation_memory
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_retention_policy
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_legal_hold
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_cdn_invalidation
+    lifecycle_status: active
+    owner: news-platform
+  - name: news_homepage_layout
+    lifecycle_status: active
+    owner: news-platform

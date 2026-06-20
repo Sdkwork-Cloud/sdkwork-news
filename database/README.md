@@ -9,17 +9,18 @@ Canonical lifecycle assets for `sdkwork-news` per `DATABASE_FRAMEWORK_SPEC.md`.
 ## Commands
 
 ```bash
+pnpm run db:materialize:contract
 pnpm run db:validate
 pnpm run db:plan
-pnpm run db:init
-pnpm run db:migrate
-pnpm run db:seed
-pnpm run db:status
-pnpm run db:drift:check
+pnpm run db:bootstrap
 ```
 
-## Migration status
+## Baseline
 
-No legacy SQL was auto-imported. Author `contract/schema.yaml` before adding migrations.
+Legacy SQL from `crates/sdkwork-content-news-repository-sqlx/migrations/*.sql` is consolidated in `database/ddl/baseline/postgres/0001_news_legacy_baseline.sql`.
 
-Runtime services MUST create pools through `sdkwork-database-sqlx` and register `DefaultDatabaseModule` at bootstrap.
+## Runtime bootstrap
+
+PostgreSQL: `sdkwork-news-database-host` via `bootstrap_news_database()` / `connect_and_bootstrap_news_database_from_env()`.
+
+SQLite tests and the current api-server path continue to use inline migration SQL through `SqliteNewsStore::migrate()`.
