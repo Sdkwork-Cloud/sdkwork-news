@@ -6,11 +6,12 @@
 
 [database]
 engine = "postgresql"
-host = "localhost"
+host = "127.0.0.1"
 port = 5432
-database = "sdkwork_news_dev"
-username = "sdkwork_news_dev"
-# password = "change-me"
+database = "sdkwork_ai_dev"
+schema = "sdkwork_ai_dev"
+username = "sdkwork_ai_dev"
+# password = "sdkworkdev123"
 ssl_mode = "disable"
 max_connections = 16
 
