@@ -889,7 +889,7 @@ export const NEWS_NEWSROOM_INTEGRATION_CAPABILITIES: readonly NewsIntegrationCap
   {
     key: "appbase-iam",
     ownerBoundary: "iam",
-    requiredSdkFamily: "sdkwork-appbase-app-sdk",
+    requiredSdkFamily: "sdkwork-iam-app-sdk",
     summary: "Dual-token user, tenant, organization, role, and permission context supplied by appbase IAM.",
     todo: "TODO(news-integration): map editor, reviewer, operator, and reader permissions to appbase IAM policy checks.",
   },

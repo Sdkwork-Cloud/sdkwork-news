@@ -3562,7 +3562,7 @@
     {
       "key": "appbase-iam",
       "ownerBoundary": "iam",
-      "requiredSdkFamily": "sdkwork-appbase-app-sdk",
+      "requiredSdkFamily": "sdkwork-iam-app-sdk",
       "todo": "TODO(news-integration): map editor, reviewer, operator, and reader permissions to appbase IAM policy checks."
     },
     {
