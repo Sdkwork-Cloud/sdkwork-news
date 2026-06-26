@@ -7,9 +7,9 @@
   "status": "design",
   "sourceModules": [
     "packages/common/news/sdkwork-news-contracts/src/professional-api.ts",
-    "crates/sdkwork-router-news-open-api",
-    "crates/sdkwork-router-news-app-api",
-    "crates/sdkwork-router-news-backend-api"
+    "crates/sdkwork-routes-news-open-api",
+    "crates/sdkwork-routes-news-app-api",
+    "crates/sdkwork-routes-news-backend-api"
   ],
   "operationCount": {
     "currentRuntimeRoutes": 152,
@@ -3736,24 +3736,24 @@
     },
     {
       "layer": "api-handler",
-      "filePath": "crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs",
+      "filePath": "crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs",
       "className": "NewsProfessionalBackendApiHandler",
       "methodCount": 3,
-      "todo": "TODO(news-module): create NewsProfessionalBackendApiHandler in crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
+      "todo": "TODO(news-module): create NewsProfessionalBackendApiHandler in crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
     },
     {
       "layer": "api-handler",
-      "filePath": "crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs",
+      "filePath": "crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs",
       "className": "NewsProfessionalAppApiHandler",
       "methodCount": 2,
-      "todo": "TODO(news-module): create NewsProfessionalAppApiHandler in crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
+      "todo": "TODO(news-module): create NewsProfessionalAppApiHandler in crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
     },
     {
       "layer": "api-handler",
-      "filePath": "crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs",
+      "filePath": "crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs",
       "className": "NewsProfessionalOpenApiHandler",
       "methodCount": 2,
-      "todo": "TODO(news-module): create NewsProfessionalOpenApiHandler in crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
+      "todo": "TODO(news-module): create NewsProfessionalOpenApiHandler in crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs and wire it through the SDKWork service boundary."
     },
     {
       "layer": "worker",

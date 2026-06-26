@@ -57,9 +57,9 @@ describe("sdkwork-news workspace structure standard", () => {
     for (const cratePath of [
       "crates/sdkwork-content-news-service/Cargo.toml",
       "crates/sdkwork-content-news-repository-sqlx/Cargo.toml",
-      "crates/sdkwork-router-news-open-api/Cargo.toml",
-      "crates/sdkwork-router-news-app-api/Cargo.toml",
-      "crates/sdkwork-router-news-backend-api/Cargo.toml",
+      "crates/sdkwork-routes-news-open-api/Cargo.toml",
+      "crates/sdkwork-routes-news-app-api/Cargo.toml",
+      "crates/sdkwork-routes-news-backend-api/Cargo.toml",
     ]) {
       assert.ok(exists(cratePath), `${cratePath} must exist`);
     }

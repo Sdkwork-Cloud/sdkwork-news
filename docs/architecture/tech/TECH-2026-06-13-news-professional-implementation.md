@@ -234,93 +234,93 @@ git commit -m "feat(news-service): implement trust and media attachment services
 ### Task 7: Implement Open API Handlers
 
 **Files:**
-- Modify: `crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs`
-- Modify: `crates/sdkwork-router-news-open-api/src/lib.rs`
+- Modify: `crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs`
+- Modify: `crates/sdkwork-routes-news-open-api/src/lib.rs`
 
 - [ ] **Step 1: Implement story retrieval handlers**
 
-Update `crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs` with story, source, author, Schema.org, rights, C2PA read operations.
+Update `crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs` with story, source, author, Schema.org, rights, C2PA read operations.
 
 - [ ] **Step 2: Update open routes with professional routes**
 
-Update `crates/sdkwork-router-news-open-api/src/lib.rs` with new professional routes.
+Update `crates/sdkwork-routes-news-open-api/src/lib.rs` with new professional routes.
 
 - [ ] **Step 3: Write open API handler tests**
 
-Create tests in `crates/sdkwork-router-news-open-api/tests/professional_handler_test.rs`.
+Create tests in `crates/sdkwork-routes-news-open-api/tests/professional_handler_test.rs`.
 
 - [ ] **Step 4: Run open API handler tests**
 
 ```bash
-cargo test -p sdkwork-router-news-open-api --test professional_handler_test
+cargo test -p sdkwork-routes-news-open-api --test professional_handler_test
 ```
 
 - [ ] **Step 5: Commit open API handlers**
 
 ```bash
-git add crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs crates/sdkwork-router-news-open-api/src/lib.rs
+git add crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs crates/sdkwork-routes-news-open-api/src/lib.rs
 git commit -m "feat(news-api): implement open API professional handlers"
 ```
 
 ### Task 8: Implement App API Handlers
 
 **Files:**
-- Create: `crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs`
-- Modify: `crates/sdkwork-router-news-app-api/src/lib.rs`
+- Create: `crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs`
+- Modify: `crates/sdkwork-routes-news-app-api/src/lib.rs`
 
 - [ ] **Step 1: Create professional app handlers**
 
-Create `crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs` with following/latest/local feed, stories, share events, and reading progress operations.
+Create `crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs` with following/latest/local feed, stories, share events, and reading progress operations.
 
 - [ ] **Step 2: Update app routes with professional routes**
 
-Update `crates/sdkwork-router-news-app-api/src/lib.rs` with new professional routes.
+Update `crates/sdkwork-routes-news-app-api/src/lib.rs` with new professional routes.
 
 - [ ] **Step 3: Write app API handler tests**
 
-Create tests in `crates/sdkwork-router-news-app-api/tests/professional_handler_test.rs`.
+Create tests in `crates/sdkwork-routes-news-app-api/tests/professional_handler_test.rs`.
 
 - [ ] **Step 4: Run app API handler tests**
 
 ```bash
-cargo test -p sdkwork-router-news-app-api --test professional_handler_test
+cargo test -p sdkwork-routes-news-app-api --test professional_handler_test
 ```
 
 - [ ] **Step 5: Commit app API handlers**
 
 ```bash
-git add crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs crates/sdkwork-router-news-app-api/src/lib.rs
+git add crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs crates/sdkwork-routes-news-app-api/src/lib.rs
 git commit -m "feat(news-api): implement app API professional handlers"
 ```
 
 ### Task 9: Implement Backend API Handlers
 
 **Files:**
-- Create: `crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs`
-- Modify: `crates/sdkwork-router-news-backend-api/src/lib.rs`
+- Create: `crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs`
+- Modify: `crates/sdkwork-routes-news-backend-api/src/lib.rs`
 
 - [ ] **Step 1: Create professional backend handlers**
 
-Create `crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs` with story management, editorial assignment/review, imports, exports, rights, body blocks, provenance, schema.org rebuild, and API audit operations.
+Create `crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs` with story management, editorial assignment/review, imports, exports, rights, body blocks, provenance, schema.org rebuild, and API audit operations.
 
 - [ ] **Step 2: Update backend routes with professional routes**
 
-Update `crates/sdkwork-router-news-backend-api/src/lib.rs` with new professional routes.
+Update `crates/sdkwork-routes-news-backend-api/src/lib.rs` with new professional routes.
 
 - [ ] **Step 3: Write backend API handler tests**
 
-Create tests in `crates/sdkwork-router-news-backend-api/tests/professional_handler_test.rs`.
+Create tests in `crates/sdkwork-routes-news-backend-api/tests/professional_handler_test.rs`.
 
 - [ ] **Step 4: Run backend API handler tests**
 
 ```bash
-cargo test -p sdkwork-router-news-backend-api --test professional_handler_test
+cargo test -p sdkwork-routes-news-backend-api --test professional_handler_test
 ```
 
 - [ ] **Step 5: Commit backend API handlers**
 
 ```bash
-git add crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs crates/sdkwork-router-news-backend-api/src/lib.rs
+git add crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs crates/sdkwork-routes-news-backend-api/src/lib.rs
 git commit -m "feat(news-api): implement backend API professional handlers"
 ```
 

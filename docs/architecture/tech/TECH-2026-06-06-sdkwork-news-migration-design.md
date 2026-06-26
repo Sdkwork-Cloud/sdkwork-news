@@ -23,7 +23,7 @@ The workspace follows the SDKWork standard project-root structure:
 - `apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react` contains user-facing PC React reusable logic.
 - `crates/sdkwork-content-news-service` contains Rust business rules, domain contracts, and service ports.
 - `crates/sdkwork-content-news-repository-sqlx` owns tables, migration plan, and SQLx repository contracts.
-- `crates/sdkwork-router-news-open-api`, `crates/sdkwork-router-news-app-api`, and `crates/sdkwork-router-news-backend-api` own HTTP route metadata by surface.
+- `crates/sdkwork-routes-news-open-api`, `crates/sdkwork-routes-news-app-api`, and `crates/sdkwork-routes-news-backend-api` own HTTP route metadata by surface.
 - `apis/open-api/content`, `apis/app-api/content`, and `apis/backend-api/content` store owner-only OpenAPI inputs.
 - `sdks/sdkwork-news-{sdk,app-sdk,backend-sdk}` store SDK assembly metadata and generation wrappers.
 

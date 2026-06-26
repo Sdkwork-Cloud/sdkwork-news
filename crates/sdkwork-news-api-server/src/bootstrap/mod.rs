@@ -6,6 +6,8 @@ use tower_http::trace::TraceLayer;
 
 use crate::routes;
 use crate::web_bootstrap::wrap_router_with_web_framework_from_env;
+use crate::readiness::NewsSqliteReadinessCheck;
+use sdkwork_web_bootstrap::{service_router, ServiceRouterConfig};
 
 pub struct AppState {
     pub pool: SqlitePool,
@@ -28,19 +30,23 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
     // Run migrations
     run_migrations(&sqlite_pool).await?;
 
-    let state = Arc::new(AppState { pool: sqlite_pool });
+    let state = Arc::new(AppState { pool: sqlite_pool.clone() });
 
     // Build router
-    let app = Router::new()
+    let business = Router::new()
         .merge(routes::open_api_routes())
         .merge(routes::app_api_routes())
         .merge(routes::backend_api_routes())
-        .merge(routes::health_routes())
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    Ok(wrap_router_with_web_framework_from_env(app).await)
+    let business = wrap_router_with_web_framework_from_env(business).await;
+    Ok(service_router(
+        business,
+        ServiceRouterConfig::default()
+            .with_readiness_check(Arc::new(NewsSqliteReadinessCheck::new(sqlite_pool))),
+    ))
 }
 
 async fn run_migrations(pool: &SqlitePool) -> Result<(), anyhow::Error> {

@@ -1,30 +1,39 @@
-# Apps
+# apps/
 
-## Purpose
+Application: sdkwork-news
+Status: active
+Owner: SDKWork maintainers
+Specs: APPLICATION_SPEC.md, SDKWORK_WORKSPACE_SPEC.md
 
-`apps/` contains runnable or architecture-specific application surfaces for the news product.
+## Primary App Surface
 
-## Owner
+The repository root is the primary runnable app surface.
+The repository root `sdkwork.app.config.json` governs the primary application manifest.
 
-The `sdkwork-news` repository owns news application surfaces and their package-local specs.
+## Directory Index
+
+| Directory | Surface role | Runnable | Purpose | Entry |
+| --- | --- | --- | --- | --- |
+| sdkwork-news-pc | pc | yes | sdkwork-news-pc pc application root. | `sdkwork-news-pc/` |
 
 ## Allowed Content
 
-- `sdkwork-news-pc/` and future news-owned app surface roots.
-- Architecture-local `packages/`, `config/`, source, and app manifests inside an app surface root.
+- Selected language/architecture application roots with `README.md`, `AGENTS.md`, `.sdkwork/`, and `specs/` when authored packages exist.
+- Architecture-local `packages/`, `config/`, `src/`, `lib/`, `App/`, or `entry/` directories required by the owning architecture standard.
 
 ## Forbidden Content
 
-- Cross-repository generated SDK output.
-- Root-level API contract inputs, which belong in `apis/`.
-- Generic shared packages that are not tied to an app surface.
+- Repository-root API contracts, generated SDK workspaces, Rust crates, or deployment descriptors moved under `apps/`.
+- Runtime secrets, user-private state, generated SDK transport output, or cross-application copied business logic.
 
 ## Related Specs
 
-- `../sdkwork-specs/SDKWORK_WORKSPACE_SPEC.md`
 - `../sdkwork-specs/APPLICATION_SPEC.md`
-- `../sdkwork-specs/APP_PC_ARCHITECTURE_SPEC.md`
+- `../sdkwork-specs/SDKWORK_WORKSPACE_SPEC.md`
+- `../sdkwork-specs/APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md`
 
 ## Verification
 
-Run `node --test sdks/test/news-workspace-standard.test.mjs`.
+```bash
+node ../sdkwork-specs/tools/check-apps-directory-index.mjs --root .
+```

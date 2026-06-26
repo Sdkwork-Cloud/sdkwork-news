@@ -12,7 +12,7 @@ The `sdkwork-news` repository owns the news service, repository, and route crate
 
 - `sdkwork-content-news-service/` for business rules and service ports.
 - `sdkwork-content-news-repository-sqlx/` for SQLx database access.
-- `sdkwork-router-news-open-api/`, `sdkwork-router-news-app-api/`, and `sdkwork-router-news-backend-api/` for HTTP route adaptation by surface.
+- `sdkwork-routes-news-open-api/`, `sdkwork-routes-news-app-api/`, and `sdkwork-routes-news-backend-api/` for HTTP route adaptation by surface.
 
 ## Forbidden Content
 

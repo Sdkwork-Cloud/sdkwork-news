@@ -18,7 +18,7 @@
 **Files:**
 - Modify: `packages/common/news/sdkwork-news-contracts/tests/news-contracts.standard.test.ts`
 - Modify: `crates/sdkwork-content-news-service/tests/news_core_standard.rs`
-- Modify: `crates/sdkwork-router-news-app-api/tests/route_standard.rs`
+- Modify: `crates/sdkwork-routes-news-app-api/tests/route_standard.rs`
 - Modify: `sdks/test/news-openapi-boundary.test.mjs`
 - Modify: `sdks/test/news-schema-quality-gate.test.mjs`
 
@@ -76,9 +76,9 @@ Run the same cargo storage test. Expected: pass.
 **Files:**
 - Modify: `packages/common/news/sdkwork-news-contracts/src/index.ts`
 - Modify: `crates/sdkwork-content-news-service/src/lib.rs`
-- Modify: `crates/sdkwork-router-news-open-api/src/lib.rs`
-- Modify: `crates/sdkwork-router-news-app-api/src/lib.rs`
-- Modify: `crates/sdkwork-router-news-backend-api/src/lib.rs`
+- Modify: `crates/sdkwork-routes-news-open-api/src/lib.rs`
+- Modify: `crates/sdkwork-routes-news-app-api/src/lib.rs`
+- Modify: `crates/sdkwork-routes-news-backend-api/src/lib.rs`
 
 - [x] **Step 1: Implement contract types and route catalogs**
 
@@ -94,7 +94,7 @@ Run:
 
 ```powershell
 pnpm test:vitest
-cargo test -p sdkwork-content-news-service -p sdkwork-router-news-open-api -p sdkwork-router-news-app-api -p sdkwork-router-news-backend-api
+cargo test -p sdkwork-content-news-service -p sdkwork-routes-news-open-api -p sdkwork-routes-news-app-api -p sdkwork-routes-news-backend-api
 ```
 
 Expected: pass.

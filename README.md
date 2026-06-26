@@ -24,9 +24,9 @@ This repository owns news contracts, open/app/backend API surfaces, SDK generati
 
 - `crates/sdkwork-content-news-service`: News business service contracts, domain models, and use-case rules.
 - `crates/sdkwork-content-news-repository-sqlx`: SQLx persistence, migrations, table catalog, and repository implementation contracts.
-- `crates/sdkwork-router-news-open-api`: News open-api route metadata.
-- `crates/sdkwork-router-news-app-api`: News app-api route metadata.
-- `crates/sdkwork-router-news-backend-api`: News backend-api route metadata.
+- `crates/sdkwork-routes-news-open-api`: News open-api route metadata.
+- `crates/sdkwork-routes-news-app-api`: News app-api route metadata.
+- `crates/sdkwork-routes-news-backend-api`: News backend-api route metadata.
 
 ## SDKWork Documentation Contract
 
@@ -73,3 +73,6 @@ Owner and lifecycle status are tracked in `specs/component.spec.json`.
 - [docs/product/prd/PRD.md](docs/product/prd/PRD.md)
 - [docs/architecture/tech/TECH_ARCHITECTURE.md](docs/architecture/tech/TECH_ARCHITECTURE.md)
 
+## Application Roots
+
+- [apps directory index](apps/README.md)

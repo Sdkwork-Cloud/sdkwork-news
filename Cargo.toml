@@ -1,12 +1,13 @@
 [workspace]
 members = [
+    "crates/sdkwork-news-gateway-assembly",
     "crates/sdkwork-content-news-service",
     "crates/sdkwork-news-database-host",
     "crates/sdkwork-content-news-repository-sqlx",
     "crates/sdkwork-content-news-worker",
-    "crates/sdkwork-router-news-open-api",
-    "crates/sdkwork-router-news-app-api",
-    "crates/sdkwork-router-news-backend-api",
+    "crates/sdkwork-routes-news-open-api",
+    "crates/sdkwork-routes-news-app-api",
+    "crates/sdkwork-routes-news-backend-api",
     "crates/sdkwork-news-api-server",
 ]
 resolver = "2"
@@ -29,8 +30,9 @@ sdkwork_database_sqlx = { path = "../sdkwork-database/crates/sdkwork-database-sq
 sdkwork-content-news-service = { path = "crates/sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "crates/sdkwork-content-news-repository-sqlx" }
 sdkwork-content-news-worker = { path = "crates/sdkwork-content-news-worker" }
-sdkwork-router-news-open-api = { path = "crates/sdkwork-router-news-open-api" }
-sdkwork-router-news-app-api = { path = "crates/sdkwork-router-news-app-api" }
-sdkwork-router-news-backend-api = { path = "crates/sdkwork-router-news-backend-api" }
+sdkwork-routes-news-open-api = { path = "crates/sdkwork-routes-news-open-api" }
+sdkwork-routes-news-app-api = { path = "crates/sdkwork-routes-news-app-api" }
+sdkwork-routes-news-backend-api = { path = "crates/sdkwork-routes-news-backend-api" }
 sdkwork-news-api-server = { path = "crates/sdkwork-news-api-server" }
+sdkwork-web-bootstrap = { path = "../sdkwork-web-framework/crates/sdkwork-web-bootstrap" }
 

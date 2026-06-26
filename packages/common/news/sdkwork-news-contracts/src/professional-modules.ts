@@ -112,16 +112,16 @@ export const NEWS_PROFESSIONAL_MODULES: readonly NewsProfessionalModuleDefinitio
     method("find_matching_rule", "async fn find_matching_rule(query: PaywallRuleQuery) -> Result<Option<PaywallRuleRow>, sqlx::Error>", "TODO(news-repository): query active rule by target and time window using tenant predicate.", { tables: ["news_paywall_rule"] }),
     method("record_metered_access_event", "async fn record_metered_access_event(row: MeteredAccessEventRow) -> Result<(), sqlx::Error>", "TODO(news-repository): append idempotent access event for user or anonymous visitor.", { tables: ["news_metered_access_event"] }),
   ], { ownedTables: ["news_paywall_rule", "news_metered_access_event"] }),
-  module("api-handler", "crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs", "NewsProfessionalBackendApiHandler", [
+  module("api-handler", "crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs", "NewsProfessionalBackendApiHandler", [
     method("create_story", "async fn create_story(state: NewsState, context: NewsRequestContext, body: NewsStoryCommand) -> NewsHttpResult", "TODO(news-api): decode request, consume typed context, call NewsStoryService, and map problem details.", { operationIds: ["stories.create"] }),
     method("create_import_job", "async fn create_import_job(state: NewsState, context: NewsRequestContext, body: NewsImportCommand) -> NewsHttpResult", "TODO(news-api): require idempotency and call import/export service without parsing raw headers.", { operationIds: ["imports.ninjs.create", "imports.newsmlG2.create"] }),
     method("list_api_operation_audits", "async fn list_api_operation_audits(state: NewsState, context: NewsRequestContext, query: AuditQuery) -> NewsHttpResult", "TODO(news-api): enforce backend-admin audit permission and bounded pagination.", { operationIds: ["apiOperationAudits.list"] }),
   ]),
-  module("api-handler", "crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs", "NewsProfessionalAppApiHandler", [
+  module("api-handler", "crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs", "NewsProfessionalAppApiHandler", [
     method("list_following_feed", "async fn list_following_feed(state: NewsState, context: NewsRequestContext, query: FeedQuery) -> NewsHttpResult", "TODO(news-api): call feed service with dual-token user context.", { operationIds: ["feed.following.list"] }),
     method("record_reading_progress", "async fn record_reading_progress(state: NewsState, context: NewsRequestContext, body: ReadingProgressCommand) -> NewsHttpResult", "TODO(news-api): record user progress without client-supplied request id.", { operationIds: ["items.readingProgress.upsert"] }),
   ]),
-  module("api-handler", "crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs", "NewsProfessionalOpenApiHandler", [
+  module("api-handler", "crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs", "NewsProfessionalOpenApiHandler", [
     method("retrieve_story", "async fn retrieve_story(state: NewsState, path: StoryPath) -> NewsHttpResult", "TODO(news-api): return public story projection with anonymous security and cache policy.", { operationIds: ["stories.retrieve"] }),
     method("retrieve_schema_org", "async fn retrieve_schema_org(state: NewsState, path: ItemPath) -> NewsHttpResult", "TODO(news-api): return JSON-LD projection without leaking backend-only fields.", { operationIds: ["items.schemaOrg.retrieve"] }),
   ]),

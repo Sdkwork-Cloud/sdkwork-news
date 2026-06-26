@@ -97,7 +97,3 @@ pub fn backend_api_routes() -> Router<Arc<AppState>> {
             post(handlers::backend::publish_story),
         )
 }
-
-pub fn health_routes() -> Router<Arc<AppState>> {
-    Router::new().route("/health", get(handlers::health::health_check))
-}

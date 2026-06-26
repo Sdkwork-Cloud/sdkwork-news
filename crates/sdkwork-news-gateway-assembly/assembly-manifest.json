@@ -1,0 +1,40 @@
+{
+  "kind": "sdkwork.gateway.assembly",
+  "schemaVersion": 1,
+  "applicationCode": "news",
+  "packageName": "sdkwork-news-gateway-assembly",
+  "crateDir": "crates/sdkwork-news-gateway-assembly",
+  "generatedAt": "2026-06-25T13:08:05.579Z",
+  "routeCrates": [
+    {
+      "packageName": "sdkwork-routes-news-app-api",
+      "memberDir": "crates/sdkwork-routes-news-app-api",
+      "libName": "sdkwork_routes_news_app_api",
+      "surface": "app-api",
+      "pathPrefix": "/app/v3/api",
+      "mountOrder": 0,
+      "hasGatewayMount": true,
+      "hasGatewayRouteManifest": false
+    },
+    {
+      "packageName": "sdkwork-routes-news-backend-api",
+      "memberDir": "crates/sdkwork-routes-news-backend-api",
+      "libName": "sdkwork_routes_news_backend_api",
+      "surface": "backend-api",
+      "pathPrefix": "/backend/v3/api",
+      "mountOrder": 1,
+      "hasGatewayMount": true,
+      "hasGatewayRouteManifest": false
+    },
+    {
+      "packageName": "sdkwork-routes-news-open-api",
+      "memberDir": "crates/sdkwork-routes-news-open-api",
+      "libName": "sdkwork_routes_news_open_api",
+      "surface": "open-api",
+      "pathPrefix": "/open/v3/api",
+      "mountOrder": 2,
+      "hasGatewayMount": true,
+      "hasGatewayRouteManifest": true
+    }
+  ]
+}

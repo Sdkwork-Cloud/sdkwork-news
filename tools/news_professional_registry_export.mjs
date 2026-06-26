@@ -66,9 +66,9 @@ function apiRegistry() {
     status: "design",
     sourceModules: [
       "packages/common/news/sdkwork-news-contracts/src/professional-api.ts",
-      "crates/sdkwork-router-news-open-api",
-      "crates/sdkwork-router-news-app-api",
-      "crates/sdkwork-router-news-backend-api",
+      "crates/sdkwork-routes-news-open-api",
+      "crates/sdkwork-routes-news-app-api",
+      "crates/sdkwork-routes-news-backend-api",
     ],
     operationCount: {
       currentRuntimeRoutes: 152,

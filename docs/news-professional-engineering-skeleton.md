@@ -104,9 +104,9 @@ Files:
 - `crates/sdkwork-content-news-repository-sqlx/src/repository/paywall_repository.rs`
 - `crates/sdkwork-content-news-worker/src/jobs/search_projection_job.rs`
 - `crates/sdkwork-content-news-worker/src/jobs/external_feed_polling_job.rs`
-- `crates/sdkwork-router-news-backend-api/src/handlers/professional_handlers.rs`
-- `crates/sdkwork-router-news-app-api/src/handlers/professional_handlers.rs`
-- `crates/sdkwork-router-news-open-api/src/handlers/professional_handlers.rs`
+- `crates/sdkwork-routes-news-backend-api/src/handlers/professional_handlers.rs`
+- `crates/sdkwork-routes-news-app-api/src/handlers/professional_handlers.rs`
+- `crates/sdkwork-routes-news-open-api/src/handlers/professional_handlers.rs`
 
 TODO handoff:
 

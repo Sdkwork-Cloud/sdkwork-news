@@ -90,7 +90,7 @@
   "components": {
     "applicationServer": {
       "crate": "sdkwork-news-api-server",
-      "binary": "news-api-server"
+      "binary": "sdkwork-news-standalone-gateway"
     },
     "cloudGateway": {
       "crate": "sdkwork-api-cloud-gateway-api-server",
@@ -106,7 +106,7 @@
           {
             "id": "application.public-ingress",
             "crate": "sdkwork-news-api-server",
-            "binary": "news-api-server",
+            "binary": "sdkwork-news-standalone-gateway",
             "required": true
           }
         ],
@@ -126,7 +126,7 @@
           {
             "id": "application.public-ingress",
             "crate": "sdkwork-news-api-server",
-            "binary": "news-api-server",
+            "binary": "sdkwork-news-standalone-gateway",
             "required": true
           }
         ],
@@ -147,7 +147,7 @@
           {
             "id": "application.public-ingress",
             "crate": "sdkwork-news-api-server",
-            "binary": "news-api-server",
+            "binary": "sdkwork-news-standalone-gateway",
             "required": true
           }
         ],
@@ -168,7 +168,7 @@
           {
             "id": "application.public-ingress",
             "crate": "sdkwork-news-api-server",
-            "binary": "news-api-server",
+            "binary": "sdkwork-news-standalone-gateway",
             "required": true
           }
         ],
@@ -189,7 +189,7 @@
           {
             "id": "application.public-ingress",
             "crate": "sdkwork-news-api-server",
-            "binary": "news-api-server",
+            "binary": "sdkwork-news-standalone-gateway",
             "required": true
           }
         ],

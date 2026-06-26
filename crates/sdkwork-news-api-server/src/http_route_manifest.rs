@@ -120,7 +120,7 @@ pub fn news_route_manifest() -> HttpRouteManifest {
 }
 
 pub fn news_public_path_prefixes() -> Vec<String> {
-    vec!["/health".to_owned()]
+    sdkwork_web_bootstrap::infra_public_path_prefixes()
 }
 
 pub fn news_open_api_prefixes() -> Vec<String> {
