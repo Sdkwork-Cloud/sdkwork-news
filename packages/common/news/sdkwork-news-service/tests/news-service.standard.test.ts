@@ -10,8 +10,8 @@ describe("sdkwork-news service", () => {
           bySlug: { retrieve: async (slug: string) => ({ data: { id: "item_1", slug } as never }) },
           list: async () => ({
             data: [
-              { categoryId: "product", id: "item_1", priority: 1, slug: "release", status: "published", summary: "Release", tenantId: "tenant_1", title: "Release" },
-              { categoryId: "product", id: "item_2", priority: 2, slug: "draft", status: "draft", summary: "Draft", tenantId: "tenant_1", title: "Draft" },
+              { categoryId: "product", id: "item_1", priority: 1, slug: "release", status: "published", summary: "Release", tenantId: "100001", title: "Release" },
+              { categoryId: "product", id: "item_2", priority: 2, slug: "draft", status: "draft", summary: "Draft", tenantId: "100001", title: "Draft" },
             ] as never,
           }),
           retrieve: async () => ({ data: {} as never }),

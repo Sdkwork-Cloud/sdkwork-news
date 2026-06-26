@@ -279,7 +279,7 @@ async fn sqlite_news_store_migrates_creates_publishes_and_reads_news() {
     store
         .create_category(NewNewsCategory {
             id: "category_product".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             slug: "product".to_owned(),
             title: "Product".to_owned(),
             description: Some("Product releases".to_owned()),
@@ -292,7 +292,7 @@ async fn sqlite_news_store_migrates_creates_publishes_and_reads_news() {
     store
         .create_item(NewNewsItem {
             id: "item_release".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             category_id: "category_product".to_owned(),
             slug: "platform-release".to_owned(),
             title: "Platform release".to_owned(),
@@ -308,14 +308,14 @@ async fn sqlite_news_store_migrates_creates_publishes_and_reads_news() {
         .expect("create item");
 
     assert!(store
-        .list_published("tenant_1", None, None)
+        .list_published("100001", None, None)
         .await
         .expect("draft list")
         .is_empty());
 
     store
         .publish_item(
-            "tenant_1",
+            "100001",
             "item_release",
             "user_editor",
             "2026-06-06T00:02:00Z",
@@ -324,7 +324,7 @@ async fn sqlite_news_store_migrates_creates_publishes_and_reads_news() {
         .expect("publish item");
 
     let published = store
-        .list_published("tenant_1", Some("category_product"), Some("release"))
+        .list_published("100001", Some("category_product"), Some("release"))
         .await
         .expect("published list");
     assert_eq!(published.len(), 1);
@@ -332,7 +332,7 @@ async fn sqlite_news_store_migrates_creates_publishes_and_reads_news() {
     assert_eq!(published[0].tags, vec!["platform", "release"]);
     assert_eq!(
         store
-            .retrieve_published_by_slug("tenant_1", "platform-release")
+            .retrieve_published_by_slug("100001", "platform-release")
             .await
             .expect("retrieve by slug")
             .expect("published item")
@@ -354,7 +354,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .create_category(NewNewsCategory {
             id: "category_world".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             slug: "world".to_owned(),
             title: "World".to_owned(),
             description: None,
@@ -367,7 +367,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .create_item(NewNewsItem {
             id: "item_world".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             category_id: "category_world".to_owned(),
             slug: "world-update".to_owned(),
             title: "World update".to_owned(),
@@ -383,7 +383,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
         .expect("create item");
     store
         .publish_item(
-            "tenant_1",
+            "100001",
             "item_world",
             "user_editor",
             "2026-06-06T00:02:00Z",
@@ -394,8 +394,8 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .create_channel(NewNewsChannel {
             id: "channel_top".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
-            organization_id: "org_1".to_owned(),
+            tenant_id: "100001".to_owned(),
+            organization_id: "0".to_owned(),
             slug: "top".to_owned(),
             title: "Top".to_owned(),
             channel_type: "editorial".to_owned(),
@@ -407,7 +407,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .attach_item_to_channel(NewNewsChannelItem {
             id: "channel_item_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             channel_id: "channel_top".to_owned(),
             item_id: "item_world".to_owned(),
             rank: 10,
@@ -418,7 +418,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
         .expect("attach item");
 
     let feed = store
-        .list_channel_feed("tenant_1", "channel_top", 10)
+        .list_channel_feed("100001", "channel_top", 10)
         .await
         .expect("channel feed");
     assert_eq!(feed.len(), 1);
@@ -432,7 +432,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
         .expect("pause channel item");
 
     let inactive_feed = store
-        .list_channel_feed("tenant_1", "channel_top", 10)
+        .list_channel_feed("100001", "channel_top", 10)
         .await
         .expect("inactive channel feed");
     assert!(inactive_feed.is_empty());
@@ -440,7 +440,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .record_recommendation_event(NewNewsRecommendationEvent {
             id: "event_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: Some("user_1".to_owned()),
             item_id: "item_world".to_owned(),
             channel_id: Some("channel_top".to_owned()),
@@ -454,7 +454,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .record_user_feedback(NewNewsUserFeedback {
             id: "feedback_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: "user_1".to_owned(),
             target_type: "item".to_owned(),
             target_id: "item_world".to_owned(),
@@ -467,7 +467,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .mark_favorite(NewNewsFavorite {
             id: "favorite_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: "user_1".to_owned(),
             item_id: "item_world".to_owned(),
             created_at: "2026-06-06T00:07:00Z".to_owned(),
@@ -477,7 +477,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .upsert_reaction(NewNewsReaction {
             id: "reaction_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: "user_1".to_owned(),
             item_id: "item_world".to_owned(),
             reaction_type: "like".to_owned(),
@@ -488,7 +488,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
     store
         .upsert_trending_metric(NewNewsTrendingMetric {
             id: "trend_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             item_id: "item_world".to_owned(),
             metric_window: "hour".to_owned(),
             score: 98,
@@ -499,7 +499,7 @@ async fn sqlite_news_store_supports_channel_feed_events_and_engagement() {
         .expect("trend");
 
     let trending = store
-        .list_trending("tenant_1", "hour", 10)
+        .list_trending("100001", "hour", 10)
         .await
         .expect("trending");
     assert_eq!(trending.len(), 1);
@@ -520,7 +520,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
     store
         .upsert_user_interest_signal(NewNewsUserInterestSignal {
             id: "interest_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: "user_1".to_owned(),
             target_type: "topic".to_owned(),
             target_id: "topic_ai".to_owned(),
@@ -533,7 +533,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
         .expect("upsert interest");
 
     let interests = store
-        .list_user_interest_signals("tenant_1", "user_1", 10)
+        .list_user_interest_signals("100001", "user_1", 10)
         .await
         .expect("list interests");
     assert_eq!(interests.len(), 1);
@@ -543,7 +543,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
     store
         .upsert_feed_candidate(NewNewsFeedCandidate {
             id: "candidate_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: Some("user_1".to_owned()),
             stream_key: "for_you".to_owned(),
             item_id: "item_ai".to_owned(),
@@ -558,7 +558,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
 
     let candidates = store
         .list_feed_candidates(
-            "tenant_1",
+            "100001",
             Some("user_1"),
             "for_you",
             "2026-06-06T01:02:00Z",
@@ -573,7 +573,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
     store
         .upsert_item_metric_snapshot(NewNewsItemMetricSnapshot {
             id: "metric_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             item_id: "item_ai".to_owned(),
             impression_count: 1000,
             click_count: 330,
@@ -589,7 +589,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
         .expect("upsert item metrics");
 
     let metrics = store
-        .retrieve_item_metric_snapshot("tenant_1", "item_ai")
+        .retrieve_item_metric_snapshot("100001", "item_ai")
         .await
         .expect("retrieve metrics")
         .expect("metrics");
@@ -599,7 +599,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
     store
         .upsert_search_suggestion(NewNewsSearchSuggestion {
             id: "suggestion_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             normalized_query: "ai".to_owned(),
             display_query: "AI".to_owned(),
             suggestion_type: "hot".to_owned(),
@@ -612,7 +612,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
         .expect("upsert suggestion");
 
     let suggestions = store
-        .list_search_suggestions("tenant_1", "a", 10)
+        .list_search_suggestions("100001", "a", 10)
         .await
         .expect("list suggestions");
     assert_eq!(suggestions.len(), 1);
@@ -621,7 +621,7 @@ async fn sqlite_news_store_supports_personalized_candidates_metrics_and_search_s
     store
         .record_search_event(NewNewsSearchEvent {
             id: "search_event_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: Some("user_1".to_owned()),
             normalized_query: "ai".to_owned(),
             display_query: "AI".to_owned(),
@@ -647,7 +647,7 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
     store
         .upsert_notification_subscription(NewNewsNotificationSubscription {
             id: "subscription_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             user_id: "user_1".to_owned(),
             target_type: "topic".to_owned(),
             target_id: "topic_ai".to_owned(),
@@ -662,7 +662,7 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
         .expect("upsert subscription");
 
     let subscriptions = store
-        .list_notification_subscriptions("tenant_1", "user_1", 10)
+        .list_notification_subscriptions("100001", "user_1", 10)
         .await
         .expect("list subscriptions");
     assert_eq!(subscriptions.len(), 1);
@@ -672,8 +672,8 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
     store
         .create_breaking_alert(NewNewsBreakingAlert {
             id: "alert_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
-            organization_id: "org_1".to_owned(),
+            tenant_id: "100001".to_owned(),
+            organization_id: "0".to_owned(),
             item_id: Some("item_ai".to_owned()),
             title: "AI breaking".to_owned(),
             summary: "AI breaking summary".to_owned(),
@@ -689,17 +689,17 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
         .await
         .expect("create alert");
     assert!(store
-        .list_active_breaking_alerts("tenant_1", "2026-06-06T02:06:00Z", 10)
+        .list_active_breaking_alerts("100001", "2026-06-06T02:06:00Z", 10)
         .await
         .expect("draft alerts")
         .is_empty());
 
     store
-        .publish_breaking_alert("tenant_1", "alert_1", "2026-06-06T02:11:00Z")
+        .publish_breaking_alert("100001", "alert_1", "2026-06-06T02:11:00Z")
         .await
         .expect("publish alert");
     let alerts = store
-        .list_active_breaking_alerts("tenant_1", "2026-06-06T02:12:00Z", 10)
+        .list_active_breaking_alerts("100001", "2026-06-06T02:12:00Z", 10)
         .await
         .expect("list active alerts");
     assert_eq!(alerts.len(), 1);
@@ -709,7 +709,7 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
     store
         .create_digest_issue(NewNewsDigestIssue {
             id: "digest_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             digest_key: "daily-2026-06-06".to_owned(),
             title: "Daily briefing".to_owned(),
             summary: Some("Top AI news".to_owned()),
@@ -724,7 +724,7 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
     store
         .attach_digest_item(NewNewsDigestItem {
             id: "digest_item_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             digest_id: "digest_1".to_owned(),
             item_id: "item_ai".to_owned(),
             rank: 1,
@@ -735,30 +735,30 @@ async fn sqlite_news_store_supports_subscriptions_breaking_alerts_and_digests() 
         .await
         .expect("attach digest item");
     store
-        .publish_digest_issue("tenant_1", "digest_1", "2026-06-06T03:00:00Z")
+        .publish_digest_issue("100001", "digest_1", "2026-06-06T03:00:00Z")
         .await
         .expect("publish digest");
 
     let digests = store
-        .list_published_digest_issues("tenant_1", "2026-06-06T03:01:00Z", 10)
+        .list_published_digest_issues("100001", "2026-06-06T03:01:00Z", 10)
         .await
         .expect("list digests");
     assert_eq!(digests.len(), 1);
     assert_eq!(digests[0].digest_key, "daily-2026-06-06");
 
     let digest_items = store
-        .list_digest_items("tenant_1", "digest_1", 10)
+        .list_digest_items("100001", "digest_1", 10)
         .await
         .expect("list digest items");
     assert_eq!(digest_items.len(), 1);
     assert_eq!(digest_items[0].item_id, "item_ai");
 
     store
-        .disable_notification_subscription("tenant_1", "subscription_1", "2026-06-06T04:00:00Z")
+        .disable_notification_subscription("100001", "subscription_1", "2026-06-06T04:00:00Z")
         .await
         .expect("disable subscription");
     assert!(store
-        .list_notification_subscriptions("tenant_1", "user_1", 10)
+        .list_notification_subscriptions("100001", "user_1", 10)
         .await
         .expect("list disabled subscriptions")
         .is_empty());
@@ -777,7 +777,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
     store
         .upsert_source_trust_profile(NewNewsSourceTrustProfile {
             id: "trust_source_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             source_id: "source_main".to_owned(),
             trust_score: 92,
             trust_tier: "verified".to_owned(),
@@ -792,7 +792,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
         .expect("upsert source trust");
 
     let source_trust = store
-        .retrieve_source_trust_profile("tenant_1", "source_main")
+        .retrieve_source_trust_profile("100001", "source_main")
         .await
         .expect("retrieve source trust")
         .expect("source trust profile");
@@ -802,7 +802,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
     store
         .create_fact_check(NewNewsFactCheck {
             id: "fact_check_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             item_id: Some("item_ai".to_owned()),
             claim: "AI model reached public safety benchmark".to_owned(),
             verdict: "mostly_true".to_owned(),
@@ -814,17 +814,17 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
         .await
         .expect("create fact check");
     assert!(store
-        .list_published_fact_checks("tenant_1", Some("item_ai"), 10)
+        .list_published_fact_checks("100001", Some("item_ai"), 10)
         .await
         .expect("draft fact checks")
         .is_empty());
 
     store
-        .publish_fact_check("tenant_1", "fact_check_1", "2026-06-06T05:20:00Z")
+        .publish_fact_check("100001", "fact_check_1", "2026-06-06T05:20:00Z")
         .await
         .expect("publish fact check");
     let fact_checks = store
-        .list_published_fact_checks("tenant_1", Some("item_ai"), 10)
+        .list_published_fact_checks("100001", Some("item_ai"), 10)
         .await
         .expect("list fact checks");
     assert_eq!(fact_checks.len(), 1);
@@ -833,7 +833,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
     store
         .create_correction_notice(NewNewsCorrectionNotice {
             id: "correction_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             item_id: "item_ai".to_owned(),
             correction_type: "clarification".to_owned(),
             title: "Clarified benchmark scope".to_owned(),
@@ -844,11 +844,11 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
         .await
         .expect("create correction");
     store
-        .publish_correction_notice("tenant_1", "correction_1", "2026-06-06T05:40:00Z")
+        .publish_correction_notice("100001", "correction_1", "2026-06-06T05:40:00Z")
         .await
         .expect("publish correction");
     let corrections = store
-        .list_published_correction_notices("tenant_1", Some("item_ai"), 10)
+        .list_published_correction_notices("100001", Some("item_ai"), 10)
         .await
         .expect("list corrections");
     assert_eq!(corrections.len(), 1);
@@ -857,7 +857,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
     store
         .upsert_item_trust_snapshot(NewNewsItemTrustSnapshot {
             id: "trust_item_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             item_id: "item_ai".to_owned(),
             trust_score: 88,
             source_trust_score: Some(92),
@@ -869,7 +869,7 @@ async fn sqlite_news_store_supports_trust_fact_checks_and_corrections() {
         .await
         .expect("upsert item trust");
     let item_trust = store
-        .retrieve_item_trust_snapshot("tenant_1", "item_ai")
+        .retrieve_item_trust_snapshot("100001", "item_ai")
         .await
         .expect("retrieve item trust")
         .expect("item trust snapshot");
@@ -891,8 +891,8 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
     store
         .create_live_event(NewNewsLiveEvent {
             id: "live_event_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
-            organization_id: "org_1".to_owned(),
+            tenant_id: "100001".to_owned(),
+            organization_id: "0".to_owned(),
             slug: "election-night".to_owned(),
             title: "Election night live".to_owned(),
             summary: "Minute-by-minute election coverage".to_owned(),
@@ -907,18 +907,18 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
         .expect("create live event");
 
     assert!(store
-        .list_published_live_events("tenant_1", "2026-06-06T06:05:00Z", 10)
+        .list_published_live_events("100001", "2026-06-06T06:05:00Z", 10)
         .await
         .expect("draft live events")
         .is_empty());
 
     store
-        .publish_live_event("tenant_1", "live_event_1", "2026-06-06T06:10:00Z")
+        .publish_live_event("100001", "live_event_1", "2026-06-06T06:10:00Z")
         .await
         .expect("publish live event");
 
     let live_events = store
-        .list_published_live_events("tenant_1", "2026-06-06T06:12:00Z", 10)
+        .list_published_live_events("100001", "2026-06-06T06:12:00Z", 10)
         .await
         .expect("list live events");
     assert_eq!(live_events.len(), 1);
@@ -928,7 +928,7 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
     store
         .create_live_update(NewNewsLiveUpdate {
             id: "live_update_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             live_event_id: "live_event_1".to_owned(),
             title: Some("First projections".to_owned()),
             body: "First official projections are coming in.".to_owned(),
@@ -943,18 +943,18 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
         .expect("create live update");
 
     assert!(store
-        .list_published_live_updates("tenant_1", "live_event_1", 10)
+        .list_published_live_updates("100001", "live_event_1", 10)
         .await
         .expect("draft live updates")
         .is_empty());
 
     store
-        .publish_live_update("tenant_1", "live_update_1", "2026-06-06T06:20:00Z")
+        .publish_live_update("100001", "live_update_1", "2026-06-06T06:20:00Z")
         .await
         .expect("publish live update");
 
     let live_updates = store
-        .list_published_live_updates("tenant_1", "live_event_1", 10)
+        .list_published_live_updates("100001", "live_event_1", 10)
         .await
         .expect("list live updates");
     assert_eq!(live_updates.len(), 1);
@@ -964,7 +964,7 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
     store
         .attach_item_to_live_event(NewNewsLiveEventItem {
             id: "live_item_1".to_owned(),
-            tenant_id: "tenant_1".to_owned(),
+            tenant_id: "100001".to_owned(),
             live_event_id: "live_event_1".to_owned(),
             item_id: "item_projection".to_owned(),
             relation_type: "source_article".to_owned(),
@@ -976,7 +976,7 @@ async fn sqlite_news_store_supports_live_events_updates_and_item_links() {
         .expect("attach live item");
 
     let live_items = store
-        .list_live_event_items("tenant_1", "live_event_1", 10)
+        .list_live_event_items("100001", "live_event_1", 10)
         .await
         .expect("list live items");
     assert_eq!(live_items.len(), 1);

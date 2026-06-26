@@ -43,7 +43,7 @@ fn news_core_manifest_owns_news_domain_contracts() {
 fn news_core_evaluates_publish_schedule_archive_readiness() {
     let item = NewsItem {
         id: "item_1",
-        tenant_id: "tenant_1",
+        tenant_id: "100001",
         category_id: "product",
         slug: "platform-release",
         title: "Platform release",

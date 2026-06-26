@@ -40,7 +40,7 @@ const items: SdkworkNewsItem[] = [
     status: "published",
     summary: "Platform release summary",
     tags: ["release", "platform"],
-    tenantId: "tenant_1",
+    tenantId: "100001",
     title: "Platform release",
     updatedAt: "2026-06-01T09:00:00.000Z",
   },
@@ -53,7 +53,7 @@ const items: SdkworkNewsItem[] = [
     status: "draft",
     summary: "Roadmap draft",
     tags: ["roadmap"],
-    tenantId: "tenant_1",
+    tenantId: "100001",
     title: "Roadmap draft",
   },
 ];
@@ -258,7 +258,7 @@ describe("sdkwork-news contracts", () => {
       id: "channel_top",
       slug: "top",
       status: "active",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "Top News",
       type: "editorial",
     };
@@ -267,7 +267,7 @@ describe("sdkwork-news contracts", () => {
       id: "event_1",
       itemId: "item_1",
       occurredAt: "2026-06-06T08:00:00.000Z",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       userId: "user_1",
     };
 
@@ -283,7 +283,7 @@ describe("sdkwork-news contracts", () => {
       status: "active",
       targetId: "topic_ai",
       targetType: "topic",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       updatedAt: "2026-06-06T08:00:00.000Z",
       userId: "user_1",
     };
@@ -294,7 +294,7 @@ describe("sdkwork-news contracts", () => {
       severity: "breaking",
       status: "published",
       summary: "Important update",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "Breaking",
       updatedAt: "2026-06-06T08:01:00.000Z",
     };
@@ -303,7 +303,7 @@ describe("sdkwork-news contracts", () => {
       digestType: "daily",
       id: "digest_1",
       status: "published",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "Daily briefing",
       updatedAt: "2026-06-06T08:02:00.000Z",
     };
@@ -320,7 +320,7 @@ describe("sdkwork-news contracts", () => {
       id: "trust_source_1",
       reviewedAt: "2026-06-06T08:03:00.000Z",
       sourceId: "source_main",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       trustScore: 92,
       trustTier: "verified",
     };
@@ -329,7 +329,7 @@ describe("sdkwork-news contracts", () => {
       id: "fact_check_1",
       status: "published",
       summary: "Mostly true with caveats",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       updatedAt: "2026-06-06T08:04:00.000Z",
       verdict: "mostly_true",
     };
@@ -339,7 +339,7 @@ describe("sdkwork-news contracts", () => {
       id: "correction_1",
       itemId: "item_1",
       status: "published",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "Clarification",
       updatedAt: "2026-06-06T08:05:00.000Z",
     };
@@ -348,7 +348,7 @@ describe("sdkwork-news contracts", () => {
       correctionCount: 1,
       itemId: "item_1",
       riskLevel: "low",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       trustScore: 88,
     };
 
@@ -367,7 +367,7 @@ describe("sdkwork-news contracts", () => {
       slug: "election-night",
       status: "published",
       summary: "Minute-by-minute election coverage",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "Election night live",
       updatedAt: "2026-06-06T08:00:00.000Z",
     };
@@ -378,7 +378,7 @@ describe("sdkwork-news contracts", () => {
       liveEventId: "live_event_1",
       publishedAt: "2026-06-06T08:10:00.000Z",
       status: "published",
-      tenantId: "tenant_1",
+      tenantId: "100001",
       title: "First projections",
       updateType: "text",
     };
