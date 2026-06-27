@@ -26,7 +26,7 @@ async fn attach_media_requires_item_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "".to_string(),
         media_id: "drive_node_123".to_string(),
         media_role: None,
@@ -43,7 +43,7 @@ async fn attach_media_requires_media_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         media_id: "".to_string(),
         media_role: None,
@@ -60,7 +60,7 @@ async fn attach_media_requires_valid_role() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         media_id: "drive_node_123".to_string(),
         media_role: Some("invalid_role".to_string()),
@@ -78,7 +78,7 @@ async fn attach_media_valid_roles_pass() {
     let service = NewsMediaAttachmentService::new(repo);
     for role in &["hero", "thumbnail", "inline", "gallery", "video", "audio", "document", "embed"] {
         let cmd = AttachDriveMediaCommand {
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             item_id: "item1".to_string(),
             media_id: "drive_node_123".to_string(),
             media_role: Some(role.to_string()),
@@ -94,7 +94,7 @@ async fn attach_media_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsMediaAttachmentService::new(repo);
     let cmd = AttachDriveMediaCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         media_id: "drive_node_123".to_string(),
         media_role: Some("hero".to_string()),

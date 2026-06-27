@@ -29,7 +29,7 @@ async fn create_feed() {
     let feed = repo
         .create_feed(NewNewsExternalFeed {
             id: "feed1".to_string(),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             feed_url: "https://example.com/rss".to_string(),
             feed_type: "rss".to_string(),
             poll_interval_seconds: 3600,
@@ -46,7 +46,7 @@ async fn claim_due_feed_returns_none_when_nothing_due() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -56,13 +56,13 @@ async fn claim_due_feed_returns_none_when_nothing_due() {
     .unwrap();
 
     let claimed = repo
-        .claim_due_feed("t1", "2026-06-13T00:00:01Z")
+        .claim_due_feed("100001", "2026-06-13T00:00:01Z")
         .await
         .unwrap();
     assert!(claimed.is_some());
 
     let claimed2 = repo
-        .claim_due_feed("t1", "2026-06-13T01:00:01Z")
+        .claim_due_feed("100001", "2026-06-13T01:00:01Z")
         .await
         .unwrap();
     assert!(claimed2.is_some());
@@ -73,7 +73,7 @@ async fn upsert_external_feed_item() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -85,7 +85,7 @@ async fn upsert_external_feed_item() {
     let item = repo
         .upsert_external_feed_item(NewNewsExternalFeedItem {
             id: "fi1".to_string(),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             feed_id: "feed1".to_string(),
             external_id: "ext1".to_string(),
             title: Some("Article 1".to_string()),
@@ -104,7 +104,7 @@ async fn list_pending_feed_items() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -116,7 +116,7 @@ async fn list_pending_feed_items() {
     for i in 0..3 {
         repo.upsert_external_feed_item(NewNewsExternalFeedItem {
             id: format!("fi{}", i),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             feed_id: "feed1".to_string(),
             external_id: format!("ext{}", i),
             title: Some(format!("Article {}", i)),
@@ -130,7 +130,7 @@ async fn list_pending_feed_items() {
     }
 
     let pending = repo
-        .list_pending_feed_items("t1", "feed1", 10)
+        .list_pending_feed_items("100001", "feed1", 10)
         .await
         .unwrap();
     assert_eq!(pending.len(), 3);
@@ -141,7 +141,7 @@ async fn mark_feed_item_imported() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -152,7 +152,7 @@ async fn mark_feed_item_imported() {
 
     repo.upsert_external_feed_item(NewNewsExternalFeedItem {
         id: "fi1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_id: "feed1".to_string(),
         external_id: "ext1".to_string(),
         title: None,
@@ -164,12 +164,12 @@ async fn mark_feed_item_imported() {
     .await
     .unwrap();
 
-    repo.mark_feed_item_imported("t1", "fi1", "2026-06-13T00:02:00Z")
+    repo.mark_feed_item_imported("100001", "fi1", "2026-06-13T00:02:00Z")
         .await
         .unwrap();
 
     let pending = repo
-        .list_pending_feed_items("t1", "feed1", 10)
+        .list_pending_feed_items("100001", "feed1", 10)
         .await
         .unwrap();
     assert_eq!(pending.len(), 0);
@@ -180,7 +180,7 @@ async fn mark_feed_item_failed() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -191,7 +191,7 @@ async fn mark_feed_item_failed() {
 
     repo.upsert_external_feed_item(NewNewsExternalFeedItem {
         id: "fi1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_id: "feed1".to_string(),
         external_id: "ext1".to_string(),
         title: None,
@@ -203,12 +203,12 @@ async fn mark_feed_item_failed() {
     .await
     .unwrap();
 
-    repo.mark_feed_item_failed("t1", "fi1", "2026-06-13T00:02:00Z")
+    repo.mark_feed_item_failed("100001", "fi1", "2026-06-13T00:02:00Z")
         .await
         .unwrap();
 
     let pending = repo
-        .list_pending_feed_items("t1", "feed1", 10)
+        .list_pending_feed_items("100001", "feed1", 10)
         .await
         .unwrap();
     assert_eq!(pending.len(), 0);
@@ -219,7 +219,7 @@ async fn update_feed_success() {
     let repo = setup_repo().await;
     repo.create_feed(NewNewsExternalFeed {
         id: "feed1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         feed_url: "https://example.com/rss".to_string(),
         feed_type: "rss".to_string(),
         poll_interval_seconds: 3600,
@@ -228,7 +228,7 @@ async fn update_feed_success() {
     .await
     .unwrap();
 
-    repo.update_feed_success("t1", "feed1", "2026-06-13T00:05:00Z")
+    repo.update_feed_success("100001", "feed1", "2026-06-13T00:05:00Z")
         .await
         .unwrap();
 }

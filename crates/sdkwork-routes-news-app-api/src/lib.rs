@@ -1,4 +1,5 @@
 pub mod handlers;
+pub mod routes;
 
 pub const APP_API_PREFIX: &str = "/app/v3/api";
 
@@ -220,6 +221,6 @@ fn route(method: HttpMethod, path: &'static str, operation_id: &'static str) -> 
     NewsHttpRoute::new(method, path, "news", operation_id)
 }
 
-pub fn gateway_mount() -> axum::Router {
-    axum::Router::new()
+pub fn gateway_mount(state: std::sync::Arc<sdkwork_routes_news_open_api::state::NewsHttpState>) -> axum::Router {
+    routes::gateway_mount(state)
 }

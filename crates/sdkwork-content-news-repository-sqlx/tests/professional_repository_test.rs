@@ -29,7 +29,7 @@ async fn create_and_retrieve_story() {
     let story = repo
         .create_story(NewNewsStory {
             id: "story_1".to_string(),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             organization_id: "org1".to_string(),
             slug: "breaking-news".to_string(),
             title: "Breaking News".to_string(),
@@ -42,7 +42,7 @@ async fn create_and_retrieve_story() {
     assert_eq!(story.id, "story_1");
     assert_eq!(story.status, "draft");
 
-    let retrieved = repo.retrieve_story("t1", "story_1").await.unwrap();
+    let retrieved = repo.retrieve_story("100001", "story_1").await.unwrap();
     assert!(retrieved.is_some());
     let s = retrieved.unwrap();
     assert_eq!(s.title, "Breaking News");
@@ -54,7 +54,7 @@ async fn list_stories_filters_by_status() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
         id: "s1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: "".to_string(),
         slug: "s1".to_string(),
         title: "Story 1".to_string(),
@@ -65,11 +65,11 @@ async fn list_stories_filters_by_status() {
     .await
     .unwrap();
 
-    let drafts = repo.list_stories("t1", Some("draft"), 10).await.unwrap();
+    let drafts = repo.list_stories("100001", Some("draft"), 10).await.unwrap();
     assert_eq!(drafts.len(), 1);
 
     let published = repo
-        .list_stories("t1", Some("published"), 10)
+        .list_stories("100001", Some("published"), 10)
         .await
         .unwrap();
     assert_eq!(published.len(), 0);
@@ -80,7 +80,7 @@ async fn update_story() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
         id: "s1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: "".to_string(),
         slug: "s1".to_string(),
         title: "Story 1".to_string(),
@@ -93,7 +93,7 @@ async fn update_story() {
 
     let updated = repo
         .update_story(
-            "t1",
+            "100001",
             "s1",
             "Updated Title",
             "Updated Summary",
@@ -104,7 +104,7 @@ async fn update_story() {
         .unwrap();
     assert!(updated);
 
-    let story = repo.retrieve_story("t1", "s1").await.unwrap().unwrap();
+    let story = repo.retrieve_story("100001", "s1").await.unwrap().unwrap();
     assert_eq!(story.title, "Updated Title");
     assert_eq!(story.summary, "Updated Summary");
 }
@@ -114,7 +114,7 @@ async fn update_story_with_wrong_version_fails() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
         id: "s1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: "".to_string(),
         slug: "s1".to_string(),
         title: "Story 1".to_string(),
@@ -127,7 +127,7 @@ async fn update_story_with_wrong_version_fails() {
 
     let updated = repo
         .update_story(
-            "t1",
+            "100001",
             "s1",
             "Updated Title",
             "Updated Summary",
@@ -144,7 +144,7 @@ async fn attach_story_item_and_list() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
         id: "s1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: "".to_string(),
         slug: "s1".to_string(),
         title: "Story 1".to_string(),
@@ -157,7 +157,7 @@ async fn attach_story_item_and_list() {
 
     repo.attach_story_item(NewNewsStoryItem {
         id: "si1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         story_id: "s1".to_string(),
         item_id: "item1".to_string(),
         relation_type: "primary".to_string(),
@@ -169,7 +169,7 @@ async fn attach_story_item_and_list() {
 
     repo.attach_story_item(NewNewsStoryItem {
         id: "si2".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         story_id: "s1".to_string(),
         item_id: "item2".to_string(),
         relation_type: "related".to_string(),
@@ -186,7 +186,7 @@ async fn list_stories_with_limit() {
     for i in 0..5 {
         repo.create_story(NewNewsStory {
             id: format!("s{}", i),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             organization_id: "".to_string(),
             slug: format!("s{}", i),
             title: format!("Story {}", i),
@@ -198,17 +198,17 @@ async fn list_stories_with_limit() {
         .unwrap();
     }
 
-    let all = repo.list_stories("t1", None, 10).await.unwrap();
+    let all = repo.list_stories("100001", None, 10).await.unwrap();
     assert_eq!(all.len(), 5);
 
-    let limited = repo.list_stories("t1", None, 2).await.unwrap();
+    let limited = repo.list_stories("100001", None, 2).await.unwrap();
     assert_eq!(limited.len(), 2);
 }
 
 #[tokio::test]
 async fn retrieve_nonexistent_story_returns_none() {
     let repo = setup_repo().await;
-    let story = repo.retrieve_story("t1", "nonexistent").await.unwrap();
+    let story = repo.retrieve_story("100001", "nonexistent").await.unwrap();
     assert!(story.is_none());
 }
 
@@ -217,7 +217,7 @@ async fn create_multiple_stories_different_tenants() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
         id: "s1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: "".to_string(),
         slug: "s1".to_string(),
         title: "Story 1".to_string(),
@@ -241,9 +241,9 @@ async fn create_multiple_stories_different_tenants() {
     .await
     .unwrap();
 
-    let t1_stories = repo.list_stories("t1", None, 10).await.unwrap();
+    let t1_stories = repo.list_stories("100001", None, 10).await.unwrap();
     assert_eq!(t1_stories.len(), 1);
-    assert_eq!(t1_stories[0].tenant_id, "t1");
+    assert_eq!(t1_stories[0].tenant_id, "100001");
 
     let t2_stories = repo.list_stories("t2", None, 10).await.unwrap();
     assert_eq!(t2_stories.len(), 1);

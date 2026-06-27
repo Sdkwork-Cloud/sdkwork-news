@@ -1,9 +1,7 @@
 mod bootstrap;
-mod handlers;
 mod http_route_manifest;
 mod middleware;
 mod readiness;
-mod routes;
 mod web_bootstrap;
 
 use anyhow::Result;

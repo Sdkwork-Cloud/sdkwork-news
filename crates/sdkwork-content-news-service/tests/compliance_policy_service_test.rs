@@ -26,7 +26,7 @@ async fn apply_legal_hold_requires_reason() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         hold_reason: "".to_string(),
         applies_to: "item".to_string(),
         reference_ids: None,
@@ -43,7 +43,7 @@ async fn apply_legal_hold_requires_target() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         hold_reason: "Litigation".to_string(),
         applies_to: "".to_string(),
         reference_ids: None,
@@ -60,7 +60,7 @@ async fn apply_legal_hold_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = ApplyLegalHoldCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         hold_reason: "Pending litigation case #123".to_string(),
         applies_to: "story".to_string(),
         reference_ids: Some("story1,story2".to_string()),
@@ -90,7 +90,7 @@ async fn evaluate_retention_requires_target_type() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         target_type: "".to_string(),
         target_id: "item1".to_string(),
         actor_user_id: None,
@@ -105,7 +105,7 @@ async fn evaluate_retention_requires_target_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         target_type: "item".to_string(),
         target_id: "".to_string(),
         actor_user_id: None,
@@ -120,7 +120,7 @@ async fn evaluate_retention_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsCompliancePolicyService::new(repo);
     let cmd = EvaluateRetentionPolicyCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         target_type: "story".to_string(),
         target_id: "story1".to_string(),
         actor_user_id: Some("compliance1".to_string()),

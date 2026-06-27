@@ -27,7 +27,7 @@ async fn create_assignment_requires_assignee() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: Some("item1".to_string()),
         story_id: None,
         assignee_user_id: "".to_string(),
@@ -45,7 +45,7 @@ async fn create_assignment_requires_valid_role() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: Some("item1".to_string()),
         story_id: None,
         assignee_user_id: "user1".to_string(),
@@ -63,7 +63,7 @@ async fn create_assignment_requires_target() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: None,
         story_id: None,
         assignee_user_id: "user1".to_string(),
@@ -81,7 +81,7 @@ async fn create_assignment_valid_writer_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: Some("item1".to_string()),
         story_id: None,
         assignee_user_id: "user1".to_string(),
@@ -97,7 +97,7 @@ async fn create_assignment_valid_editor_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: None,
         story_id: Some("story1".to_string()),
         assignee_user_id: "user2".to_string(),
@@ -113,7 +113,7 @@ async fn create_assignment_valid_reviewer_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsEditorialWorkflowService::new(repo);
     let cmd = CreateAssignmentCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: Some("item1".to_string()),
         story_id: None,
         assignee_user_id: "user3".to_string(),

@@ -26,7 +26,7 @@ async fn import_ninjs_requires_payload() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ImportNinjsCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: None,
         source_id: None,
         provider: None,
@@ -43,7 +43,7 @@ async fn import_ninjs_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ImportNinjsCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: Some("org1".to_string()),
         source_id: Some("source1".to_string()),
         provider: Some("reuters".to_string()),
@@ -75,7 +75,7 @@ async fn import_newsml_g2_requires_payload() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ImportNewsmlG2Command {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: None,
         source_id: None,
         provider: None,
@@ -92,7 +92,7 @@ async fn import_newsml_g2_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ImportNewsmlG2Command {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: Some("org1".to_string()),
         source_id: None,
         provider: Some("associated-press".to_string()),
@@ -124,7 +124,7 @@ async fn export_requires_valid_format() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: None,
         format: "invalid_format".to_string(),
         filter_json: None,
@@ -141,7 +141,7 @@ async fn export_ninjs_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: Some("org1".to_string()),
         format: "ninjs".to_string(),
         filter_json: Some(r#"{"status":"published"}"#.to_string()),
@@ -156,7 +156,7 @@ async fn export_schema_org_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsImportExportService::new(repo);
     let cmd = ExportCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: None,
         format: "schema_org".to_string(),
         filter_json: None,
@@ -182,8 +182,8 @@ async fn compute_payload_hash_different_for_different_input() {
 
 #[tokio::test]
 async fn compute_idempotency_key_format() {
-    let key = NewsImportExportService::compute_idempotency_key("t1", "ninjs", "hash123");
-    assert!(key.contains("t1"));
+    let key = NewsImportExportService::compute_idempotency_key("100001", "ninjs", "hash123");
+    assert!(key.contains("100001"));
     assert!(key.contains("ninjs"));
     assert!(key.contains("hash123"));
 }

@@ -29,7 +29,7 @@ async fn create_paywall_policy() {
     let policy = repo
         .create_paywall_policy(NewNewsPaywallPolicy {
             id: "p1".to_string(),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             policy_name: "metered-access".to_string(),
             policy_type: "metered".to_string(),
             rules_json: r#"{"max_views":10,"window_days":30}"#.to_string(),
@@ -44,7 +44,7 @@ async fn create_paywall_policy() {
 #[tokio::test]
 async fn find_matching_rule_returns_none_when_empty() {
     let repo = setup_repo().await;
-    let rule = repo.find_matching_rule("t1", "metered").await.unwrap();
+    let rule = repo.find_matching_rule("100001", "metered").await.unwrap();
     assert!(rule.is_none());
 }
 
@@ -53,7 +53,7 @@ async fn find_matching_rule_returns_created_policy() {
     let repo = setup_repo().await;
     repo.create_paywall_policy(NewNewsPaywallPolicy {
         id: "p1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         policy_name: "premium".to_string(),
         policy_type: "subscription".to_string(),
         rules_json: r#"{"tier":"premium"}"#.to_string(),
@@ -62,7 +62,7 @@ async fn find_matching_rule_returns_created_policy() {
     .await
     .unwrap();
 
-    let rule = repo.find_matching_rule("t1", "subscription").await.unwrap();
+    let rule = repo.find_matching_rule("100001", "subscription").await.unwrap();
     assert!(rule.is_some());
     assert_eq!(rule.unwrap().policy_type, "subscription");
 }
@@ -72,7 +72,7 @@ async fn record_metered_access_event() {
     let repo = setup_repo().await;
     repo.record_metered_access_event(NewNewsMeteredAccessEvent {
         id: "mae1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: "user1".to_string(),
         item_id: "item1".to_string(),
         event_type: "view".to_string(),
@@ -89,7 +89,7 @@ async fn count_metered_access_returns_correct_count() {
     for i in 0..5 {
         repo.record_metered_access_event(NewNewsMeteredAccessEvent {
             id: format!("mae{}", i),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             user_id: "user1".to_string(),
             item_id: "item1".to_string(),
             event_type: "view".to_string(),
@@ -101,7 +101,7 @@ async fn count_metered_access_returns_correct_count() {
     }
 
     let count = repo
-        .count_metered_access("t1", "user1", "item1", "2026-06-01T00:00:00Z")
+        .count_metered_access("100001", "user1", "item1", "2026-06-01T00:00:00Z")
         .await
         .unwrap();
     assert_eq!(count, 5);
@@ -113,7 +113,7 @@ async fn list_paywall_policies() {
     for i in 0..3 {
         repo.create_paywall_policy(NewNewsPaywallPolicy {
             id: format!("p{}", i),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             policy_name: format!("policy_{}", i),
             policy_type: "metered".to_string(),
             rules_json: "{}".to_string(),
@@ -123,7 +123,7 @@ async fn list_paywall_policies() {
         .unwrap();
     }
 
-    let policies = repo.list_paywall_policies("t1", 10).await.unwrap();
+    let policies = repo.list_paywall_policies("100001", 10).await.unwrap();
     assert_eq!(policies.len(), 3);
 }
 
@@ -133,7 +133,7 @@ async fn create_multiple_metered_events_different_users() {
     for user_id in &["user1", "user2", "user3"] {
         repo.record_metered_access_event(NewNewsMeteredAccessEvent {
             id: format!("mae_{}", user_id),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             user_id: user_id.to_string(),
             item_id: "item1".to_string(),
             event_type: "view".to_string(),
@@ -145,13 +145,13 @@ async fn create_multiple_metered_events_different_users() {
     }
 
     let count_user1 = repo
-        .count_metered_access("t1", "user1", "item1", "2026-06-01T00:00:00Z")
+        .count_metered_access("100001", "user1", "item1", "2026-06-01T00:00:00Z")
         .await
         .unwrap();
     assert_eq!(count_user1, 1);
 
     let count_user2 = repo
-        .count_metered_access("t1", "user2", "item1", "2026-06-01T00:00:00Z")
+        .count_metered_access("100001", "user2", "item1", "2026-06-01T00:00:00Z")
         .await
         .unwrap();
     assert_eq!(count_user2, 1);
@@ -162,7 +162,7 @@ async fn create_multiple_policies_different_types() {
     let repo = setup_repo().await;
     repo.create_paywall_policy(NewNewsPaywallPolicy {
         id: "p1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         policy_name: "metered".to_string(),
         policy_type: "metered".to_string(),
         rules_json: r#"{"max_views":5}"#.to_string(),
@@ -173,7 +173,7 @@ async fn create_multiple_policies_different_types() {
 
     repo.create_paywall_policy(NewNewsPaywallPolicy {
         id: "p2".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         policy_name: "hard-paywall".to_string(),
         policy_type: "hard".to_string(),
         rules_json: r#"{"always_block":true}"#.to_string(),
@@ -182,11 +182,11 @@ async fn create_multiple_policies_different_types() {
     .await
     .unwrap();
 
-    let metered = repo.find_matching_rule("t1", "metered").await.unwrap();
+    let metered = repo.find_matching_rule("100001", "metered").await.unwrap();
     assert!(metered.is_some());
     assert_eq!(metered.unwrap().policy_type, "metered");
 
-    let hard = repo.find_matching_rule("t1", "hard").await.unwrap();
+    let hard = repo.find_matching_rule("100001", "hard").await.unwrap();
     assert!(hard.is_some());
     assert_eq!(hard.unwrap().policy_type, "hard");
 }

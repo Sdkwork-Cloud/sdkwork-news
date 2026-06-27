@@ -29,7 +29,7 @@ async fn create_story_requires_title() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: None,
         title: "  ".to_string(),
         slug: None,
@@ -49,7 +49,7 @@ async fn create_story_valid_command_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: Some("org1".to_string()),
         title: "Breaking News".to_string(),
         slug: Some("breaking-news".to_string()),
@@ -214,7 +214,7 @@ async fn create_story_persists_to_database() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         organization_id: Some("org1".to_string()),
         title: "Breaking News".to_string(),
         slug: None,

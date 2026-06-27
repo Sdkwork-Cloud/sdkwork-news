@@ -9,7 +9,7 @@ name = "sdkwork_news_gateway_assembly"
 path = "src/lib.rs"
 
 [dependencies]
-axum.workspace = true
+axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1.48", features = ["macros", "rt-multi-thread"] }
 sdkwork_routes_news_app_api = { package = "sdkwork-routes-news-app-api", path = "../sdkwork-routes-news-app-api" }
 sdkwork_routes_news_backend_api = { package = "sdkwork-routes-news-backend-api", path = "../sdkwork-routes-news-backend-api" }

@@ -29,7 +29,7 @@ async fn upsert_rights_requires_item_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertItemRightsCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "".to_string(),
         rights_status: "cleared".to_string(),
         copyright_holder: None,
@@ -49,7 +49,7 @@ async fn upsert_rights_requires_valid_status() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertItemRightsCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         rights_status: "invalid".to_string(),
         copyright_holder: None,
@@ -77,7 +77,7 @@ async fn upsert_rights_valid_statuses_pass() {
         "public_domain",
     ] {
         let cmd = UpsertItemRightsCommand {
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             item_id: "item1".to_string(),
             rights_status: status.to_string(),
             copyright_holder: Some("Publisher".to_string()),
@@ -118,7 +118,7 @@ async fn upsert_c2pa_requires_item_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "".to_string(),
         provenance_status: "verified".to_string(),
         manifest_uri: None,
@@ -136,7 +136,7 @@ async fn upsert_c2pa_requires_valid_status() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         provenance_status: "invalid".to_string(),
         manifest_uri: None,
@@ -157,7 +157,7 @@ async fn upsert_c2pa_verified_requires_manifest_hash() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         provenance_status: "verified".to_string(),
         manifest_uri: Some("https://example.com/manifest".to_string()),
@@ -175,7 +175,7 @@ async fn upsert_c2pa_verified_with_hash_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         provenance_status: "verified".to_string(),
         manifest_uri: Some("https://example.com/manifest".to_string()),
@@ -191,7 +191,7 @@ async fn upsert_c2pa_unverified_passes_without_hash() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsTrustService::new(repo);
     let cmd = UpsertC2paProvenanceCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         item_id: "item1".to_string(),
         provenance_status: "unverified".to_string(),
         manifest_uri: None,

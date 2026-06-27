@@ -27,7 +27,7 @@ async fn validate_feed_query_limit_zero_fails() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsFeedPersonalizationService::new(repo);
     let query = FeedQuery {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: Some("u1".to_string()),
         organization_id: None,
         region: None,
@@ -45,7 +45,7 @@ async fn validate_feed_query_limit_over_100_fails() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsFeedPersonalizationService::new(repo);
     let query = FeedQuery {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: None,
         organization_id: None,
         region: None,
@@ -63,7 +63,7 @@ async fn validate_feed_query_valid_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsFeedPersonalizationService::new(repo);
     let query = FeedQuery {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: Some("u1".to_string()),
         organization_id: Some("org1".to_string()),
         region: Some("US".to_string()),
@@ -95,7 +95,7 @@ async fn validate_share_event_requires_item_id() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsFeedPersonalizationService::new(repo);
     let cmd = ShareEventCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: Some("u1".to_string()),
         item_id: "".to_string(),
         share_channel: Some("twitter".to_string()),
@@ -111,7 +111,7 @@ async fn validate_share_event_valid_passes() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsFeedPersonalizationService::new(repo);
     let cmd = ShareEventCommand {
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         user_id: Some("u1".to_string()),
         item_id: "item1".to_string(),
         share_channel: Some("twitter".to_string()),

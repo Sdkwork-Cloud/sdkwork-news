@@ -29,7 +29,7 @@ async fn create_newsletter() {
     let nl = repo
         .create_newsletter(NewNewsNewsletter {
             id: "nl1".to_string(),
-            tenant_id: "t1".to_string(),
+            tenant_id: "100001".to_string(),
             title: "Daily Digest".to_string(),
             description: Some("Daily news digest".to_string()),
             now: "2026-06-13T00:00:00Z".to_string(),
@@ -45,7 +45,7 @@ async fn list_newsletters_filters_by_status() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "NL 1".to_string(),
         description: None,
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -54,13 +54,13 @@ async fn list_newsletters_filters_by_status() {
     .unwrap();
 
     let drafts = repo
-        .list_newsletters("t1", Some("draft"), 10)
+        .list_newsletters("100001", Some("draft"), 10)
         .await
         .unwrap();
     assert_eq!(drafts.len(), 1);
 
     let published = repo
-        .list_newsletters("t1", Some("published"), 10)
+        .list_newsletters("100001", Some("published"), 10)
         .await
         .unwrap();
     assert_eq!(published.len(), 0);
@@ -71,7 +71,7 @@ async fn attach_newsletter_item() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "NL 1".to_string(),
         description: None,
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -81,7 +81,7 @@ async fn attach_newsletter_item() {
 
     repo.attach_newsletter_item(NewNewsNewsletterItem {
         id: "nli1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         newsletter_id: "nl1".to_string(),
         item_id: "item1".to_string(),
         rank: 0,
@@ -93,7 +93,7 @@ async fn attach_newsletter_item() {
 
     repo.attach_newsletter_item(NewNewsNewsletterItem {
         id: "nli2".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         newsletter_id: "nl1".to_string(),
         item_id: "item2".to_string(),
         rank: 1,
@@ -109,7 +109,7 @@ async fn create_newsletter_issue() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "Weekly".to_string(),
         description: None,
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -118,7 +118,7 @@ async fn create_newsletter_issue() {
     .unwrap();
 
     repo.create_newsletter_issue(
-        "t1",
+        "100001",
         "nl1",
         "Issue #1",
         Some("2026-06-14T09:00:00Z"),
@@ -133,7 +133,7 @@ async fn record_newsletter_delivery() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "Weekly".to_string(),
         description: None,
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -141,7 +141,7 @@ async fn record_newsletter_delivery() {
     .await
     .unwrap();
 
-    repo.record_newsletter_delivery("t1", "nl1", "delivered", "2026-06-14T09:00:00Z")
+    repo.record_newsletter_delivery("100001", "nl1", "delivered", "2026-06-14T09:00:00Z")
         .await
         .unwrap();
 }
@@ -151,7 +151,7 @@ async fn create_newsletter_with_schedule() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "Scheduled NL".to_string(),
         description: Some("Sends every Monday".to_string()),
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -160,7 +160,7 @@ async fn create_newsletter_with_schedule() {
     .unwrap();
 
     repo.create_newsletter_issue(
-        "t1",
+        "100001",
         "nl1",
         "Monday Edition",
         Some("2026-06-16T09:00:00Z"),
@@ -175,7 +175,7 @@ async fn attach_duplicate_newsletter_item_upserts() {
     let repo = setup_repo().await;
     repo.create_newsletter(NewNewsNewsletter {
         id: "nl1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         title: "NL 1".to_string(),
         description: None,
         now: "2026-06-13T00:00:00Z".to_string(),
@@ -185,7 +185,7 @@ async fn attach_duplicate_newsletter_item_upserts() {
 
     repo.attach_newsletter_item(NewNewsNewsletterItem {
         id: "nli1".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         newsletter_id: "nl1".to_string(),
         item_id: "item1".to_string(),
         rank: 0,
@@ -197,7 +197,7 @@ async fn attach_duplicate_newsletter_item_upserts() {
 
     repo.attach_newsletter_item(NewNewsNewsletterItem {
         id: "nli1b".to_string(),
-        tenant_id: "t1".to_string(),
+        tenant_id: "100001".to_string(),
         newsletter_id: "nl1".to_string(),
         item_id: "item1".to_string(),
         rank: 5,

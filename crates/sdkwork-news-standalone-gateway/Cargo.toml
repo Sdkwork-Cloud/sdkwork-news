@@ -1,10 +1,10 @@
 [package]
-name = "sdkwork-news-api-server"
+name = "sdkwork-news-standalone-gateway"
 version.workspace = true
 edition.workspace = true
 
 [[bin]]
-name = "news-api-server"
+name = "sdkwork-news-standalone-gateway"
 path = "src/main.rs"
 
 [dependencies]
@@ -31,6 +31,3 @@ sdkwork-web-axum = { path = "../../../sdkwork-web-framework/crates/sdkwork-web-a
 sdkwork-web-core = { path = "../../../sdkwork-web-framework/crates/sdkwork-web-core" }
 sdkwork-web-bootstrap = { workspace = true }
 
-[[bin]]
-name = "sdkwork-news-standalone-gateway"
-path = "src/main.rs"

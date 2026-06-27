@@ -8,7 +8,7 @@ members = [
     "crates/sdkwork-routes-news-open-api",
     "crates/sdkwork-routes-news-app-api",
     "crates/sdkwork-routes-news-backend-api",
-    "crates/sdkwork-news-api-server",
+    "crates/sdkwork-news-standalone-gateway",
 ]
 resolver = "2"
 
@@ -33,6 +33,6 @@ sdkwork-content-news-worker = { path = "crates/sdkwork-content-news-worker" }
 sdkwork-routes-news-open-api = { path = "crates/sdkwork-routes-news-open-api" }
 sdkwork-routes-news-app-api = { path = "crates/sdkwork-routes-news-app-api" }
 sdkwork-routes-news-backend-api = { path = "crates/sdkwork-routes-news-backend-api" }
-sdkwork-news-api-server = { path = "crates/sdkwork-news-api-server" }
+sdkwork-news-standalone-gateway = { path = "crates/sdkwork-news-standalone-gateway" }
 sdkwork-web-bootstrap = { path = "../sdkwork-web-framework/crates/sdkwork-web-bootstrap" }
 

@@ -1,6 +1,10 @@
 pub mod handlers;
 pub mod http_route_manifest;
+pub mod routes;
+pub mod state;
 pub mod web_bootstrap;
+
+use sdkwork_web_core::HttpRouteManifest;
 
 pub use http_route_manifest::open_route_manifest;
 pub use web_bootstrap::{
@@ -135,6 +139,6 @@ pub fn gateway_route_manifest() -> HttpRouteManifest {
     open_route_manifest()
 }
 
-pub fn gateway_mount() -> axum::Router {
-    axum::Router::new()
+pub fn gateway_mount(state: std::sync::Arc<state::NewsHttpState>) -> axum::Router {
+    routes::gateway_mount(state)
 }
