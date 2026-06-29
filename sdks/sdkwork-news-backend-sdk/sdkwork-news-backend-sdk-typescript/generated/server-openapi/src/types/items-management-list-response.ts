@@ -1,3 +1,9 @@
 import type { NewsItem } from './news-item';
+import type { PageInfo } from './page-info';
 
-export type ItemsManagementListResponse = NewsItem[];
+export interface ItemsManagementListResponse {
+  code: 0;
+  data: unknown & Record<string, unknown>;
+  /** Server-owned request correlation id. */
+  traceId: string;
+}

@@ -1,3 +1,9 @@
 import type { NewsAuthor } from './news-author';
+import type { PageInfo } from './page-info';
 
-export type AuthorsManagementListResponse = NewsAuthor[];
+export interface AuthorsManagementListResponse {
+  code: 0;
+  data: unknown & Record<string, unknown>;
+  /** Server-owned request correlation id. */
+  traceId: string;
+}

@@ -2,6 +2,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sdkWorkEnvelopeComponentSchemas } from "../../sdkwork-specs/tools/lib/openapi-envelope-schemas.mjs";
+import { bootstrapOpenApiEnvelope } from "../../sdkwork-specs/tools/lib/migrate-openapi-legacy-envelope.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
@@ -10,17 +12,6 @@ const OWNER = "sdkwork-news";
 const DOMAIN = "news";
 
 const schemas = {
-  NewsApiResult: {
-    type: "object",
-    additionalProperties: false,
-    required: ["code", "message", "requestId", "data"],
-    properties: {
-      code: { type: "string" },
-      message: { type: "string" },
-      requestId: { type: "string", format: "uuid" },
-      data: {},
-    },
-  },
   NewsCategory: {
     type: "object",
     additionalProperties: false,
@@ -839,18 +830,6 @@ const schemas = {
       scheduledFor: { type: "string", format: "date-time" },
     },
   },
-  ProblemDetail: {
-    type: "object",
-    additionalProperties: true,
-    required: ["type", "title", "status"],
-    properties: {
-      type: { type: "string", format: "uri-reference" },
-      title: { type: "string" },
-      status: { type: "integer", minimum: 100, maximum: 599 },
-      detail: { type: "string" },
-      requestId: { type: "string", format: "uuid" },
-    },
-  },
 };
 
 const appRoutes = [
@@ -1171,7 +1150,7 @@ function documentFor({ authority, routes, serverUrl, title }) {
     item.operation["x-sdkwork-api-authority"] = authority;
     paths[item.path][item.method] = item.operation;
   }
-  return {
+  return bootstrapOpenApiEnvelope({
     openapi: "3.1.2",
     info: {
       title,
@@ -1200,13 +1179,16 @@ function documentFor({ authority, routes, serverUrl, title }) {
           name: "X-API-Key",
         },
       },
-      schemas,
+      schemas: {
+        ...schemas,
+        ...structuredClone(sdkWorkEnvelopeComponentSchemas),
+      },
     },
     "x-sdkwork-owner": OWNER,
     "x-sdkwork-api-authority": authority,
     "x-sdkwork-domain": DOMAIN,
     "x-sdkwork-standard-profile": "sdkwork-v3",
-  };
+  });
 }
 
 function parseArgs(argv) {

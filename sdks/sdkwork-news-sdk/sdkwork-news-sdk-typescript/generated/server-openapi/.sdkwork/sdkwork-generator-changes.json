@@ -6,22 +6,39 @@
     "version": "0.1.0",
     "language": "typescript",
     "sdkType": "custom",
+    "protocol": "http",
     "packageName": "sdkwork-news-sdk-generated-typescript"
   },
-  "changeFingerprint": "a6f4f37ae13ed24af891dd61536cd54a9b75ac07de9565b4d486ad1a225c9621",
+  "changeFingerprint": "a24e000f1d8c642c7186937974a97d3be114c7055cf669e133b525b68ffcecf3",
   "changes": {
     "createdGeneratedFiles": [
-      "src/types/news-live-event-command.ts",
-      "src/types/news-live-event-item-command.ts",
-      "src/types/news-live-event-list-response.ts",
-      "src/types/news-live-event.ts",
-      "src/types/news-live-update-command.ts",
-      "src/types/news-live-update-list-response.ts",
-      "src/types/news-live-update.ts"
+      "src/types/channels-feed-list-response.ts",
+      "src/types/field-error.ts",
+      "src/types/items-by-slug-retrieve-response.ts",
+      "src/types/items-related-list-response.ts",
+      "src/types/items-retrieve-response.ts",
+      "src/types/live-events-retrieve-response.ts",
+      "src/types/page-info.ts",
+      "src/types/sdk-work-api-response.ts",
+      "src/types/sdk-work-command-data.ts",
+      "src/types/sdk-work-command-response.ts",
+      "src/types/sdk-work-list-response.ts",
+      "src/types/sdk-work-page-data.ts",
+      "src/types/sdk-work-platform-error-code.ts",
+      "src/types/sdk-work-resource-data.ts",
+      "src/types/sdk-work-resource-response.ts",
+      "src/types/search-list-response.ts",
+      "src/types/topics-items-list-response.ts",
+      "src/types/trust-item-retrieve-response.ts"
     ],
     "updatedGeneratedFiles": [
       "src/api/news.ts",
-      "src/types/index.ts"
+      "src/types/channels-list-response.ts",
+      "src/types/index.ts",
+      "src/types/items-list-response.ts",
+      "src/types/problem-detail.ts",
+      "src/types/topics-list-response.ts",
+      "src/types/trending-list-response.ts"
     ],
     "unchangedGeneratedFiles": [
       "bin/publish-core.mjs",
@@ -42,11 +59,8 @@
       "src/http/index.ts",
       "src/index.ts",
       "src/sdk.ts",
-      "src/types/channels-list-response.ts",
       "src/types/common.ts",
-      "src/types/items-list-response.ts",
       "src/types/media-resource.ts",
-      "src/types/news-api-result.ts",
       "src/types/news-author.ts",
       "src/types/news-breaking-alert-command.ts",
       "src/types/news-breaking-alert-list-response.ts",
@@ -87,6 +101,13 @@
       "src/types/news-item-trust-snapshot-command.ts",
       "src/types/news-item-trust-snapshot.ts",
       "src/types/news-item.ts",
+      "src/types/news-live-event-command.ts",
+      "src/types/news-live-event-item-command.ts",
+      "src/types/news-live-event-list-response.ts",
+      "src/types/news-live-event.ts",
+      "src/types/news-live-update-command.ts",
+      "src/types/news-live-update-list-response.ts",
+      "src/types/news-live-update.ts",
       "src/types/news-moderation-case.ts",
       "src/types/news-notification-subscription-command.ts",
       "src/types/news-notification-subscription-list-response.ts",
@@ -113,20 +134,17 @@
       "src/types/news-user-interest-command.ts",
       "src/types/news-user-interest-signal-list-response.ts",
       "src/types/news-user-interest-signal.ts",
-      "src/types/problem-detail.ts",
-      "src/types/topics-list-response.ts",
-      "src/types/trending-list-response.ts",
       "tsconfig.json"
     ],
-    "deletedGeneratedFiles": [],
+    "deletedGeneratedFiles": [
+      "src/types/news-api-result.ts"
+    ],
     "scaffoldedFiles": [],
     "preservedScaffoldFiles": [
       "custom/build-runtime.mjs",
       "custom/README.md"
     ],
-    "backedUpFiles": [
-      "src/api/news.ts"
-    ]
+    "backedUpFiles": []
   },
   "impact": {
     "schemaVersion": 1,
@@ -144,14 +162,31 @@
       {
         "area": "models",
         "paths": [
+          "src/types/channels-feed-list-response.ts",
+          "src/types/channels-list-response.ts",
+          "src/types/field-error.ts",
           "src/types/index.ts",
-          "src/types/news-live-event-command.ts",
-          "src/types/news-live-event-item-command.ts",
-          "src/types/news-live-event-list-response.ts",
-          "src/types/news-live-event.ts",
-          "src/types/news-live-update-command.ts",
-          "src/types/news-live-update-list-response.ts",
-          "src/types/news-live-update.ts"
+          "src/types/items-by-slug-retrieve-response.ts",
+          "src/types/items-list-response.ts",
+          "src/types/items-related-list-response.ts",
+          "src/types/items-retrieve-response.ts",
+          "src/types/live-events-retrieve-response.ts",
+          "src/types/news-api-result.ts",
+          "src/types/page-info.ts",
+          "src/types/problem-detail.ts",
+          "src/types/sdk-work-api-response.ts",
+          "src/types/sdk-work-command-data.ts",
+          "src/types/sdk-work-command-response.ts",
+          "src/types/sdk-work-list-response.ts",
+          "src/types/sdk-work-page-data.ts",
+          "src/types/sdk-work-platform-error-code.ts",
+          "src/types/sdk-work-resource-data.ts",
+          "src/types/sdk-work-resource-response.ts",
+          "src/types/search-list-response.ts",
+          "src/types/topics-items-list-response.ts",
+          "src/types/topics-list-response.ts",
+          "src/types/trending-list-response.ts",
+          "src/types/trust-item-retrieve-response.ts"
         ]
       }
     ],
@@ -209,7 +244,7 @@
     "applyRequiresExpectedFingerprint": false,
     "summary": "Changes have been applied. Run the required verification plan now.",
     "reasons": [
-      "backed-up-generated-files",
+      "deleted-generated-files",
       "manual-review-required",
       "verification-required"
     ]

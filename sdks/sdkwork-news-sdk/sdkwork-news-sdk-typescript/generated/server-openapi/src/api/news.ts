@@ -1,7 +1,7 @@
-﻿import { customApiPath } from './paths';
+import { customApiPath } from './paths';
 import type { HttpClient } from '../http/client';
 
-import type { ChannelsListResponse, ItemsListResponse, NewsBreakingAlertListResponse, NewsCorrectionNoticeListResponse, NewsDigestIssueListResponse, NewsFactCheckListResponse, NewsFeedPage, NewsItem, NewsItemPage, NewsItemTrustSnapshot, NewsLiveEvent, NewsLiveEventListResponse, NewsLiveUpdateListResponse, NewsSearchResultPage, NewsSearchSuggestionListResponse, TopicsListResponse, TrendingListResponse } from '../types';
+import type { ChannelsFeedListResponse, ChannelsListResponse, ItemsBySlugRetrieveResponse, ItemsListResponse, ItemsRelatedListResponse, ItemsRetrieveResponse, LiveEventsRetrieveResponse, SdkWorkListResponse, SearchListResponse, TopicsItemsListResponse, TopicsListResponse, TrendingListResponse, TrustItemRetrieveResponse } from '../types';
 
 
 export interface NewsLiveUpdatesListParams {
@@ -18,12 +18,12 @@ export class NewsLiveUpdatesApi {
 
 
 /** News live.updates.list */
-  async list(eventId: string, params?: NewsLiveUpdatesListParams): Promise<NewsLiveUpdateListResponse> {
+  async list(eventId: string, params?: NewsLiveUpdatesListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsLiveUpdateListResponse>(appendQueryString(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}/updates`), query));
   }
 }
 
@@ -45,7 +45,7 @@ export class NewsLiveEventsApi {
 
 
 /** News live.events.list */
-  async list(params?: NewsLiveEventsListParams): Promise<NewsLiveEventListResponse> {
+  async list(params?: NewsLiveEventsListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'event_type', value: params?.eventType, style: 'form', explode: true, allowReserved: false },
       { name: 'region', value: params?.region, style: 'form', explode: true, allowReserved: false },
@@ -54,12 +54,12 @@ export class NewsLiveEventsApi {
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsLiveEventListResponse>(appendQueryString(customApiPath(`/news/live/events`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/live/events`), query));
   }
 
 /** News live.events.retrieve */
-  async retrieve(eventId: string): Promise<NewsLiveEvent> {
-    return this.client.get<NewsLiveEvent>(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}`));
+  async retrieve(eventId: string): Promise<LiveEventsRetrieveResponse> {
+    return this.client.get<LiveEventsRetrieveResponse>(customApiPath(`/news/live/events/${serializePathParameter(eventId, { name: 'eventId', style: 'simple', explode: false })}`));
   }
 }
 
@@ -93,7 +93,7 @@ export class NewsCorrectionsApi {
 
 
 /** News corrections.list */
-  async list(params?: NewsCorrectionsListParams): Promise<NewsCorrectionNoticeListResponse> {
+  async list(params?: NewsCorrectionsListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'item_id', value: params?.itemId, style: 'form', explode: true, allowReserved: false },
       { name: 'correction_type', value: params?.correctionType, style: 'form', explode: true, allowReserved: false },
@@ -101,7 +101,7 @@ export class NewsCorrectionsApi {
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsCorrectionNoticeListResponse>(appendQueryString(customApiPath(`/news/corrections`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/corrections`), query));
   }
 }
 
@@ -122,7 +122,7 @@ export class NewsFactChecksApi {
 
 
 /** News factChecks.list */
-  async list(params?: NewsFactChecksListParams): Promise<NewsFactCheckListResponse> {
+  async list(params?: NewsFactChecksListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'item_id', value: params?.itemId, style: 'form', explode: true, allowReserved: false },
       { name: 'verdict', value: params?.verdict, style: 'form', explode: true, allowReserved: false },
@@ -130,7 +130,7 @@ export class NewsFactChecksApi {
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsFactCheckListResponse>(appendQueryString(customApiPath(`/news/fact_checks`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/fact_checks`), query));
   }
 }
 
@@ -143,8 +143,8 @@ export class NewsTrustItemApi {
 
 
 /** News trust.item.retrieve */
-  async retrieve(itemId: string): Promise<NewsItemTrustSnapshot> {
-    return this.client.get<NewsItemTrustSnapshot>(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/trust`));
+  async retrieve(itemId: string): Promise<TrustItemRetrieveResponse> {
+    return this.client.get<TrustItemRetrieveResponse>(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/trust`));
   }
 }
 
@@ -175,14 +175,14 @@ export class NewsDigestsApi {
 
 
 /** News digests.list */
-  async list(params?: NewsDigestsListParams): Promise<NewsDigestIssueListResponse> {
+  async list(params?: NewsDigestsListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'digest_type', value: params?.digestType, style: 'form', explode: true, allowReserved: false },
       { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsDigestIssueListResponse>(appendQueryString(customApiPath(`/news/digests`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/digests`), query));
   }
 }
 
@@ -203,7 +203,7 @@ export class NewsAlertsBreakingApi {
 
 
 /** News alerts.breaking.list */
-  async list(params?: NewsAlertsBreakingListParams): Promise<NewsBreakingAlertListResponse> {
+  async list(params?: NewsAlertsBreakingListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'severity', value: params?.severity, style: 'form', explode: true, allowReserved: false },
       { name: 'target_type', value: params?.targetType, style: 'form', explode: true, allowReserved: false },
@@ -211,7 +211,7 @@ export class NewsAlertsBreakingApi {
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsBreakingAlertListResponse>(appendQueryString(customApiPath(`/news/alerts/breaking`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/alerts/breaking`), query));
   }
 }
 
@@ -242,14 +242,14 @@ export class NewsSearchSuggestionsApi {
 
 
 /** News search.suggestions.list */
-  async list(params?: NewsSearchSuggestionsListParams): Promise<NewsSearchSuggestionListResponse> {
+  async list(params?: NewsSearchSuggestionsListParams): Promise<SdkWorkListResponse> {
     const query = buildQueryString([
       { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
       { name: 'locale', value: params?.locale, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsSearchSuggestionListResponse>(appendQueryString(customApiPath(`/news/search/suggestions`), query));
+    return this.client.get<SdkWorkListResponse>(appendQueryString(customApiPath(`/news/search/suggestions`), query));
   }
 }
 
@@ -270,13 +270,13 @@ export class NewsSearchApi {
 
 
 /** News search.list */
-  async list(params?: NewsSearchListParams): Promise<NewsSearchResultPage> {
+  async list(params?: NewsSearchListParams): Promise<SearchListResponse> {
     const query = buildQueryString([
       { name: 'q', value: params?.q, style: 'form', explode: true, allowReserved: false },
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsSearchResultPage>(appendQueryString(customApiPath(`/news/search`), query));
+    return this.client.get<SearchListResponse>(appendQueryString(customApiPath(`/news/search`), query));
   }
 }
 
@@ -318,13 +318,13 @@ export class NewsTopicsItemsApi {
 
 
 /** News topics.items.list */
-  async list(topicId: string, params?: NewsTopicsItemsListParams): Promise<NewsItemPage> {
+  async list(topicId: string, params?: NewsTopicsItemsListParams): Promise<TopicsItemsListResponse> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
       { name: 'trace_id', value: params?.traceId, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsItemPage>(appendQueryString(customApiPath(`/news/topics/${serializePathParameter(topicId, { name: 'topicId', style: 'simple', explode: false })}/items`), query));
+    return this.client.get<TopicsItemsListResponse>(appendQueryString(customApiPath(`/news/topics/${serializePathParameter(topicId, { name: 'topicId', style: 'simple', explode: false })}/items`), query));
   }
 }
 
@@ -368,13 +368,13 @@ export class NewsChannelsFeedApi {
 
 
 /** News channels.feed.list */
-  async list(channelId: string, params?: NewsChannelsFeedListParams): Promise<NewsFeedPage> {
+  async list(channelId: string, params?: NewsChannelsFeedListParams): Promise<ChannelsFeedListResponse> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
       { name: 'trace_id', value: params?.traceId, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsFeedPage>(appendQueryString(customApiPath(`/news/channels/${serializePathParameter(channelId, { name: 'channelId', style: 'simple', explode: false })}/feed`), query));
+    return this.client.get<ChannelsFeedListResponse>(appendQueryString(customApiPath(`/news/channels/${serializePathParameter(channelId, { name: 'channelId', style: 'simple', explode: false })}/feed`), query));
   }
 }
 
@@ -417,12 +417,12 @@ export class NewsItemsRelatedApi {
 
 
 /** News items.related.list */
-  async list(itemId: string, params?: NewsItemsRelatedListParams): Promise<NewsItemPage> {
+  async list(itemId: string, params?: NewsItemsRelatedListParams): Promise<ItemsRelatedListResponse> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
       { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
-    return this.client.get<NewsItemPage>(appendQueryString(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/related`), query));
+    return this.client.get<ItemsRelatedListResponse>(appendQueryString(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}/related`), query));
   }
 }
 
@@ -435,8 +435,8 @@ export class NewsItemsBySlugApi {
 
 
 /** News items.bySlug.retrieve */
-  async retrieve(slug: string): Promise<NewsItem> {
-    return this.client.get<NewsItem>(customApiPath(`/news/items/by_slug/${serializePathParameter(slug, { name: 'slug', style: 'simple', explode: false })}`));
+  async retrieve(slug: string): Promise<ItemsBySlugRetrieveResponse> {
+    return this.client.get<ItemsBySlugRetrieveResponse>(customApiPath(`/news/items/by_slug/${serializePathParameter(slug, { name: 'slug', style: 'simple', explode: false })}`));
   }
 }
 
@@ -469,8 +469,8 @@ export class NewsItemsApi {
   }
 
 /** News items.retrieve */
-  async retrieve(itemId: string): Promise<NewsItem> {
-    return this.client.get<NewsItem>(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}`));
+  async retrieve(itemId: string): Promise<ItemsRetrieveResponse> {
+    return this.client.get<ItemsRetrieveResponse>(customApiPath(`/news/items/${serializePathParameter(itemId, { name: 'itemId', style: 'simple', explode: false })}`));
   }
 }
 
