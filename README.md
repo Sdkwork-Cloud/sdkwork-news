@@ -1,4 +1,5 @@
 # sdkwork-news
+repository-kind: application
 
 SDKWork news domain workspace.
 

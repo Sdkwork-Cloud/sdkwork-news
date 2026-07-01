@@ -1,10 +1,12 @@
 packages:
+  - "apps/sdkwork-news-common"
+  - "apps/sdkwork-news-common/packages/*"
+  - "apps/sdkwork-news-pc"
+  - "apps/sdkwork-news-pc/packages/*"
   - "sdks/*"
   - "sdks/sdkwork-news-sdk/*/generated/server-openapi"
   - "sdks/sdkwork-news-app-sdk/*/generated/server-openapi"
   - "sdks/sdkwork-news-backend-sdk/*/generated/server-openapi"
-  - "packages/common/news/*"
-  - "apps/sdkwork-news-pc/packages/*"
   - "../sdkwork-ui/sdkwork-ui-pc-react"
   - "../sdkwork-sdk-commons/sdkwork-sdk-common-typescript"
 

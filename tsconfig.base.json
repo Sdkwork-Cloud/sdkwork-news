@@ -24,16 +24,16 @@
     ],
     "paths": {
       "@sdkwork/news-contracts": [
-        "packages/common/news/sdkwork-news-contracts/src/index.ts"
+        "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/index.ts"
       ],
       "@sdkwork/news-sdk-ports": [
-        "packages/common/news/sdkwork-news-sdk-ports/src/index.ts"
+        "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/index.ts"
       ],
       "@sdkwork/news-service": [
-        "packages/common/news/sdkwork-news-service/src/index.ts"
+        "apps/sdkwork-news-common/packages/sdkwork-news-service/src/index.ts"
       ],
       "@sdkwork/news-runtime": [
-        "packages/common/news/sdkwork-news-runtime/src/index.ts"
+        "apps/sdkwork-news-common/packages/sdkwork-news-runtime/src/index.ts"
       ],
       "@sdkwork/news-pc-react": [
         "apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react/src/index.ts"

@@ -6,21 +6,23 @@ Canonical lifecycle assets for `sdkwork-news` per `DATABASE_FRAMEWORK_SPEC.md`.
 - serviceCode: `NEWS`
 - tablePrefix: `news_`
 
+## Initialization state
+
+This module is in **initialization state** for greenfield deployments:
+
+1. **Baseline** — `database/ddl/baseline/{engine}/0001_news_baseline.sql` contains the full DDL snapshot.
+2. **Migrations** — `database/migrations/{engine}/` is reserved for post-GA incremental schema changes only. It is intentionally empty at initialization.
+3. **Drift** — run `pnpm db:drift:check` before release.
+
 ## Commands
 
 ```bash
-pnpm run db:materialize:contract
 pnpm run db:validate
+pnpm run db:materialize:contract
 pnpm run db:plan
-pnpm run db:bootstrap
+pnpm run db:init
+pnpm run db:migrate
+pnpm run db:seed
+pnpm run db:status
+pnpm run db:drift:check
 ```
-
-## Baseline
-
-Legacy SQL from `crates/sdkwork-content-news-repository-sqlx/migrations/*.sql` is consolidated in `database/ddl/baseline/postgres/0001_news_legacy_baseline.sql`.
-
-## Runtime bootstrap
-
-PostgreSQL: `sdkwork-news-database-host` via `bootstrap_news_database()` / `connect_and_bootstrap_news_database_from_env()`.
-
-SQLite tests and the current api-server path continue to use inline migration SQL through `SqliteNewsStore::migrate()`.

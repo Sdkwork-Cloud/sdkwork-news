@@ -11,8 +11,8 @@ path = "src/main.rs"
 sdkwork_news_gateway_assembly = { package = "sdkwork-news-gateway-assembly", path = "../sdkwork-news-gateway-assembly" }
 sdkwork-content-news-service = { path = "../sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
-sdkwork-database-config = { path = "../../../sdkwork-database/crates/sdkwork-database-config" }
-sdkwork-database-sqlx = { path = "../../../sdkwork-database/crates/sdkwork-database-sqlx" }
+sdkwork-database-config = { workspace = true }
+sdkwork-database-sqlx = { workspace = true }
 axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
@@ -26,8 +26,8 @@ chrono = { version = "0.4", features = ["serde"] }
 sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite"] }
 anyhow = "1"
 dotenvy = "0.15"
-sdkwork-iam-web-adapter = { path = "../../../sdkwork-iam/crates/sdkwork-iam-web-adapter" }
-sdkwork-web-axum = { path = "../../../sdkwork-web-framework/crates/sdkwork-web-axum" }
-sdkwork-web-core = { path = "../../../sdkwork-web-framework/crates/sdkwork-web-core" }
+sdkwork-iam-web-adapter = { workspace = true }
+sdkwork-web-axum = { workspace = true }
+sdkwork-web-core = { workspace = true }
 sdkwork-web-bootstrap = { workspace = true }
 

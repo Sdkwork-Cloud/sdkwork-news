@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@sdkwork/news-pc-core": "workspace:*",
-    "@sdkwork/news-backend-sdk-workspace": "file:../../../../sdks/sdkwork-news-backend-sdk"
+    "@sdkwork/news-backend-sdk-workspace": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18.2.0 <20.0.0",
