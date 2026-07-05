@@ -487,5 +487,31 @@
       "path": "/backend/v3/api/news/trust/sources"
     }
   ],
-  "managedBy": "tools/news_sdk_generator_runner.mjs"
+  "managedBy": "tools/news_sdk_generator_runner.mjs",
+  "packageName": "@sdkwork/news-backend-sdk",
+  "transportPackageName": "sdkwork-news-backend-sdk-generated-typescript",
+  "typescript": {
+    "composedRoot": "sdkwork-news-backend-sdk-typescript",
+    "composedEntry": "sdkwork-news-backend-sdk-typescript/src/index.ts",
+    "transportRoot": "sdkwork-news-backend-sdk-typescript/generated/server-openapi",
+    "transportEntry": "sdkwork-news-backend-sdk-typescript/generated/server-openapi/src/index.ts"
+  },
+  "workspace": "sdkwork-news-backend-sdk",
+  "title": "SDKWork News Backend API SDK",
+  "apiVersion": "0.1.0",
+  "openapiVersion": "3.1.2",
+  "authoritySpec": "../../apis/backend-api/content/news-backend-api.openapi.json",
+  "derivedSpecs": {
+    "default": "../../apis/backend-api/content/news-backend-api.openapi.json"
+  },
+  "discoverySurface": {
+    "sdkTarget": "backend",
+    "apiPrefix": "/backend/v3/api",
+    "schemaUrl": "/backend/v3/openapi.json",
+    "generatedProtocols": [
+      "http-openapi"
+    ],
+    "manualTransports": []
+  },
+  "sdkDependencies": []
 }

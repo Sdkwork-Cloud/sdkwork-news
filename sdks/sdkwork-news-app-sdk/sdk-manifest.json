@@ -222,5 +222,31 @@
       "path": "/app/v3/api/news/items/{itemId}/trust"
     }
   ],
-  "managedBy": "tools/news_sdk_generator_runner.mjs"
+  "managedBy": "tools/news_sdk_generator_runner.mjs",
+  "packageName": "@sdkwork/news-app-sdk",
+  "transportPackageName": "sdkwork-news-app-sdk-generated-typescript",
+  "typescript": {
+    "composedRoot": "sdkwork-news-app-sdk-typescript",
+    "composedEntry": "sdkwork-news-app-sdk-typescript/src/index.ts",
+    "transportRoot": "sdkwork-news-app-sdk-typescript/generated/server-openapi",
+    "transportEntry": "sdkwork-news-app-sdk-typescript/generated/server-openapi/src/index.ts"
+  },
+  "workspace": "sdkwork-news-app-sdk",
+  "title": "SDKWork News App API SDK",
+  "apiVersion": "0.1.0",
+  "openapiVersion": "3.1.2",
+  "authoritySpec": "../../apis/app-api/content/news-app-api.openapi.json",
+  "derivedSpecs": {
+    "default": "../../apis/app-api/content/news-app-api.openapi.json"
+  },
+  "discoverySurface": {
+    "sdkTarget": "app",
+    "apiPrefix": "/app/v3/api",
+    "schemaUrl": "/app/v3/openapi.json",
+    "generatedProtocols": [
+      "http-openapi"
+    ],
+    "manualTransports": []
+  },
+  "sdkDependencies": []
 }

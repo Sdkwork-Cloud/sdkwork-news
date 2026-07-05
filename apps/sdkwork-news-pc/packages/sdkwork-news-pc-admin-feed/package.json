@@ -8,7 +8,7 @@
     "@sdkwork/news-pc-commons": "workspace:*",
     "@sdkwork/news-pc-admin-core": "workspace:*",
     "@sdkwork/news-pc-admin-shell": "workspace:*",
-    "sdkwork-news-backend-sdk-generated-typescript": "file:../../../../sdks/sdkwork-news-backend-sdk/sdkwork-news-backend-sdk-typescript/generated/server-openapi"
+    "@sdkwork/news-backend-sdk": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18.2.0 <20.0.0",

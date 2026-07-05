@@ -1,4 +1,4 @@
-import type { NewsApi } from '../../../../../../sdks/sdkwork-news-backend-sdk/sdkwork-news-backend-sdk-typescript/generated/server-openapi/src';
+import type { NewsApi } from '@sdkwork/news-backend-sdk';
 
 export interface AdminNewsServiceConfig {
   newsApi: NewsApi;

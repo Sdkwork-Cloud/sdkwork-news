@@ -117,5 +117,31 @@
       "path": "/open/v3/api/news/items/{itemId}/trust"
     }
   ],
-  "managedBy": "tools/news_sdk_generator_runner.mjs"
+  "managedBy": "tools/news_sdk_generator_runner.mjs",
+  "packageName": "@sdkwork/news-sdk",
+  "transportPackageName": "sdkwork-news-sdk-generated-typescript",
+  "typescript": {
+    "composedRoot": "sdkwork-news-sdk-typescript",
+    "composedEntry": "sdkwork-news-sdk-typescript/src/index.ts",
+    "transportRoot": "sdkwork-news-sdk-typescript/generated/server-openapi",
+    "transportEntry": "sdkwork-news-sdk-typescript/generated/server-openapi/src/index.ts"
+  },
+  "workspace": "sdkwork-news-sdk",
+  "title": "SDKWork News Open API SDK",
+  "apiVersion": "0.1.0",
+  "openapiVersion": "3.1.2",
+  "authoritySpec": "../../apis/open-api/content/news-open-api.openapi.json",
+  "derivedSpecs": {
+    "default": "../../apis/open-api/content/news-open-api.openapi.json"
+  },
+  "discoverySurface": {
+    "sdkTarget": "custom",
+    "apiPrefix": "/open/v3/api",
+    "schemaUrl": "/open/v3/openapi.json",
+    "generatedProtocols": [
+      "http-openapi"
+    ],
+    "manualTransports": []
+  },
+  "sdkDependencies": []
 }

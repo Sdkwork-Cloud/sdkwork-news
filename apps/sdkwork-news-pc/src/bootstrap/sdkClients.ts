@@ -1,5 +1,5 @@
-import { createClient, SdkworkAppClient } from '../../../../sdks/sdkwork-news-app-sdk/sdkwork-news-app-sdk-typescript/generated/server-openapi/src';
-import type { NewsApi } from '../../../../sdks/sdkwork-news-app-sdk/sdkwork-news-app-sdk-typescript/generated/server-openapi/src';
+import { createClient, SdkworkAppClient } from '@sdkwork/news-app-sdk';
+import type { NewsApi } from '@sdkwork/news-app-sdk';
 
 export interface SdkClients {
   newsApi: NewsApi;

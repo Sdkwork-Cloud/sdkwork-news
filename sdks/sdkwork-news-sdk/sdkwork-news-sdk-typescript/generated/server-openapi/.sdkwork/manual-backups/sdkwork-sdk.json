@@ -26,5 +26,7 @@
     "stateRoots": [
       ".sdkwork/"
     ]
-  }
+  },
+  "transportPackageName": "sdkwork-news-sdk-generated-typescript",
+  "consumerPackageName": "@sdkwork/news-sdk"
 }

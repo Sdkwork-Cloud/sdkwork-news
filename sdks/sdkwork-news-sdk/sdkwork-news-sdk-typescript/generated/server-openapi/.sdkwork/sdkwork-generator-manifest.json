@@ -48,7 +48,7 @@
     },
     {
       "path": "sdkwork-sdk.json",
-      "sha256": "539bcfbee35710e99a919dabb517e93d4084efbceccbd940b70d2b0f5a54a1fc"
+      "sha256": "8c307b6c1a913578de0f7b10ebce863df425245cd5009c0db7837bafd51560ac"
     },
     {
       "path": "src/api/base.ts",

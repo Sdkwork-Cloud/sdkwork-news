@@ -5,6 +5,8 @@
   "language": "typescript",
   "sdkType": "app",
   "packageName": "sdkwork-news-app-sdk-generated-typescript",
+  "transportPackageName": "sdkwork-news-app-sdk-generated-typescript",
+  "consumerPackageName": "@sdkwork/news-app-sdk",
   "generator": "@sdkwork/sdk-generator",
   "capabilities": {
     "supportsGeneratedTests": true,
