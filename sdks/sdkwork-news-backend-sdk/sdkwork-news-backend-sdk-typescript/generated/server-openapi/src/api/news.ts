@@ -516,7 +516,7 @@ export class NewsExperimentsManagementApi {
   async list(params?: NewsExperimentsManagementListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/experiments`), query));
   }
@@ -765,7 +765,7 @@ export class NewsTrendingMetricsApi {
   async list(params?: NewsTrendingMetricsListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/trending/metrics`), query));
   }
@@ -804,7 +804,7 @@ export class NewsReportsManagementApi {
   async list(params?: NewsReportsManagementListParams): Promise<SdkWorkPageData> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<SdkWorkPageData>(appendQueryString(backendApiPath(`/news/reports`), query));
   }
@@ -843,7 +843,7 @@ export class NewsCommentsModerationApi {
   async list(params?: NewsCommentsModerationListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/comments/moderation`), query));
   }
@@ -882,7 +882,7 @@ export class NewsModerationCasesApi {
   async list(params?: NewsModerationCasesListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/moderation/cases`), query));
   }
@@ -926,7 +926,7 @@ export class NewsTopicsManagementApi {
   async list(params?: NewsTopicsManagementListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/topics`), query));
   }
@@ -975,7 +975,7 @@ export class NewsChannelsManagementApi {
   async list(params?: NewsChannelsManagementListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/channels`), query));
   }
@@ -1024,7 +1024,7 @@ export class NewsAuthorsManagementApi {
   async list(params?: NewsAuthorsManagementListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/authors`), query));
   }
@@ -1073,7 +1073,7 @@ export class NewsSourcesManagementApi {
   async list(params?: NewsSourcesManagementListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/sources`), query));
   }
@@ -1122,7 +1122,7 @@ export class NewsItemsMetricsApi {
   async list(params?: NewsItemsMetricsListParams): Promise<Record<string, unknown>> {
     const query = buildQueryString([
       { name: 'cursor', value: params?.cursor, style: 'form', explode: true, allowReserved: false },
-      { name: 'limit', value: params?.limit, style: 'form', explode: true, allowReserved: false },
+      { name: 'page_size', value: params?.limit, style: 'form', explode: true, allowReserved: false },
     ]);
     return this.client.get<Record<string, unknown>>(appendQueryString(backendApiPath(`/news/items/metrics`), query));
   }

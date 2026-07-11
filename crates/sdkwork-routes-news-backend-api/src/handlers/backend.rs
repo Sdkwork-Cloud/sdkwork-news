@@ -11,7 +11,7 @@ use sdkwork_routes_news_open_api::state::NewsHttpState;
 pub struct ListParams {
     pub status: Option<String>,
     pub tenant_id: Option<String>,
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
     pub cursor: Option<String>,
 }
 
@@ -19,7 +19,7 @@ pub async fn list_items(
     State(state): State<Arc<sdkwork_routes_news_open_api::state::NewsHttpState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     let result = sqlx::query(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
@@ -132,7 +132,7 @@ pub async fn list_stories(
     State(state): State<Arc<sdkwork_routes_news_open_api::state::NewsHttpState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     let result = sqlx::query(
         "SELECT id, tenant_id, slug, title, summary, story_type, status, published_at, updated_at

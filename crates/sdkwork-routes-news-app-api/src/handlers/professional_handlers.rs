@@ -6,7 +6,7 @@ pub struct ListFollowingFeedRequest {
     pub user_id: String,
     pub organization_id: Option<String>,
     pub cursor: Option<String>,
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -79,7 +79,7 @@ impl NewsProfessionalAppApiHandler {
                 detail: "user_id is required from authenticated context".to_string(),
             });
         }
-        if let Some(limit) = request.limit {
+        if let Some(limit) = request.page_size {
             if limit <= 0 || limit > 100 {
                 return Err(AppApiError {
                     status: 400,

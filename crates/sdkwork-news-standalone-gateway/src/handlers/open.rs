@@ -12,7 +12,7 @@ pub struct ListParams {
     pub category_id: Option<String>,
     pub q: Option<String>,
     pub status: Option<String>,
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
     pub cursor: Option<String>,
 }
 
@@ -20,7 +20,7 @@ pub async fn list_items(
     State(state): State<Arc<AppState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
     let status = params.status.as_deref().unwrap_or("published");
 
     let result = sqlx::query(
@@ -226,7 +226,7 @@ pub async fn list_channel_feed(
     Path(channel_id): Path<String>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     let result = sqlx::query(
         "SELECT i.id, i.tenant_id, i.category_id, i.slug, i.title, i.summary, 
@@ -315,7 +315,7 @@ pub async fn list_trending(
     State(state): State<Arc<AppState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     let result = sqlx::query(
         "SELECT i.id, i.tenant_id, i.category_id, i.slug, i.title, i.summary, 
@@ -364,7 +364,7 @@ pub async fn list_trending(
 #[derive(Deserialize)]
 pub struct SearchParams {
     pub q: Option<String>,
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
     pub cursor: Option<String>,
 }
 
@@ -372,7 +372,7 @@ pub async fn search(
     State(state): State<Arc<AppState>>,
     Query(params): Query<SearchParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
     let query = params.q.unwrap_or_default();
     let search_pattern = format!("%{}%", query);
 

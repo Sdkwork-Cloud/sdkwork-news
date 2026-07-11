@@ -12,7 +12,7 @@ pub struct ListParams {
     pub category_id: Option<String>,
     pub q: Option<String>,
     pub status: Option<String>,
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
     pub cursor: Option<String>,
 }
 
@@ -20,7 +20,7 @@ pub async fn list_items(
     State(state): State<Arc<AppState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
     let status = params.status.as_deref().unwrap_or("published");
 
     let result = sqlx::query(
@@ -146,7 +146,7 @@ pub async fn list_categories(
 
 #[derive(Deserialize)]
 pub struct FeedParams {
-    pub limit: Option<i64>,
+    pub page_size: Option<i64>,
     pub cursor: Option<String>,
     pub trace_id: Option<String>,
 }
@@ -155,7 +155,7 @@ pub async fn get_personalized_feed(
     State(state): State<Arc<AppState>>,
     Query(params): Query<FeedParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     // Simple personalized feed - returns published items ordered by priority
     let result = sqlx::query(
@@ -240,7 +240,7 @@ pub async fn list_favorites(
     State(state): State<Arc<AppState>>,
     Query(params): Query<ListParams>,
 ) -> Json<Value> {
-    let limit = params.limit.unwrap_or(20).min(100);
+    let limit = params.page_size.unwrap_or(20).min(100);
 
     let result = sqlx::query(
         "SELECT f.id, f.user_id, f.item_id, f.status, f.created_at,

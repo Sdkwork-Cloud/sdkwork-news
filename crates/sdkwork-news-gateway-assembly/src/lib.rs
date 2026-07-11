@@ -4,8 +4,7 @@
 mod bootstrap;
 mod generated;
 
-pub use bootstrap::{assemble_application_business_router, ApplicationAssembly};
-pub use sdkwork_routes_news_open_api::state::NewsHttpState;
+pub use bootstrap::{assemble_application_router, ApplicationAssembly};
 
 pub fn assembly_route_count() -> usize {
     generated::ROUTE_CRATE_COUNT
