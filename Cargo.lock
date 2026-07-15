@@ -1674,6 +1674,7 @@ dependencies = [
  "sha2",
  "sqlx",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]
@@ -1722,6 +1723,7 @@ dependencies = [
 name = "sdkwork-database-sqlx"
 version = "0.1.0"
 dependencies = [
+ "libsqlite3-sys",
  "sdkwork-database-config",
  "serde",
  "sqlx",
@@ -1735,12 +1737,15 @@ name = "sdkwork-iam-bootstrap"
 version = "0.1.0"
 dependencies = [
  "aes-gcm",
+ "argon2",
  "base64",
  "chrono",
  "rand_core 0.6.4",
+ "rsa",
  "sdkwork-database-id",
  "sdkwork-iam-context-service",
  "sdkwork-iam-module-registry",
+ "serde_json",
  "sha2",
  "sqlx",
  "uuid",
@@ -1803,7 +1808,32 @@ dependencies = [
 ]
 
 [[package]]
-name = "sdkwork-news-api-server"
+name = "sdkwork-news-database-host"
+version = "0.1.0"
+dependencies = [
+ "dotenvy",
+ "sdkwork-database-config",
+ "sdkwork-database-lifecycle",
+ "sdkwork-database-spi",
+ "sdkwork-database-sqlx",
+]
+
+[[package]]
+name = "sdkwork-news-gateway-assembly"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "sdkwork-database-sqlx",
+ "sdkwork-news-database-host",
+ "sdkwork-routes-news-app-api",
+ "sdkwork-routes-news-backend-api",
+ "sdkwork-routes-news-open-api",
+ "sqlx",
+ "tokio",
+]
+
+[[package]]
+name = "sdkwork-news-standalone-gateway"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -1828,28 +1858,6 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "uuid",
-]
-
-[[package]]
-name = "sdkwork-news-database-host"
-version = "0.1.0"
-dependencies = [
- "dotenvy",
- "sdkwork-database-config",
- "sdkwork-database-lifecycle",
- "sdkwork-database-spi",
- "sdkwork-database-sqlx",
-]
-
-[[package]]
-name = "sdkwork-news-gateway-assembly"
-version = "0.1.0"
-dependencies = [
- "axum",
- "sdkwork-routes-news-app-api",
- "sdkwork-routes-news-backend-api",
- "sdkwork-routes-news-open-api",
- "tokio",
 ]
 
 [[package]]
@@ -1963,7 +1971,9 @@ dependencies = [
  "getrandom 0.2.17",
  "hmac",
  "http",
+ "percent-encoding",
  "rsa",
+ "sdkwork-utils-rust",
  "sdkwork-web-contract",
  "serde",
  "serde_json",
