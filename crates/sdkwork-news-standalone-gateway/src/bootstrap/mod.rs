@@ -1,7 +1,6 @@
 use axum::Router;
 use sqlx::SqlitePool;
 use std::sync::Arc;
-use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
 use crate::readiness::NewsSqliteReadinessCheck;
@@ -29,7 +28,10 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
 
     let business = assemble_application_business_router(state).router;
     let business = business
-        .layer(CorsLayer::permissive())
+        .layer(sdkwork_web_bootstrap::application_cors_layer_from_env(
+            &["SDKWORK_NEWS_ENVIRONMENT"],
+            &["SDKWORK_NEWS_CORS_ALLOWED_ORIGINS", "SDKWORK_CORS_ALLOWED_ORIGINS"],
+        ))
         .layer(TraceLayer::new_for_http());
 
     let business = wrap_router_with_web_framework_from_env(business).await;
