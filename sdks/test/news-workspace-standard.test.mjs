@@ -79,9 +79,9 @@ describe("sdkwork-news workspace structure standard", () => {
       "sdks/sdkwork-news-sdk/sdk-manifest.json",
       "sdks/sdkwork-news-app-sdk/sdk-manifest.json",
       "sdks/sdkwork-news-backend-sdk/sdk-manifest.json",
-      "sdks/sdkwork-news-sdk/.sdkwork-assembly.json",
-      "sdks/sdkwork-news-app-sdk/.sdkwork-assembly.json",
-      "sdks/sdkwork-news-backend-sdk/.sdkwork-assembly.json",
+      "sdks/sdkwork-news-sdk/sdk-manifest.json",
+      "sdks/sdkwork-news-app-sdk/sdk-manifest.json",
+      "sdks/sdkwork-news-backend-sdk/sdk-manifest.json",
       "tools/news_sdk_generate.mjs",
       "tools/news_openapi_export.mjs",
     ]) {

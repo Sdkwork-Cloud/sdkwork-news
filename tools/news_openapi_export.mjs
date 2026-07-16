@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { sdkWorkEnvelopeComponentSchemas } from "../../sdkwork-specs/tools/lib/openapi-envelope-schemas.mjs";
 import { bootstrapOpenApiEnvelope } from "../../sdkwork-specs/tools/lib/migrate-openapi-legacy-envelope.mjs";
+import { alignOpenApiOperationPatterns } from "../../sdkwork-specs/tools/lib/align-api-operation-patterns.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
@@ -1005,12 +1006,20 @@ function pageOf(name) {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["items", "hasMore", "limit"],
+    required: ["items", "pageInfo"],
     properties: {
       items: { type: "array", items: ref(name) },
-      cursor: { type: "string" },
-      hasMore: { type: "boolean" },
-      limit: { type: "integer", minimum: 1, maximum: 100 },
+      pageInfo: {
+        type: "object",
+        additionalProperties: false,
+        required: ["mode", "pageSize", "hasMore"],
+        properties: {
+          mode: { type: "string", enum: ["cursor"] },
+          pageSize: { type: "integer", minimum: 1, maximum: 200 },
+          hasMore: { type: "boolean" },
+          nextCursor: { type: ["string", "null"] },
+        },
+      },
     },
   };
 }
@@ -1033,64 +1042,73 @@ function queryParam(name) {
   };
 }
 
+function pageSizeParam() {
+  return {
+    name: "page_size",
+    in: "query",
+    required: false,
+    schema: { type: "integer", minimum: 1, maximum: 200, default: 20 },
+  };
+}
+
 function listParams() {
   return [queryParam("categoryId"), queryParam("q"), queryParam("status")];
 }
 
 function pageParams() {
-  return [queryParam("cursor"), queryParam("limit")];
+  return [queryParam("cursor"), pageSizeParam()];
 }
 
 function feedParams() {
-  return [queryParam("cursor"), queryParam("limit"), queryParam("trace_id")];
+  return [queryParam("cursor"), pageSizeParam(), queryParam("trace_id")];
 }
 
 function searchParams() {
-  return [queryParam("q"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("q"), queryParam("cursor"), pageSizeParam()];
 }
 
 function suggestionParams() {
-  return [queryParam("q"), queryParam("cursor"), queryParam("limit"), queryParam("locale")];
+  return [queryParam("q"), queryParam("cursor"), pageSizeParam(), queryParam("locale")];
 }
 
 function candidateParams() {
-  return [queryParam("stream_key"), queryParam("user_id"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("stream_key"), queryParam("user_id"), queryParam("cursor"), pageSizeParam()];
 }
 
 function interestParams() {
-  return [queryParam("user_id"), queryParam("target_type"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("user_id"), queryParam("target_type"), queryParam("cursor"), pageSizeParam()];
 }
 
 function searchEventParams() {
-  return [queryParam("q"), queryParam("user_id"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("q"), queryParam("user_id"), queryParam("cursor"), pageSizeParam()];
 }
 
 function subscriptionParams() {
-  return [queryParam("user_id"), queryParam("target_type"), queryParam("target_id"), queryParam("channel"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("user_id"), queryParam("target_type"), queryParam("target_id"), queryParam("channel"), queryParam("cursor"), pageSizeParam()];
 }
 
 function alertParams() {
-  return [queryParam("severity"), queryParam("target_type"), queryParam("target_id"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("severity"), queryParam("target_type"), queryParam("target_id"), queryParam("cursor"), pageSizeParam()];
 }
 
 function digestParams() {
-  return [queryParam("digest_type"), queryParam("locale"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("digest_type"), queryParam("locale"), queryParam("cursor"), pageSizeParam()];
 }
 
 function factCheckParams() {
-  return [queryParam("item_id"), queryParam("verdict"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("item_id"), queryParam("verdict"), queryParam("status"), queryParam("cursor"), pageSizeParam()];
 }
 
 function correctionParams() {
-  return [queryParam("item_id"), queryParam("correction_type"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("item_id"), queryParam("correction_type"), queryParam("status"), queryParam("cursor"), pageSizeParam()];
 }
 
 function trustSourceParams() {
-  return [queryParam("source_id"), queryParam("credibility_status"), queryParam("trust_tier"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("source_id"), queryParam("credibility_status"), queryParam("trust_tier"), queryParam("cursor"), pageSizeParam()];
 }
 
 function liveEventParams() {
-  return [queryParam("event_type"), queryParam("region"), queryParam("locale"), queryParam("status"), queryParam("cursor"), queryParam("limit")];
+  return [queryParam("event_type"), queryParam("region"), queryParam("locale"), queryParam("status"), queryParam("cursor"), pageSizeParam()];
 }
 
 function route(method, pathKey, operationId, response, isPublic, parameters = [], bodySchemaName = null) {
@@ -1150,7 +1168,7 @@ function documentFor({ authority, routes, serverUrl, title }) {
     item.operation["x-sdkwork-api-authority"] = authority;
     paths[item.path][item.method] = item.operation;
   }
-  return bootstrapOpenApiEnvelope({
+  const document = bootstrapOpenApiEnvelope({
     openapi: "3.1.2",
     info: {
       title,
@@ -1189,6 +1207,7 @@ function documentFor({ authority, routes, serverUrl, title }) {
     "x-sdkwork-domain": DOMAIN,
     "x-sdkwork-standard-profile": "sdkwork-v3",
   });
+  return alignOpenApiOperationPatterns(document).document;
 }
 
 function parseArgs(argv) {

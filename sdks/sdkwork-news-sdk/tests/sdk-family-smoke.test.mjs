@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 test("news open SDK assembly points at sdkwork-news open authority", () => {
-  const assembly = JSON.parse(readFileSync("sdks/sdkwork-news-sdk/.sdkwork-assembly.json", "utf8"));
+  const assembly = JSON.parse(readFileSync("sdks/sdkwork-news-sdk/sdk-manifest.json", "utf8"));
   assert.equal(assembly.sdkOwner, "sdkwork-news");
   assert.equal(assembly.apiAuthority, "sdkwork-news.open");
   assert.equal(assembly.discoverySurface.apiPrefix, "/open/v3/api");

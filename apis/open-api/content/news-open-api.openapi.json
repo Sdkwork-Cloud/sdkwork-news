@@ -304,8 +304,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -409,8 +411,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           },
           {
@@ -514,8 +518,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -619,8 +625,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           },
           {
@@ -732,8 +740,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -829,8 +839,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -934,8 +946,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1039,8 +1053,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           },
           {
@@ -1137,8 +1153,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1219,8 +1237,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1389,8 +1409,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1479,8 +1501,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1577,8 +1601,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -1731,8 +1757,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "maximum": 200
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 20
             }
           }
         ],
@@ -2174,8 +2202,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2184,16 +2211,36 @@
               "$ref": "#/components/schemas/NewsFeedItem"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -2202,8 +2249,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2212,16 +2258,36 @@
               "$ref": "#/components/schemas/NewsItem"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -2230,8 +2296,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2240,16 +2305,36 @@
               "$ref": "#/components/schemas/NewsComment"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -2258,8 +2343,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2268,16 +2352,36 @@
               "$ref": "#/components/schemas/NewsFavorite"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -2286,8 +2390,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2296,16 +2399,36 @@
               "$ref": "#/components/schemas/NewsFollow"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -2314,8 +2437,7 @@
         "additionalProperties": false,
         "required": [
           "items",
-          "hasMore",
-          "limit"
+          "pageInfo"
         ],
         "properties": {
           "items": {
@@ -2324,16 +2446,36 @@
               "$ref": "#/components/schemas/NewsSearchResult"
             }
           },
-          "cursor": {
-            "type": "string"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
+          "pageInfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "pageSize",
+              "hasMore"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "cursor"
+                ]
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       },
@@ -4596,6 +4738,14 @@
             "format": "uuid",
             "description": "Server-owned request correlation id."
           },
+          "i18nKey": {
+            "type": "string",
+            "description": "Optional stable localization key such as errors.result.40001."
+          },
+          "locale": {
+            "type": "string",
+            "description": "Optional effective BCP 47 locale used by framework message mapping."
+          },
           "errors": {
             "type": "array",
             "items": {
@@ -4623,6 +4773,28 @@
             "format": "int32",
             "minimum": 40011,
             "maximum": 40099
+          },
+          "i18nKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
           }
         }
       },
