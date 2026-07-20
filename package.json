@@ -5,14 +5,18 @@
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "stop": "node ../sdkwork-specs/tools/stop-sdkwork-workspace-processes.mjs --workspace .",    "test": "pnpm test:node && pnpm test:vitest && cargo test --workspace",
+    "stop": "pnpm exec sdkwork-app stop",
+    "build": "pnpm exec sdkwork-app build",
+    "test": "pnpm exec sdkwork-app test",
     "test:node": "node --test sdks/test/*.test.mjs sdks/sdkwork-news-app-sdk/tests/*.test.mjs sdks/sdkwork-news-backend-sdk/tests/*.test.mjs sdks/sdkwork-news-sdk/tests/*.test.mjs",
     "test:vitest": "vitest run --config vitest.config.ts --configLoader native --pool vmThreads",
     "typecheck": "tsc --noEmit",
+    "check": "pnpm exec sdkwork-app check",
     "sdk:check": "node tools/news_sdk_generate.mjs --check",
     "sdk:generate": "node tools/news_sdk_generate.mjs",
-    "openapi:export": "node tools/news_openapi_export.mjs",
-    "verify": "pnpm sdk:check && pnpm test:node && pnpm test:vitest && cargo test --workspace && pnpm run check:app-composition",
+    "api:materialize:openapi": "node tools/news_openapi_export.mjs",
+    "verify": "pnpm exec sdkwork-app verify",
+    "clean": "pnpm exec sdkwork-app clean",
     "db:validate": "node ../sdkwork-specs/tools/check-database-framework-standard.mjs --root .",
     "db:materialize:contract": "node ../sdkwork-specs/tools/materialize-database-contract-from-baseline.mjs --root . --baseline database/ddl/baseline/postgres/0001_news_baseline.sql --module-id news --owner news-platform --prefixes news_ --engines postgres",
     "db:plan": "cargo run --manifest-path ../sdkwork-database/Cargo.toml -p sdkwork-database-cli -- --app-root . plan",
@@ -26,13 +30,19 @@
     "test:contract:database": "node ../sdkwork-specs/tools/check-database-framework-standard.mjs --root .",
     "topology:validate": "node ../sdkwork-app-topology/scripts/sdkwork-topology.mjs validate --root . --spec specs/topology.spec.json",
     "topology:plan": "node ../sdkwork-app-topology/scripts/sdkwork-topology.mjs plan --root . --spec specs/topology.spec.json",
-    "gateway:package:cloud": "node ../sdkwork-app-topology/scripts/gateway-cloud-bundle.mjs bundle --root .",
-    "gateway:validate:cloud": "node ../sdkwork-app-topology/scripts/gateway-cloud-bundle.mjs validate --root .",
-    "gateway:assembly:materialize": "node scripts/gateway/assembly-materialize.mjs",
-    "gateway:assembly:validate": "node scripts/gateway/assembly-validate.mjs",
+    "api:assembly:materialize": "node scripts/gateway/assembly-materialize.mjs",
+    "api:assembly:validate": "node scripts/gateway/assembly-validate.mjs",
     "db:postgres:init": "node ../sdkwork-specs/tools/postgres/postgres-db-cli.mjs --mode init --config .env.postgres --app-root .",
     "db:postgres:plan": "node ../sdkwork-specs/tools/postgres/postgres-db-cli.mjs --mode plan --config .env.postgres --app-root . --dry-run",
-    "check:app-composition": "node ../sdkwork-specs/tools/verify-repo.mjs --root ."
+    "check:app-composition": "node ../sdkwork-specs/tools/verify-repo.mjs --root .",
+    "_sdkwork:build": "pnpm --dir apps/sdkwork-news-pc build && cargo build --workspace",
+    "_sdkwork:test": "pnpm test:node && pnpm test:vitest && cargo test --workspace",
+    "_sdkwork:check": "pnpm typecheck && pnpm sdk:check && pnpm db:validate && pnpm topology:validate && pnpm api:assembly:validate && pnpm check:app-composition",
+    "_sdkwork:verify": "pnpm sdk:check && pnpm test:node && pnpm test:vitest && cargo test --workspace && pnpm run check:app-composition",
+    "_sdkwork:clean": "cargo clean && node -e \"import('node:fs').then(fs => fs.rmSync('apps/sdkwork-news-pc/dist', { recursive: true, force: true }))\"",
+    "dev": "pnpm dev:standalone",
+    "dev:standalone": "pnpm exec sdkwork-app dev --deployment-profile standalone",
+    "dev:cloud": "pnpm exec sdkwork-app dev --deployment-profile cloud"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -47,7 +57,8 @@
     "react-dom": "^19.2.4",
     "typescript": "^6.0.2",
     "vite": "^8.0.3",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "@sdkwork/app-topology": "workspace:*"
   },
   "exports": {
     ".": {
