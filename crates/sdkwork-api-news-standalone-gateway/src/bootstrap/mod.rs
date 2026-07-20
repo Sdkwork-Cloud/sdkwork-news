@@ -5,7 +5,7 @@ use tower_http::trace::TraceLayer;
 
 use crate::readiness::NewsSqliteReadinessCheck;
 use crate::web_bootstrap::wrap_router_with_web_framework_from_env;
-use sdkwork_news_gateway_assembly::{assemble_application_business_router, NewsHttpState};
+use sdkwork_api_news_assembly::{assemble_api_router, NewsHttpState};
 use sdkwork_web_bootstrap::{service_router, ServiceRouterConfig};
 
 pub async fn create_app() -> Result<Router, anyhow::Error> {
@@ -26,7 +26,7 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
         pool: sqlite_pool.clone(),
     });
 
-    let business = assemble_application_business_router(state).router;
+    let business = assemble_api_router(state).router;
     let business = business
         .layer(sdkwork_web_bootstrap::application_cors_layer_from_env(
             &["SDKWORK_NEWS_ENVIRONMENT"],

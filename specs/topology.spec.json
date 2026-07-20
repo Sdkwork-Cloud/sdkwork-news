@@ -72,8 +72,8 @@
   },
   "components": {
     "applicationServer": {
-      "crate": "sdkwork-news-standalone-gateway",
-      "binary": "sdkwork-news-standalone-gateway"
+      "crate": "sdkwork-api-news-standalone-gateway",
+      "binary": "sdkwork-api-news-standalone-gateway"
     }
   },
   "orchestration": {
@@ -82,8 +82,8 @@
         "processes": [
           {
             "id": "application.public-ingress",
-            "crate": "sdkwork-news-standalone-gateway",
-            "binary": "sdkwork-news-standalone-gateway",
+            "crate": "sdkwork-api-news-standalone-gateway",
+            "binary": "sdkwork-api-news-standalone-gateway",
             "required": true,
             "role": "api-standalone-gateway"
           }
@@ -103,8 +103,8 @@
         "processes": [
           {
             "id": "application.public-ingress",
-            "crate": "sdkwork-news-standalone-gateway",
-            "binary": "sdkwork-news-standalone-gateway",
+            "crate": "sdkwork-api-news-standalone-gateway",
+            "binary": "sdkwork-api-news-standalone-gateway",
             "required": true,
             "role": "api-standalone-gateway"
           }
@@ -118,8 +118,8 @@
         "processes": [
           {
             "id": "application.public-ingress",
-            "crate": "sdkwork-news-standalone-gateway",
-            "binary": "sdkwork-news-standalone-gateway",
+            "crate": "sdkwork-api-news-standalone-gateway",
+            "binary": "sdkwork-api-news-standalone-gateway",
             "required": true,
             "role": "api-standalone-gateway"
           }

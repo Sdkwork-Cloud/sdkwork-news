@@ -1,14 +1,14 @@
 [package]
-name = "sdkwork-news-standalone-gateway"
+name = "sdkwork-api-news-standalone-gateway"
 version.workspace = true
 edition.workspace = true
 
 [[bin]]
-name = "sdkwork-news-standalone-gateway"
+name = "sdkwork-api-news-standalone-gateway"
 path = "src/main.rs"
 
 [dependencies]
-sdkwork_news_gateway_assembly = { package = "sdkwork-news-gateway-assembly", path = "../sdkwork-news-gateway-assembly" }
+sdkwork_api_news_assembly = { package = "sdkwork-api-news-assembly", path = "../sdkwork-api-news-assembly" }
 sdkwork-content-news-service = { path = "../sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "../sdkwork-content-news-repository-sqlx" }
 sdkwork-database-config = { workspace = true }
