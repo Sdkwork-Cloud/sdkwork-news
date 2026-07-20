@@ -8,7 +8,7 @@ pub struct ApiAssembly {
     pub router: Router,
 }
 
-pub fn assemble_api_router(state: Arc<NewsHttpState>) -> ApiAssembly {
+pub fn assemble_business_routes(state: Arc<NewsHttpState>) -> ApiAssembly {
     let router = Router::new()
         .merge(sdkwork_routes_news_open_api::gateway_mount(state.clone()))
         .merge(sdkwork_routes_news_app_api::gateway_mount(state.clone()))
@@ -28,5 +28,5 @@ pub async fn assemble_api_router() -> Result<ApiAssembly, String> {
         .ok_or_else(|| "Expected SQLite pool for news service".to_string())?
         .clone();
     let state = Arc::new(NewsHttpState { pool: sqlite_pool });
-    Ok(assemble_api_router(state))
+    Ok(assemble_business_routes(state))
 }
