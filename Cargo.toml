@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/sdkwork-api-news-assembly",
     "crates/sdkwork-news-gateway-assembly",
     "crates/sdkwork-content-news-service",
     "crates/sdkwork-news-database-host",
