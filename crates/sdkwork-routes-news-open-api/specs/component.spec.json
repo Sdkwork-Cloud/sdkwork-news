@@ -6,7 +6,7 @@
     "displayName": "sdkwork-routes-news-open-api",
     "version": "0.1.0",
     "type": "web-backend-service",
-    "root": "sdkwork-news/crates/sdkwork-routes-news-open-api",
+    "root": "crates/sdkwork-routes-news-open-api",
     "domain": "content",
     "capability": "news",
     "languages": [
@@ -15,7 +15,8 @@
     "generated": false,
     "manifests": [
       "Cargo.toml"
-    ]
+    ],
+    "surface": "open-api"
   },
   "canonicalSpecs": [
     {
@@ -39,7 +40,7 @@
       "."
     ],
     "runtimeEntrypoints": [],
-    "routeManifest": null,
+    "routeManifest": "src/http_route_manifest.rs#open_route_manifest",
     "sdkClients": [],
     "events": [],
     "configKeys": []

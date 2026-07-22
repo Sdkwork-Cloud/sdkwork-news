@@ -5,8 +5,6 @@ use serde_json::{json, Value};
 use sqlx::Row;
 use std::sync::Arc;
 
-use sdkwork_routes_news_open_api::state::NewsHttpState;
-
 #[derive(Deserialize)]
 pub struct ListParams {
     pub status: Option<String>,

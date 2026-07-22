@@ -1332,9 +1332,9 @@ dependencies = [
 
 [[package]]
 name = "quick-xml"
-version = "0.37.5"
+version = "0.41.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
+checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
 dependencies = [
  "memchr",
 ]
@@ -1654,6 +1654,48 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
+name = "sdkwork-api-news-assembly"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "sdkwork-database-sqlx",
+ "sdkwork-news-database-host",
+ "sdkwork-routes-news-app-api",
+ "sdkwork-routes-news-backend-api",
+ "sdkwork-routes-news-open-api",
+ "sqlx",
+ "tokio",
+]
+
+[[package]]
+name = "sdkwork-api-news-standalone-gateway"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "chrono",
+ "dotenvy",
+ "sdkwork-api-news-assembly",
+ "sdkwork-content-news-repository-sqlx",
+ "sdkwork-content-news-service",
+ "sdkwork-database-config",
+ "sdkwork-database-sqlx",
+ "sdkwork-iam-web-adapter",
+ "sdkwork-web-axum",
+ "sdkwork-web-bootstrap",
+ "sdkwork-web-core",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
 name = "sdkwork-content-news-repository-sqlx"
 version = "0.1.0"
 dependencies = [
@@ -1758,6 +1800,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tracing",
+ "url",
 ]
 
 [[package]]
@@ -1821,6 +1864,7 @@ dependencies = [
  "sdkwork-iam-context-service",
  "sdkwork-utils-rust",
  "sdkwork-web-axum",
+ "sdkwork-web-bootstrap",
  "sdkwork-web-core",
  "serde",
  "serde_json",
@@ -1847,48 +1891,6 @@ dependencies = [
  "sdkwork-database-lifecycle",
  "sdkwork-database-spi",
  "sdkwork-database-sqlx",
-]
-
-[[package]]
-name = "sdkwork-news-gateway-assembly"
-version = "0.1.0"
-dependencies = [
- "axum",
- "sdkwork-database-sqlx",
- "sdkwork-news-database-host",
- "sdkwork-routes-news-app-api",
- "sdkwork-routes-news-backend-api",
- "sdkwork-routes-news-open-api",
- "sqlx",
- "tokio",
-]
-
-[[package]]
-name = "sdkwork-news-standalone-gateway"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "chrono",
- "dotenvy",
- "sdkwork-content-news-repository-sqlx",
- "sdkwork-content-news-service",
- "sdkwork-database-config",
- "sdkwork-database-sqlx",
- "sdkwork-iam-web-adapter",
- "sdkwork-news-gateway-assembly",
- "sdkwork-web-axum",
- "sdkwork-web-bootstrap",
- "sdkwork-web-core",
- "serde",
- "serde_json",
- "sqlx",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "uuid",
 ]
 
 [[package]]

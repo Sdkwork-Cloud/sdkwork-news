@@ -6,7 +6,7 @@
     "displayName": "sdkwork-routes-news-backend-api",
     "version": "0.1.0",
     "type": "web-backend-service",
-    "root": "sdkwork-news/crates/sdkwork-routes-news-backend-api",
+    "root": "crates/sdkwork-routes-news-backend-api",
     "domain": "content",
     "capability": "news",
     "languages": [
@@ -15,7 +15,8 @@
     "generated": false,
     "manifests": [
       "Cargo.toml"
-    ]
+    ],
+    "surface": "backend-api"
   },
   "canonicalSpecs": [
     {
@@ -39,7 +40,7 @@
       "."
     ],
     "runtimeEntrypoints": [],
-    "routeManifest": null,
+    "routeManifest": "src/lib.rs#backend_routes",
     "sdkClients": [],
     "events": [],
     "configKeys": []
