@@ -1,4 +1,4 @@
-﻿use axum::extract::{Path, Query, State};
+use axum::extract::{Path, Query, State};
 use axum::Json;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -25,9 +25,9 @@ pub async fn list_items(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
-         WHERE status = ? AND deleted_at IS NULL
+         WHERE status = $1 AND deleted_at IS NULL
          ORDER BY published_at DESC, priority ASC
-         LIMIT ?"
+         LIMIT $2",
     )
     .bind(status)
     .bind(limit)
@@ -73,30 +73,28 @@ pub async fn get_item(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
-         WHERE id = ? AND deleted_at IS NULL"
+         WHERE id = $1 AND deleted_at IS NULL",
     )
     .bind(&item_id)
     .fetch_optional(&state.pool)
     .await;
 
     match result {
-        Ok(Some(row)) => {
-            Json(json!({
-                "id": row.get::<String, _>("id"),
-                "tenantId": row.get::<String, _>("tenant_id"),
-                "categoryId": row.get::<String, _>("category_id"),
-                "slug": row.get::<String, _>("slug"),
-                "title": row.get::<String, _>("title"),
-                "summary": row.get::<String, _>("summary"),
-                "status": row.get::<String, _>("status"),
-                "authorName": row.get::<Option<String>, _>("author_name"),
-                "featured": row.get::<bool, _>("featured"),
-                "priority": row.get::<i32, _>("priority"),
-                "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
-                "publishedAt": row.get::<Option<String>, _>("published_at"),
-                "updatedAt": row.get::<String, _>("updated_at"),
-            }))
-        }
+        Ok(Some(row)) => Json(json!({
+            "id": row.get::<String, _>("id"),
+            "tenantId": row.get::<String, _>("tenant_id"),
+            "categoryId": row.get::<String, _>("category_id"),
+            "slug": row.get::<String, _>("slug"),
+            "title": row.get::<String, _>("title"),
+            "summary": row.get::<String, _>("summary"),
+            "status": row.get::<String, _>("status"),
+            "authorName": row.get::<Option<String>, _>("author_name"),
+            "featured": row.get::<bool, _>("featured"),
+            "priority": row.get::<i32, _>("priority"),
+            "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
+            "publishedAt": row.get::<Option<String>, _>("published_at"),
+            "updatedAt": row.get::<String, _>("updated_at"),
+        })),
         Ok(None) => Json(json!(null)),
         Err(e) => {
             tracing::error!("Failed to get item: {}", e);
@@ -112,7 +110,7 @@ pub async fn list_categories(
         "SELECT id, tenant_id, slug, title, description, priority, enabled
          FROM news_category
          WHERE enabled = TRUE
-         ORDER BY priority ASC, title ASC"
+         ORDER BY priority ASC, title ASC",
     )
     .fetch_all(&state.pool)
     .await;
@@ -162,7 +160,7 @@ pub async fn get_personalized_feed(
          FROM news_item
          WHERE status = 'published' AND deleted_at IS NULL
          ORDER BY featured DESC, priority ASC, published_at DESC
-         LIMIT ?"
+         LIMIT $1",
     )
     .bind(limit)
     .fetch_all(&state.pool)
@@ -216,7 +214,7 @@ pub async fn create_event(
 
     let result = sqlx::query(
         "INSERT INTO news_publication_event (id, tenant_id, item_id, event_type, actor_user_id, occurred_at)
-         VALUES (?, 'default', ?, ?, NULL, ?)"
+         VALUES ($1, 'default', $2, $3, NULL, $4)"
     )
     .bind(&id)
     .bind(&request.item_id)
@@ -247,7 +245,7 @@ pub async fn list_favorites(
          JOIN news_item i ON i.id = f.item_id
          WHERE f.status = 'active'
          ORDER BY f.created_at DESC
-         LIMIT ?"
+         LIMIT $1",
     )
     .bind(limit)
     .fetch_all(&state.pool)
@@ -290,7 +288,7 @@ pub async fn create_favorite(
 
     let result = sqlx::query(
         "INSERT INTO news_favorite (id, tenant_id, user_id, item_id, status, created_at)
-         VALUES (?, 'default', 'anonymous', ?, 'active', ?)
+         VALUES ($1, 'default', 'anonymous', $2, 'active', $3)
          ON CONFLICT (tenant_id, user_id, item_id) DO UPDATE SET status = 'active', deleted_at = NULL"
     )
     .bind(&id)

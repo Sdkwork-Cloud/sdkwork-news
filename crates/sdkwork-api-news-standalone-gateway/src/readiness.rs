@@ -2,19 +2,19 @@ use std::future::Future;
 use std::pin::Pin;
 
 use sdkwork_web_bootstrap::ReadinessCheck;
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 
-pub struct NewsSqliteReadinessCheck {
-    pool: SqlitePool,
+pub struct NewsPostgresReadinessCheck {
+    pool: PgPool,
 }
 
-impl NewsSqliteReadinessCheck {
-    pub fn new(pool: SqlitePool) -> Self {
+impl NewsPostgresReadinessCheck {
+    pub fn new(pool: PgPool) -> Self {
         Self { pool }
     }
 }
 
-impl ReadinessCheck for NewsSqliteReadinessCheck {
+impl ReadinessCheck for NewsPostgresReadinessCheck {
     fn check(&self) -> Pin<Box<dyn Future<Output = Result<(), String>> + Send + '_>> {
         let pool = self.pool.clone();
         Box::pin(async move {

@@ -1,4 +1,4 @@
-﻿use axum::extract::{Path, Query, State};
+use axum::extract::{Path, Query, State};
 use axum::Json;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -25,7 +25,7 @@ pub async fn list_items(
          FROM news_item
          WHERE deleted_at IS NULL
          ORDER BY updated_at DESC
-         LIMIT ?"
+         LIMIT $1",
     )
     .bind(limit)
     .fetch_all(&state.pool)
@@ -89,7 +89,7 @@ pub async fn create_item(
     let result = sqlx::query(
         "INSERT INTO news_item (id, tenant_id, category_id, slug, title, summary, status, 
                                 author_name, featured, priority, estimated_read_minutes, created_at, updated_at)
-         VALUES (?, 'default', ?, ?, ?, ?, 'draft', ?, FALSE, 100, 0, ?, ?)"
+         VALUES ($1, 'default', $2, $3, $4, $5, 'draft', $6, FALSE, 100, 0, $7, $8)"
     )
     .bind(&id)
     .bind(&request.category_id)
@@ -108,7 +108,7 @@ pub async fn create_item(
             if let Some(body) = &request.body {
                 let _ = sqlx::query(
                     "INSERT INTO news_item_body (item_id, body_markdown, body_format, updated_at)
-                     VALUES (?, ?, 'markdown', ?)"
+                     VALUES ($1, $2, 'markdown', $3)",
                 )
                 .bind(&id)
                 .bind(body)
@@ -137,7 +137,7 @@ pub async fn list_stories(
          FROM news_story
          WHERE deleted_at IS NULL
          ORDER BY updated_at DESC
-         LIMIT ?"
+         LIMIT $1",
     )
     .bind(limit)
     .fetch_all(&state.pool)
@@ -195,7 +195,7 @@ pub async fn create_story(
     let result = sqlx::query(
         "INSERT INTO news_story (id, tenant_id, organization_id, slug, title, summary, story_type, status, 
                                   priority, created_at, updated_at, version)
-         VALUES (?, 'default', ?, ?, ?, ?, ?, 'draft', 100, ?, ?, 0)"
+         VALUES ($1, 'default', $2, $3, $4, $5, $6, 'draft', 100, $7, $8, 0)"
     )
     .bind(&id)
     .bind(&request.organization_id)
@@ -224,26 +224,24 @@ pub async fn get_story(
     let result = sqlx::query(
         "SELECT id, tenant_id, slug, title, summary, story_type, status, published_at, updated_at
          FROM news_story
-         WHERE id = ? AND deleted_at IS NULL"
+         WHERE id = $1 AND deleted_at IS NULL",
     )
     .bind(&story_id)
     .fetch_optional(&state.pool)
     .await;
 
     match result {
-        Ok(Some(row)) => {
-            Json(json!({
-                "id": row.get::<String, _>("id"),
-                "tenantId": row.get::<String, _>("tenant_id"),
-                "slug": row.get::<String, _>("slug"),
-                "title": row.get::<String, _>("title"),
-                "summary": row.get::<String, _>("summary"),
-                "storyType": row.get::<String, _>("story_type"),
-                "status": row.get::<String, _>("status"),
-                "publishedAt": row.get::<Option<String>, _>("published_at"),
-                "updatedAt": row.get::<String, _>("updated_at"),
-            }))
-        }
+        Ok(Some(row)) => Json(json!({
+            "id": row.get::<String, _>("id"),
+            "tenantId": row.get::<String, _>("tenant_id"),
+            "slug": row.get::<String, _>("slug"),
+            "title": row.get::<String, _>("title"),
+            "summary": row.get::<String, _>("summary"),
+            "storyType": row.get::<String, _>("story_type"),
+            "status": row.get::<String, _>("status"),
+            "publishedAt": row.get::<Option<String>, _>("published_at"),
+            "updatedAt": row.get::<String, _>("updated_at"),
+        })),
         Ok(None) => Json(json!(null)),
         Err(e) => {
             tracing::error!("Failed to get story: {}", e);
@@ -261,10 +259,10 @@ pub async fn publish_story(
     let result = sqlx::query(
         "UPDATE news_story
          SET status = 'published',
-             published_at = COALESCE(published_at, ?),
-             updated_at = ?,
+             published_at = COALESCE(published_at, $1),
+             updated_at = $2,
              version = version + 1
-         WHERE id = ? AND deleted_at IS NULL AND status IN ('draft', 'review')"
+         WHERE id = $3 AND deleted_at IS NULL AND status IN ('draft', 'review')",
     )
     .bind(&now)
     .bind(&now)

@@ -1,11 +1,10 @@
 use axum::Router;
-use sqlx::SqlitePool;
 use std::sync::Arc;
 use tower_http::trace::TraceLayer;
 
-use crate::readiness::NewsSqliteReadinessCheck;
+use crate::readiness::NewsPostgresReadinessCheck;
 use crate::web_bootstrap::wrap_router_with_web_framework_from_env;
-use sdkwork_api_news_assembly::{assemble_api_router, NewsHttpState};
+use sdkwork_api_news_assembly::{assemble_business_routes, NewsHttpState};
 use sdkwork_web_bootstrap::{service_router, ServiceRouterConfig};
 
 pub async fn create_app() -> Result<Router, anyhow::Error> {
@@ -15,22 +14,27 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
         .await?
         .ok_or_else(|| anyhow::anyhow!("SDKWORK_NEWS_DATABASE_URL not set"))?;
 
-    let sqlite_pool = pool
-        .as_sqlite()
-        .ok_or_else(|| anyhow::anyhow!("Expected SQLite pool for news service"))?
+    let postgres_pool = pool
+        .as_postgres()
+        .ok_or_else(|| anyhow::anyhow!("News authoritative server requires PostgreSQL"))?
         .clone();
 
-    run_migrations(&sqlite_pool).await?;
+    sdkwork_content_news_repository_sqlx::bootstrap_news_database(pool)
+        .await
+        .map_err(anyhow::Error::msg)?;
 
     let state = Arc::new(NewsHttpState {
-        pool: sqlite_pool.clone(),
+        pool: postgres_pool.clone(),
     });
 
-    let business = assemble_api_router(state).router;
+    let business = assemble_business_routes(state).router;
     let business = business
         .layer(sdkwork_web_bootstrap::application_cors_layer_from_env(
             &["SDKWORK_NEWS_ENVIRONMENT"],
-            &["SDKWORK_NEWS_CORS_ALLOWED_ORIGINS", "SDKWORK_CORS_ALLOWED_ORIGINS"],
+            &[
+                "SDKWORK_NEWS_CORS_ALLOWED_ORIGINS",
+                "SDKWORK_CORS_ALLOWED_ORIGINS",
+            ],
         ))
         .layer(TraceLayer::new_for_http());
 
@@ -38,25 +42,6 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
     Ok(service_router(
         business,
         ServiceRouterConfig::default()
-            .with_readiness_check(Arc::new(NewsSqliteReadinessCheck::new(sqlite_pool))),
+            .with_readiness_check(Arc::new(NewsPostgresReadinessCheck::new(postgres_pool))),
     ))
-}
-
-async fn run_migrations(pool: &SqlitePool) -> Result<(), anyhow::Error> {
-    let migrations = [
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0001_news_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0002_news_industry_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0003_news_personalization_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0004_news_alert_digest_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0005_news_trust_correction_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0006_news_live_coverage_foundation.sql"),
-        include_str!("../../../sdkwork-content-news-repository-sqlx/migrations/0007_news_professional_newsroom_foundation.sql"),
-    ];
-
-    for migration in &migrations {
-        sqlx::raw_sql(migration).execute(pool).await?;
-    }
-
-    tracing::info!("Database migrations completed");
-    Ok(())
 }

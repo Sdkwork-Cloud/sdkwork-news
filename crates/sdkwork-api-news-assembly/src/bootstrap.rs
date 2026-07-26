@@ -18,15 +18,17 @@ pub fn assemble_business_routes(state: Arc<NewsHttpState>) -> ApiAssembly {
 
 /// Assemble the news application router from environment variables.
 ///
-/// This function bootstraps the news database from environment variables,
-/// creates the HTTP state, and delegates to [`assemble_api_router`].
+/// This function prepares the authoritative News PostgreSQL database through
+/// the lifecycle host and creates the HTTP state.
 pub async fn assemble_api_router() -> Result<ApiAssembly, String> {
     let host = sdkwork_news_database_host::bootstrap_news_database_from_env().await?;
-    let sqlite_pool = host
+    let postgres_pool = host
         .pool()
-        .as_sqlite()
-        .ok_or_else(|| "Expected SQLite pool for news service".to_string())?
+        .as_postgres()
+        .ok_or_else(|| "News authoritative server requires PostgreSQL".to_string())?
         .clone();
-    let state = Arc::new(NewsHttpState { pool: sqlite_pool });
+    let state = Arc::new(NewsHttpState {
+        pool: postgres_pool,
+    });
     Ok(assemble_business_routes(state))
 }

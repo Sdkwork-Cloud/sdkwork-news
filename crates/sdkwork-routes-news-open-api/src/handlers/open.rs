@@ -1,4 +1,4 @@
-﻿use axum::extract::{Path, Query, State};
+use axum::extract::{Path, Query, State};
 use axum::Json;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -25,9 +25,9 @@ pub async fn list_items(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
-         WHERE status = ? AND deleted_at IS NULL
+         WHERE status = $1 AND deleted_at IS NULL
          ORDER BY published_at DESC, priority ASC
-         LIMIT ?"
+         LIMIT $2",
     )
     .bind(status)
     .bind(limit)
@@ -73,30 +73,28 @@ pub async fn get_item(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
-         WHERE id = ? AND deleted_at IS NULL"
+         WHERE id = $1 AND deleted_at IS NULL",
     )
     .bind(&item_id)
     .fetch_optional(&state.pool)
     .await;
 
     match result {
-        Ok(Some(row)) => {
-            Json(json!({
-                "id": row.get::<String, _>("id"),
-                "tenantId": row.get::<String, _>("tenant_id"),
-                "categoryId": row.get::<String, _>("category_id"),
-                "slug": row.get::<String, _>("slug"),
-                "title": row.get::<String, _>("title"),
-                "summary": row.get::<String, _>("summary"),
-                "status": row.get::<String, _>("status"),
-                "authorName": row.get::<Option<String>, _>("author_name"),
-                "featured": row.get::<bool, _>("featured"),
-                "priority": row.get::<i32, _>("priority"),
-                "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
-                "publishedAt": row.get::<Option<String>, _>("published_at"),
-                "updatedAt": row.get::<String, _>("updated_at"),
-            }))
-        }
+        Ok(Some(row)) => Json(json!({
+            "id": row.get::<String, _>("id"),
+            "tenantId": row.get::<String, _>("tenant_id"),
+            "categoryId": row.get::<String, _>("category_id"),
+            "slug": row.get::<String, _>("slug"),
+            "title": row.get::<String, _>("title"),
+            "summary": row.get::<String, _>("summary"),
+            "status": row.get::<String, _>("status"),
+            "authorName": row.get::<Option<String>, _>("author_name"),
+            "featured": row.get::<bool, _>("featured"),
+            "priority": row.get::<i32, _>("priority"),
+            "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
+            "publishedAt": row.get::<Option<String>, _>("published_at"),
+            "updatedAt": row.get::<String, _>("updated_at"),
+        })),
         Ok(None) => Json(json!(null)),
         Err(e) => {
             tracing::error!("Failed to get item: {}", e);
@@ -113,30 +111,28 @@ pub async fn get_item_by_slug(
         "SELECT id, tenant_id, category_id, slug, title, summary, status, author_name, 
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
-         WHERE slug = ? AND status = 'published' AND deleted_at IS NULL"
+         WHERE slug = $1 AND status = 'published' AND deleted_at IS NULL",
     )
     .bind(&slug)
     .fetch_optional(&state.pool)
     .await;
 
     match result {
-        Ok(Some(row)) => {
-            Json(json!({
-                "id": row.get::<String, _>("id"),
-                "tenantId": row.get::<String, _>("tenant_id"),
-                "categoryId": row.get::<String, _>("category_id"),
-                "slug": row.get::<String, _>("slug"),
-                "title": row.get::<String, _>("title"),
-                "summary": row.get::<String, _>("summary"),
-                "status": row.get::<String, _>("status"),
-                "authorName": row.get::<Option<String>, _>("author_name"),
-                "featured": row.get::<bool, _>("featured"),
-                "priority": row.get::<i32, _>("priority"),
-                "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
-                "publishedAt": row.get::<Option<String>, _>("published_at"),
-                "updatedAt": row.get::<String, _>("updated_at"),
-            }))
-        }
+        Ok(Some(row)) => Json(json!({
+            "id": row.get::<String, _>("id"),
+            "tenantId": row.get::<String, _>("tenant_id"),
+            "categoryId": row.get::<String, _>("category_id"),
+            "slug": row.get::<String, _>("slug"),
+            "title": row.get::<String, _>("title"),
+            "summary": row.get::<String, _>("summary"),
+            "status": row.get::<String, _>("status"),
+            "authorName": row.get::<Option<String>, _>("author_name"),
+            "featured": row.get::<bool, _>("featured"),
+            "priority": row.get::<i32, _>("priority"),
+            "estimatedReadMinutes": row.get::<i32, _>("estimated_read_minutes"),
+            "publishedAt": row.get::<Option<String>, _>("published_at"),
+            "updatedAt": row.get::<String, _>("updated_at"),
+        })),
         Ok(None) => Json(json!(null)),
         Err(e) => {
             tracing::error!("Failed to get item by slug: {}", e);
@@ -145,14 +141,12 @@ pub async fn get_item_by_slug(
     }
 }
 
-pub async fn list_categories(
-    State(state): State<Arc<crate::state::NewsHttpState>>,
-) -> Json<Value> {
+pub async fn list_categories(State(state): State<Arc<crate::state::NewsHttpState>>) -> Json<Value> {
     let result = sqlx::query(
         "SELECT id, tenant_id, slug, title, description, priority, enabled
          FROM news_category
          WHERE enabled = TRUE
-         ORDER BY priority ASC, title ASC"
+         ORDER BY priority ASC, title ASC",
     )
     .fetch_all(&state.pool)
     .await;
@@ -182,14 +176,12 @@ pub async fn list_categories(
     }
 }
 
-pub async fn list_channels(
-    State(state): State<Arc<crate::state::NewsHttpState>>,
-) -> Json<Value> {
+pub async fn list_channels(State(state): State<Arc<crate::state::NewsHttpState>>) -> Json<Value> {
     let result = sqlx::query(
         "SELECT id, tenant_id, slug, title, channel_type, status, priority
          FROM news_channel
          WHERE status = 'active'
-         ORDER BY priority ASC, title ASC"
+         ORDER BY priority ASC, title ASC",
     )
     .fetch_all(&state.pool)
     .await;
@@ -232,9 +224,9 @@ pub async fn list_channel_feed(
                 i.estimated_read_minutes, i.published_at, i.updated_at
          FROM news_channel_item ci
          JOIN news_item i ON i.id = ci.item_id
-         WHERE ci.channel_id = ? AND ci.status = 'active' AND i.status = 'published' AND i.deleted_at IS NULL
+         WHERE ci.channel_id = $1 AND ci.status = 'active' AND i.status = 'published' AND i.deleted_at IS NULL
          ORDER BY ci.rank ASC, i.published_at DESC
-         LIMIT ?"
+         LIMIT $2"
     )
     .bind(&channel_id)
     .bind(limit)
@@ -272,14 +264,12 @@ pub async fn list_channel_feed(
     }
 }
 
-pub async fn list_topics(
-    State(state): State<Arc<crate::state::NewsHttpState>>,
-) -> Json<Value> {
+pub async fn list_topics(State(state): State<Arc<crate::state::NewsHttpState>>) -> Json<Value> {
     let result = sqlx::query(
         "SELECT id, tenant_id, slug, title, description, status, priority
          FROM news_topic
          WHERE status = 'active'
-         ORDER BY priority ASC, title ASC"
+         ORDER BY priority ASC, title ASC",
     )
     .fetch_all(&state.pool)
     .await;
@@ -322,7 +312,7 @@ pub async fn list_trending(
          FROM news_item i
          WHERE i.status = 'published' AND i.deleted_at IS NULL
          ORDER BY i.featured DESC, i.priority ASC, i.published_at DESC
-         LIMIT ?"
+         LIMIT $1",
     )
     .bind(limit)
     .fetch_all(&state.pool)
@@ -379,9 +369,9 @@ pub async fn search(
                 featured, priority, estimated_read_minutes, published_at, updated_at
          FROM news_item
          WHERE status = 'published' AND deleted_at IS NULL
-           AND (title LIKE ? OR summary LIKE ?)
+           AND (title LIKE $1 OR summary LIKE $2)
          ORDER BY published_at DESC, priority ASC
-         LIMIT ?"
+         LIMIT $3",
     )
     .bind(&search_pattern)
     .bind(&search_pattern)
