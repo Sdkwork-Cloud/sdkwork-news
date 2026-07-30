@@ -12,7 +12,7 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
 
     let pool = sdkwork_database_sqlx::create_pool_from_env("NEWS")
         .await?
-        .ok_or_else(|| anyhow::anyhow!("SDKWORK_NEWS_DATABASE_URL not set"))?;
+        .ok_or_else(|| anyhow::anyhow!("SDKWORK_DATABASE_URL not set"))?;
 
     let postgres_pool = pool
         .as_postgres()

@@ -88,7 +88,7 @@ impl DatabaseConfig {
 
         let max_connections = match max_connections {
             Some(value) => value.parse::<u32>().map_err(|_| {
-                format!("SDKWORK_NEWS_DATABASE_MAX_CONNECTIONS must be a positive integer: {value}")
+                format!("SDKWORK_DATABASE_MAX_CONNECTIONS must be a positive integer: {value}")
             })?,
             None => Self::DEFAULT_MAX_CONNECTIONS,
         };
@@ -98,8 +98,8 @@ impl DatabaseConfig {
 
     pub fn from_env() -> Result<Option<Self>, String> {
         let env_config = Self::from_optional_parts(
-            std::env::var("SDKWORK_NEWS_DATABASE_URL").ok(),
-            std::env::var("SDKWORK_NEWS_DATABASE_MAX_CONNECTIONS").ok(),
+            std::env::var("SDKWORK_DATABASE_URL").ok(),
+            std::env::var("SDKWORK_DATABASE_MAX_CONNECTIONS").ok(),
         )?;
         if env_config.is_some() {
             return Ok(env_config);
@@ -122,8 +122,8 @@ impl DatabaseConfig {
         let profile = RuntimeConfigProfile::from_env();
         let location = Self::runtime_config_location_from_env(profile);
         let env_config = Self::from_optional_parts(
-            std::env::var("SDKWORK_NEWS_DATABASE_URL").ok(),
-            std::env::var("SDKWORK_NEWS_DATABASE_MAX_CONNECTIONS").ok(),
+            std::env::var("SDKWORK_DATABASE_URL").ok(),
+            std::env::var("SDKWORK_DATABASE_MAX_CONNECTIONS").ok(),
         )?;
         if let Some(config) = env_config {
             return Ok(Some(config));
