@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork-news-flutter-mobile",
+    "displayName": "SDKWork News Flutter Mobile",
+    "version": "0.1.0",
+    "type": "flutter-mobile-app-root",
+    "root": "apps/sdkwork-news-flutter-mobile",
+    "domain": "content",
+    "capability": "news-mobile",
+    "surface": "app",
+    "languages": ["dart"],
+    "generated": false,
+    "manifests": ["pubspec.yaml", "sdkwork.app.config.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "FLUTTER_APP_MOBILE_ARCHITECTURE_SPEC.md", "path": "../../../sdkwork-specs/FLUTTER_APP_MOBILE_ARCHITECTURE_SPEC.md", "purpose": "Native Flutter mobile architecture." },
+    { "file": "APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md", "path": "../../../sdkwork-specs/APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md", "purpose": "Cross-client package taxonomy." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Public composed SDK integration." }
+  ],
+  "contracts": {
+    "layerRole": "frontend-app-root",
+    "publicExports": [],
+    "runtimeEntrypoints": ["lib/main.dart"],
+    "sdkClients": ["SdkworkAppClient", "ImSdkClientBundle"],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "packageName": "sdkwork_agents_app_sdk", "status": "active" },
+      { "workspace": "sdkwork-im", "surface": "im", "packageName": "sdkwork_im_flutter_mobile_chat", "status": "active" }
+    ]
+  },
+  "verification": { "commands": ["flutter analyze", "flutter test", "dart test"] }
+}

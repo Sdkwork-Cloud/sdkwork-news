@@ -1,0 +1,19 @@
+{
+  "name": "@sdkwork/news-pc-assistant",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@sdkwork/news-agent-contracts": "workspace:*",
+    "@sdkwork/news-agent-service": "workspace:*",
+    "lucide-react": "catalog:",
+    "react": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.tsx",
+      "import": "./src/index.tsx",
+      "default": "./src/index.tsx"
+    }
+  }
+}

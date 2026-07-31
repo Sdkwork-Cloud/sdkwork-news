@@ -1,0 +1,51 @@
+name: sdkwork_news_flutter_mobile
+description: SDKWork News AI-native Flutter mobile application
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  sdkwork_agents_app_sdk:
+    path: ../../../sdkwork-agents/sdks/sdkwork-agents-app-sdk/sdkwork-agents-app-sdk-flutter/generated/server-openapi
+  sdkwork_im_flutter_mobile_core:
+    path: ../../../sdkwork-im/apps/sdkwork-im-flutter-mobile/packages/sdkwork_im_flutter_mobile_core
+  sdkwork_news_flutter_mobile_account:
+    path: packages/sdkwork_news_flutter_mobile_account
+  sdkwork_news_flutter_mobile_agent_sdk_adapter:
+    path: packages/sdkwork_news_flutter_mobile_agent_sdk_adapter
+  sdkwork_news_flutter_mobile_ai_store:
+    path: packages/sdkwork_news_flutter_mobile_ai_store
+  sdkwork_news_flutter_mobile_assistant:
+    path: packages/sdkwork_news_flutter_mobile_assistant
+  sdkwork_news_flutter_mobile_commons:
+    path: packages/sdkwork_news_flutter_mobile_commons
+  sdkwork_news_flutter_mobile_core:
+    path: packages/sdkwork_news_flutter_mobile_core
+  sdkwork_news_flutter_mobile_host:
+    path: packages/sdkwork_news_flutter_mobile_host
+  sdkwork_news_flutter_mobile_im_adapter:
+    path: packages/sdkwork_news_flutter_mobile_im_adapter
+  sdkwork_news_flutter_mobile_news:
+    path: packages/sdkwork_news_flutter_mobile_news
+  sdkwork_news_flutter_mobile_shell:
+    path: packages/sdkwork_news_flutter_mobile_shell
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  test: ^1.25.0
+
+dependency_overrides:
+  sdkwork_common_flutter:
+    path: ../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter
+
+flutter:
+  uses-material-design: true

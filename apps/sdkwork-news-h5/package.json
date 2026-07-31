@@ -1,0 +1,29 @@
+{
+  "name": "@sdkwork/news-h5",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json && vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@sdkwork/news-agent-service": "workspace:*",
+    "@sdkwork/news-h5-account": "workspace:*",
+    "@sdkwork/news-h5-ai-store": "workspace:*",
+    "@sdkwork/news-h5-assistant": "workspace:*",
+    "@sdkwork/news-h5-news": "workspace:*",
+    "@sdkwork/news-h5-shell": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

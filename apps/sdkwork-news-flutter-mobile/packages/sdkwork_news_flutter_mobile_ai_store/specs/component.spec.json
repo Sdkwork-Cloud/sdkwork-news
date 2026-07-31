@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork_news_flutter_mobile_ai_store",
+    "displayName": "SDKWork News Flutter Mobile AI Store",
+    "version": "0.1.0",
+    "type": "flutter-package",
+    "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_ai_store",
+    "domain": "news",
+    "capability": "ai-store",
+    "surface": "app",
+    "languages": ["dart", "flutter"],
+    "generated": false,
+    "manifests": ["pubspec.yaml"]
+  },
+  "contracts": {
+    "layerRole": "frontend-feature",
+    "publicExports": ["lib/sdkwork_news_flutter_mobile_ai_store.dart"],
+    "providedPorts": [{"name": "aiStoreRepository", "export": "lib/sdkwork_news_flutter_mobile_ai_store.dart"}],
+    "sdkDependencies": [
+      {"workspace": "sdkwork-appstore-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"},
+      {"workspace": "sdkwork-skills-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"},
+      {"workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"}
+    ]
+  },
+  "verification": {"commands": ["flutter test"]}
+}

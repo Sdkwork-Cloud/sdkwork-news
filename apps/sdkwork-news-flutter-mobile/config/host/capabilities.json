@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "platforms": ["android", "ios"],
+  "formFactor": "phone",
+  "orientation": "portrait",
+  "capabilities": ["secure-session-storage", "realtime-im", "external-links"],
+  "webDelivery": false
+}

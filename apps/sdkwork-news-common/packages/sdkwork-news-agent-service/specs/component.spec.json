@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-agent-service",
+    "displayName": "SDKWork News Agent Service",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-service",
+    "domain": "content",
+    "capability": "news-agent-service",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "COMPOSABLE_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/COMPOSABLE_ARCHITECTURE_SPEC.md", "purpose": "Service ports and composition." },
+    { "file": "PAGINATION_SPEC.md", "path": "../../../../../sdkwork-specs/PAGINATION_SPEC.md", "purpose": "Bounded interactive lists." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript rules." }
+  ],
+  "contracts": {
+    "layerRole": "backend-service",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsAgentService", "export": "." }],
+    "requiredPorts": [
+      { "name": "newsAgentProfiles", "export": ".", "package": "@sdkwork/news-agent-contracts" },
+      { "name": "newsAgentConversations", "export": ".", "package": "@sdkwork/news-agent-contracts" }
+    ],
+    "runtimeEntrypoints": [],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": { "commands": ["pnpm typecheck", "pnpm test:vitest"] }
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork-news-pc",
+    "displayName": "SDKWork News PC",
+    "version": "0.1.0",
+    "type": "react-pc-app-root",
+    "root": "apps/sdkwork-news-pc",
+    "domain": "content",
+    "capability": "news-pc",
+    "surface": "pc",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json", "sdkwork.app.config.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "APP_PC_ARCHITECTURE_SPEC.md", "path": "../../../sdkwork-specs/APP_PC_ARCHITECTURE_SPEC.md", "purpose": "PC client package and shell architecture." },
+    { "file": "APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md", "path": "../../../sdkwork-specs/APP_CLIENT_ARCHITECTURE_ALIGNMENT_SPEC.md", "purpose": "Cross-client package taxonomy." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Public composed SDK integration." }
+  ],
+  "contracts": {
+    "layerRole": "frontend-app-root",
+    "publicExports": [],
+    "runtimeEntrypoints": ["src/main.tsx"],
+    "sdkClients": ["SdkworkAppClient", "ImSdkClient"],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "packageName": "@sdkwork/agents-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-im-sdk", "surface": "im", "packageName": "@sdkwork/im-sdk", "status": "active" }
+    ]
+  },
+  "verification": { "commands": ["pnpm --dir apps/sdkwork-news-pc build"] }
+}

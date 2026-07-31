@@ -1,0 +1,18 @@
+name: sdkwork_news_flutter_mobile_agent_sdk_adapter
+description: SDKWork News Flutter adapter for the Agents App SDK
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  sdkwork_agents_app_sdk:
+    path: ../../../../../sdkwork-agents/sdks/sdkwork-agents-app-sdk/sdkwork-agents-app-sdk-flutter/generated/server-openapi
+  sdkwork_news_flutter_mobile_core:
+    path: ../sdkwork_news_flutter_mobile_core
+
+dependency_overrides:
+  sdkwork_common_flutter:
+    path: ../../../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter
+

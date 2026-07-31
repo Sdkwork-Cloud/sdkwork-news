@@ -1,0 +1,105 @@
+import 'package:sdkwork_agents_app_sdk/sdkwork_agents_app_sdk.dart';
+import 'package:sdkwork_im_flutter_mobile_core/sdkwork_im_flutter_mobile_core.dart';
+import 'package:sdkwork_news_flutter_mobile_account/sdkwork_news_flutter_mobile_account.dart';
+import 'package:sdkwork_news_flutter_mobile_agent_sdk_adapter/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart';
+import 'package:sdkwork_news_flutter_mobile_ai_store/sdkwork_news_flutter_mobile_ai_store.dart';
+import 'package:sdkwork_news_flutter_mobile_assistant/sdkwork_news_flutter_mobile_assistant.dart';
+import 'package:sdkwork_news_flutter_mobile_host/sdkwork_news_flutter_mobile_host.dart';
+import 'package:sdkwork_news_flutter_mobile_im_adapter/sdkwork_news_flutter_mobile_im_adapter.dart';
+import 'package:sdkwork_news_flutter_mobile_news/sdkwork_news_flutter_mobile_news.dart';
+import 'package:sdkwork_news_flutter_mobile_shell/sdkwork_news_flutter_mobile_shell.dart';
+
+import 'app_config.dart';
+
+class NewsRuntime {
+  NewsRuntime({
+    required this.shellController,
+    required this.assistantController,
+    required this.newsController,
+    required this.storeController,
+    required this.accountController,
+    this.requiresSignIn = false,
+  });
+
+  final NewsShellController shellController;
+  final AssistantController assistantController;
+  final NewsFeedController newsController;
+  final AiStoreController storeController;
+  final AccountController accountController;
+  final bool requiresSignIn;
+
+  factory NewsRuntime.demo() => NewsRuntime(
+        shellController: NewsShellController(),
+        assistantController: AssistantController(
+          agentRepository: DemoNewsAgentRepository(),
+          conversationGateway: DemoNewsConversationGateway(),
+        ),
+        newsController: NewsFeedController(DemoNewsFeedRepository()),
+        storeController: AiStoreController(DemoAiStoreRepository()),
+        accountController: AccountController(DemoAccountRepository()),
+      );
+
+  void dispose() {
+    shellController.dispose();
+    assistantController.dispose();
+    newsController.dispose();
+    storeController.dispose();
+    accountController.dispose();
+  }
+}
+
+Future<NewsRuntime> bootstrapNewsRuntime({
+  NewsAppConfig? config,
+  NewsSessionStore? sessionStore,
+}) async {
+  final activeConfig = config ?? NewsAppConfig.fromEnvironment();
+  if (activeConfig.demoMode) {
+    return NewsRuntime.demo();
+  }
+
+  final store = sessionStore ?? const SecureNewsSessionStore();
+  final session = await store.read();
+  if (session == null) {
+    final demo = NewsRuntime.demo();
+    return NewsRuntime(
+      shellController: demo.shellController,
+      assistantController: demo.assistantController,
+      newsController: demo.newsController,
+      storeController: demo.storeController,
+      accountController: demo.accountController,
+      requiresSignIn: true,
+    );
+  }
+
+  final agentsClient = SdkworkAppClient.withBaseUrl(
+    baseUrl: _transportBaseUrl(activeConfig.agentsAppApiUrl),
+    accessToken: session.accessToken,
+    authToken: session.authToken,
+  );
+  final imBundle = createImSdkClient(
+    applicationPublicHttpUrl: activeConfig.applicationPublicHttpUrl,
+    applicationPublicWebSocketUrl:
+        activeConfig.applicationPublicWebSocketUrl.isEmpty
+            ? null
+            : activeConfig.applicationPublicWebSocketUrl,
+    accessToken: session.accessToken,
+    authToken: session.authToken,
+  );
+  return NewsRuntime(
+    shellController: NewsShellController(),
+    assistantController: AssistantController(
+      agentRepository: AgentsNewsAgentRepository(agentsClient),
+      conversationGateway: SdkworkImNewsConversationGateway(imBundle),
+    ),
+    newsController: NewsFeedController(DemoNewsFeedRepository()),
+    storeController: AiStoreController(DemoAiStoreRepository()),
+    accountController: AccountController(DemoAccountRepository()),
+  );
+}
+
+String _transportBaseUrl(String appApiUrl) {
+  final uri = Uri.parse(appApiUrl);
+  const suffix = '/app/v3/api';
+  final path = uri.path.substring(0, uri.path.length - suffix.length);
+  return uri.replace(path: path).toString().replaceFirst(RegExp(r'/+$'), '');
+}

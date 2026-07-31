@@ -11,8 +11,8 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -34,6 +34,18 @@
       ],
       "@sdkwork/news-runtime": [
         "apps/sdkwork-news-common/packages/sdkwork-news-runtime/src/index.ts"
+      ],
+      "@sdkwork/news-agent-contracts": [
+        "apps/sdkwork-news-common/packages/sdkwork-news-agent-contracts/src/index.ts"
+      ],
+      "@sdkwork/news-agent-service": [
+        "apps/sdkwork-news-common/packages/sdkwork-news-agent-service/src/index.ts"
+      ],
+      "@sdkwork/news-agent-sdk-adapter": [
+        "apps/sdkwork-news-common/packages/sdkwork-news-agent-sdk-adapter/src/index.ts"
+      ],
+      "@sdkwork/news-im-adapter": [
+        "apps/sdkwork-news-common/packages/sdkwork-news-im-adapter/src/index.ts"
       ],
       "@sdkwork/news-pc-react": [
         "apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react/src/index.ts"

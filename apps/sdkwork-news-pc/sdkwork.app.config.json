@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "kind": "sdkwork.app",
+  "app": {
+    "key": "news-pc",
+    "name": "SDKWork News PC",
+    "displayName": "SDKWork News",
+    "description": "WeChat-inspired PC workspace for AI-assisted news reading.",
+    "officialWebsiteUrl": "https://sdkwork.com/apps/news-pc",
+    "appType": "APP_REACT",
+    "versionSource": "package.json"
+  },
+  "backend": {
+    "platform": "WEB",
+    "appId": "sdkwork-news",
+    "organizationId": "0",
+    "tenantId": "100001"
+  },
+  "runtime": {
+    "family": "web",
+    "framework": "react",
+    "runtimes": ["WEB"],
+    "deliveryModes": ["WEB_URL"],
+    "defaultPlatform": "WEB",
+    "defaultArchitecture": "universal",
+    "supportedDeploymentProfiles": ["standalone", "cloud"],
+    "defaultDeploymentProfile": "standalone"
+  },
+  "media": {
+    "icons": {
+      "primary": {
+        "id": "news-pc-primary-icon",
+        "type": "ICON",
+        "purpose": "PRIMARY",
+        "platform": "WEB",
+        "format": "PNG",
+        "width": 1024,
+        "height": 1024,
+        "enabled": true,
+        "url": "https://cdn.sdkwork.com/apps/sdkwork-news/assets/icon-1024.png",
+        "metadata": { "generatedPlaceholder": true }
+      },
+      "platform": []
+    },
+    "screenshots": [],
+    "previews": []
+  },
+  "publish": {
+    "status": "DRAFT",
+    "platforms": ["WEB"],
+    "installPlatforms": ["WEB"],
+    "installSkill": false
+  },
+  "artifacts": { "installConfig": { "packages": [] } },
+  "release": {
+    "currentVersion": "0.1.0",
+    "defaultChannel": "BETA",
+    "latest": { "BETA": "0.1.0" },
+    "notes": [{ "version": "0.1.0", "channel": "BETA", "current": true, "packageIds": [] }]
+  },
+  "security": { "checksumRequired": true, "signatureRequired": false, "sbomRequired": true },
+  "metadata": {
+    "standardOwner": "sdkwork-news",
+    "deploymentConfig": "etc/sdkwork.deployment.config.json"
+  }
+}

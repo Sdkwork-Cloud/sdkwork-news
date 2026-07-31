@@ -1,0 +1,1 @@
+{"name":"@sdkwork/news-h5-news","private":true,"version":"0.1.0","type":"module","dependencies":{"lucide-react":"catalog:","react":"catalog:"},"exports":{".":{"types":"./src/index.tsx","import":"./src/index.tsx","default":"./src/index.tsx"}}}

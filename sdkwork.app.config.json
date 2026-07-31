@@ -3,13 +3,78 @@
   "kind": "sdkwork.app",
   "app": {
     "key": "sdkwork-news",
-    "name": "sdkwork-news"
+    "name": "sdkwork-news",
+    "displayName": "SDKWork News",
+    "officialWebsiteUrl": "https://sdkwork.com/apps/news",
+    "appType": "NONE",
+    "description": "AI-native news workspace with agent reading, IM conversations, news discovery, and AI marketplace clients.",
+    "identifiers": {
+      "containerImage": "registry.sdkwork.com/apps/sdkwork-news"
+    }
+  },
+  "backend": {
+    "primaryLanguage": "rust",
+    "framework": "axum",
+    "appId": "sdkwork-news",
+    "tenantId": "100001",
+    "organizationId": "0"
   },
   "runtime": {
-    "supportedDeploymentProfiles": [
-      "standalone",
-      "cloud"
-    ],
-    "defaultDeploymentProfile": "cloud"
+    "family": "server",
+    "framework": "rust-service",
+    "defaultPlatform": "API",
+    "defaultArchitecture": "x64",
+    "supportedDeploymentProfiles": ["standalone", "cloud"],
+    "defaultDeploymentProfile": "standalone"
+  },
+  "media": {
+    "icons": {
+      "primary": {
+        "id": "sdkwork-news-primary-icon",
+        "type": "ICON",
+        "purpose": "PRIMARY",
+        "platform": "APP",
+        "format": "PNG",
+        "width": 1024,
+        "height": 1024,
+        "enabled": true,
+        "url": "https://cdn.sdkwork.com/apps/sdkwork-news/assets/icon-1024.png",
+        "metadata": { "generatedPlaceholder": true }
+      },
+      "platform": []
+    },
+    "screenshots": [],
+    "previews": []
+  },
+  "publish": {
+    "status": "DRAFT",
+    "platforms": ["API", "WEB", "H5", "APP", "APP_ANDROID", "APP_IOS"],
+    "installPlatforms": ["API", "WEB", "H5", "APP_ANDROID", "APP_IOS"],
+    "installSkill": false
+  },
+  "artifacts": {
+    "installConfig": { "packages": [] }
+  },
+  "release": {
+    "currentVersion": "0.1.0",
+    "defaultChannel": "BETA",
+    "latest": { "BETA": "0.1.0" },
+    "notes": [
+      {
+        "version": "0.1.0",
+        "channel": "BETA",
+        "current": true,
+        "packageIds": []
+      }
+    ]
+  },
+  "security": {
+    "checksumRequired": true,
+    "signatureRequired": true,
+    "sbomRequired": true
+  },
+  "metadata": {
+    "deploymentConfig": "etc/sdkwork.deployment.config.json",
+    "topologySpec": "specs/topology.spec.json"
   }
 }
