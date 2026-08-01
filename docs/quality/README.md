@@ -32,8 +32,10 @@ Google Play and App Store display profiles.
 
 The latest browser interaction audit exercised PC and H5 category filtering and
 search, Flutter localized search and clear behavior, account language settings,
-and the complete Account hierarchy. No horizontal overflow was observed at
-390px or 320px mobile widths, and the audited pages emitted no console errors.
+and the complete Account hierarchy. Assistant conversation details now hide the
+bottom tab bar on H5 and Flutter and restore it on back navigation. No horizontal
+overflow was observed at 390px or 320px mobile widths, and the fresh audited
+pages emitted no console errors.
 
 ## Functional And Architecture Evidence
 
@@ -57,12 +59,13 @@ and the complete Account hierarchy. No horizontal overflow was observed at
 | Build-source integrity | Passed |
 | TypeScript typecheck | Passed |
 | Node tests | 16 passed |
-| Vitest | 102 passed across 35 files |
+| Vitest | 105 passed across 35 files |
 | Flutter analyze | Passed |
-| Flutter tests | 17 passed |
+| Flutter tests | 19 passed |
 | PC, H5, Flutter Web release builds | Passed |
-| PC app-local check | 30 tests, typecheck, and production build passed |
-| H5 app-local check | 17 tests, typecheck, and production build passed |
+| PC app-local check | 31 tests, typecheck, and production build passed |
+| H5 app-local check | 19 tests, typecheck, and production build passed |
+| Flutter IM adapter check | 1 package test and analyze passed; realtime message tracker covered |
 | Rust format | Passed |
 | Rust workspace tests | Passed |
 | Rust clippy `--workspace --tests -- -D warnings` | Passed |

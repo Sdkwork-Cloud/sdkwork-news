@@ -26,7 +26,7 @@ repositories; demo data is limited to explicit demo mode.
 | Capability | H5 reference | Flutter evidence | Result |
 | --- | --- | --- | --- |
 | Assistant-first shell | Four fixed bottom tabs | `assistant-390x844.png`, `assistant-430x932.png` | Pass |
-| Conversation | Agent header, history, composer, streaming state | `assistant-chat-390x844.png`, `assistant-stream-390x844.png` | Pass |
+| Conversation | Agent header, history, composer, streaming state, secondary-page navigation | `assistant-chat-390x844.png`, `assistant-stream-390x844.png`, `widget_test.dart`, browser QA | Pass |
 | Reading schedule | Daily slots, weekly summary, monthly review | `schedule-daily-390x844.png`, `schedule-weekly-390x844.png` | Pass |
 | News | Category tabs, localized search, lead story, paged feed cards | `news-390x844.png`, `news-430x932.png`, `news-search-390x844.png` | Pass |
 | AI Store | Product/Skill/MCP segments and install lifecycle | `ai-store-installed-390x844.png`, `ai-store-430x932.png` | Pass |
@@ -50,6 +50,7 @@ warning/error console entries.
 | MCP catalog adapter | MCP App SDK page maps to feature-owned entries without copied transport DTOs | `sdk_adapters_test.dart` | Pass |
 | IAM identity adapter | IAM current-user identity maps without fabricated plan or activity metrics | `sdk_adapters_test.dart` | Pass |
 | Typed four-tab routing | Route ids map to stable shell destinations | `app_contract_test.dart`, `widget_test.dart` | Pass |
+| Secondary navigation | Conversation detail hides the shell `NavigationBar`; back restores the four-tab root | `widget_test.dart`, H5 `App.test.tsx`, browser QA at 390x844 | Pass |
 | Production config | Validates Agents, IM, IAM, and MCP URLs and keeps demo mode explicit | `app_contract_test.dart` | Pass |
 
 ## 4. Dependency Provenance
@@ -92,7 +93,7 @@ pnpm check:flutter
   No issues found.
 
 pnpm test:flutter
-  17 tests passed.
+  19 tests passed.
 
 pnpm build:flutter:web
   Built build/web.
@@ -101,6 +102,8 @@ pnpm build:flutter:web
 Browser QA: 390x844 and 430x932
   Assistant, News categories/search, AI Store install/uninstall, Account: passed.
   Flutter search results/clear and Account language settings: passed.
+  Assistant conversation detail hides the bottom tab bar on Flutter and H5;
+  back navigation restores the tab bar.
   Horizontal overflow: none.
   Console warning/error entries: [].
 ```
@@ -130,13 +133,19 @@ pnpm test:node
   16 tests passed.
 
 pnpm test:vitest
-  102 tests passed across 35 files.
+  105 tests passed across 35 files.
 
 pnpm check:flutter
   No issues found.
 
 pnpm test:flutter
-  17 tests passed.
+  19 tests passed.
+
+Flutter IM adapter package test
+  1 test passed; realtime refresh deduplication verified.
+
+H5 app-local check
+  19 tests, typecheck, and production build passed.
 
 pnpm build:pc
 pnpm build:h5
