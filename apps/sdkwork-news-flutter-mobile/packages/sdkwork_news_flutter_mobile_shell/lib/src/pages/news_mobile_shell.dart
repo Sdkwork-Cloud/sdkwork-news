@@ -31,33 +31,35 @@ class NewsMobileShell extends StatelessWidget {
             index: index,
             children: [assistant, news, store, account],
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: index,
-            onDestinationSelected: (value) =>
-                controller.select(NewsShellTab.values[value]),
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.smart_toy_outlined),
-                selectedIcon: const Icon(Icons.smart_toy_rounded),
-                label: strings.text('nav.assistant'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.newspaper_outlined),
-                selectedIcon: const Icon(Icons.newspaper_rounded),
-                label: strings.text('nav.news'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.storefront_outlined),
-                selectedIcon: const Icon(Icons.storefront_rounded),
-                label: strings.text('nav.store'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.person_outline_rounded),
-                selectedIcon: const Icon(Icons.person_rounded),
-                label: strings.text('nav.account'),
-              ),
-            ],
-          ),
+          bottomNavigationBar: controller.isSecondaryPage
+              ? null
+              : NavigationBar(
+                  selectedIndex: index,
+                  onDestinationSelected: (value) =>
+                      controller.select(NewsShellTab.values[value]),
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(Icons.smart_toy_outlined),
+                      selectedIcon: const Icon(Icons.smart_toy_rounded),
+                      label: strings.text('nav.assistant'),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.newspaper_outlined),
+                      selectedIcon: const Icon(Icons.newspaper_rounded),
+                      label: strings.text('nav.news'),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.storefront_outlined),
+                      selectedIcon: const Icon(Icons.storefront_rounded),
+                      label: strings.text('nav.store'),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.person_outline_rounded),
+                      selectedIcon: const Icon(Icons.person_rounded),
+                      label: strings.text('nav.account'),
+                    ),
+                  ],
+                ),
         );
       },
     );

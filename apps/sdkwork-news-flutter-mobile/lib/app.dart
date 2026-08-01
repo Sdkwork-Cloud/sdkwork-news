@@ -63,6 +63,8 @@ class _NewsAppState extends State<NewsApp> {
               controller: widget.runtime.shellController!,
               assistant: AssistantPage(
                 controller: widget.runtime.assistantController!,
+                onSecondaryPageChanged:
+                    widget.runtime.shellController!.setSecondaryPage,
               ),
               news: NewsFeedPage(controller: widget.runtime.newsController!),
               store: AiStorePage(controller: widget.runtime.storeController!),

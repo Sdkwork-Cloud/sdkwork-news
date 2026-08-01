@@ -33,6 +33,21 @@ void main() {
     expect(find.text('我的'), findsOneWidget);
   });
 
+  testWidgets('hides the bottom tab bar inside assistant conversations',
+      (tester) async {
+    final runtime = NewsRuntime.demo();
+    await tester.pumpWidget(NewsApp(runtime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('市场雷达'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await tester.tap(find.byTooltip('返回'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
   testWidgets('renders explicit unavailable states without demo fallback',
       (tester) async {
     final newsController =

@@ -6,7 +6,7 @@ import { NewsH5ScheduleSheet, type NewsH5AgentProfileInput } from "./schedule-ed
 import "./styles.css";
 import "./interaction.css";
 
-export interface NewsH5AssistantProps { demoMode: boolean; service?: NewsAgentService; }
+export interface NewsH5AssistantProps { demoMode: boolean; service?: NewsAgentService; onSecondaryPageChange?: (isSecondaryPage: boolean) => void; }
 
 type AssistantLoadState = "demo" | "loading" | "live" | "offline";
 type ConversationLoadState = "idle" | "loading" | "live" | "offline";
@@ -23,7 +23,7 @@ const showcaseMessages: NewsConversationMessage[] = [
   { id: "showcase-agent", occurredAt: "2026-07-31T08:31:00+08:00", role: "agent", status: "sent", text: "已完成 126 个来源的增量阅读，去重后保留 9 条。下面 3 条需要你今天关注。" },
 ];
 
-export function NewsH5Assistant({ demoMode, service }: NewsH5AssistantProps) {
+export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: NewsH5AssistantProps) {
   const [agents, setAgents] = useState<NewsReadingAgent[]>(() => demoMode ? showcaseAgents : []);
   const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
   const [messages, setMessages] = useState<NewsConversationMessage[]>(() => demoMode ? showcaseMessages : []);
@@ -44,6 +44,10 @@ export function NewsH5Assistant({ demoMode, service }: NewsH5AssistantProps) {
     const normalized = query.trim().toLocaleLowerCase();
     return normalized ? agents.filter((agent) => `${agent.name} ${agent.description}`.toLocaleLowerCase().includes(normalized)) : agents;
   }, [agents, query]);
+
+  useEffect(() => {
+    onSecondaryPageChange?.(activeAgentId !== null);
+  }, [activeAgentId, onSecondaryPageChange]);
 
   useEffect(() => {
     if (demoMode) {

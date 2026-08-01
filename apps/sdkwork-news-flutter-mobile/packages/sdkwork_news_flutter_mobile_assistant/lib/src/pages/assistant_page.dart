@@ -5,9 +5,10 @@ import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_cor
 import '../controllers/assistant_controller.dart';
 
 class AssistantPage extends StatefulWidget {
-  const AssistantPage({super.key, required this.controller});
+  const AssistantPage({super.key, required this.controller, this.onSecondaryPageChanged});
 
   final AssistantController controller;
+  final ValueChanged<bool>? onSecondaryPageChanged;
 
   @override
   State<AssistantPage> createState() => _AssistantPageState();
@@ -17,7 +18,32 @@ class _AssistantPageState extends State<AssistantPage> {
   @override
   void initState() {
     super.initState();
+    widget.controller.addListener(_handleControllerChanged);
     widget.controller.initialize();
+  }
+
+  void _handleControllerChanged() {
+    widget.onSecondaryPageChanged?.call(widget.controller.selectedAgent != null);
+  }
+
+  @override
+  void didUpdateWidget(covariant AssistantPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_handleControllerChanged);
+      widget.controller.addListener(_handleControllerChanged);
+    }
+    if (oldWidget.onSecondaryPageChanged != widget.onSecondaryPageChanged) {
+      widget.onSecondaryPageChanged
+          ?.call(widget.controller.selectedAgent != null);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleControllerChanged);
+    widget.onSecondaryPageChanged?.call(false);
+    super.dispose();
   }
 
   @override

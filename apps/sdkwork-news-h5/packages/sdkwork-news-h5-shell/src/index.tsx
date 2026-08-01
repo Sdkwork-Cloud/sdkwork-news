@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";import { Bot, Newspaper, ShoppingBag, UserRound } from "lucide-react";import "./styles.css";
 export type NewsH5Tab="assistant"|"news"|"store"|"account";const tabs=[{id:"assistant" as const,label:"助手",icon:Bot},{id:"news" as const,label:"新闻",icon:Newspaper},{id:"store" as const,label:"AI Store",icon:ShoppingBag},{id:"account" as const,label:"我的",icon:UserRound}];
-export function NewsH5Shell({activeTab,onTabChange,children}:{activeTab:NewsH5Tab;onTabChange:(tab:NewsH5Tab)=>void;children:ReactNode}){return <div className="news-h5-shell"><main>{children}</main><nav>{tabs.map(({id,label,icon:Icon})=><button className={id===activeTab?"is-active":""} onClick={()=>onTabChange(id)} type="button" key={id}><Icon size={21}/><span>{label}</span></button>)}</nav></div>}
+export interface NewsH5ShellProps { activeTab: NewsH5Tab; onTabChange: (tab: NewsH5Tab) => void; children: ReactNode; showTabBar?: boolean; }
+export function NewsH5Shell({activeTab,onTabChange,children,showTabBar=true}:NewsH5ShellProps){return <div className="news-h5-shell"><main>{children}</main>{showTabBar && <nav>{tabs.map(({id,label,icon:Icon})=><button className={id===activeTab?"is-active":""} onClick={()=>onTabChange(id)} type="button" key={id}><Icon size={21}/><span>{label}</span></button>)}</nav>}</div>}
 export default NewsH5Shell;
