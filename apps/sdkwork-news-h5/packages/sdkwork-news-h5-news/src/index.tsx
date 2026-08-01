@@ -390,7 +390,23 @@ function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSeco
     {searchOpen && <form className="news-h5-search" onSubmit={submitSearch} role="search"><Search aria-hidden="true" size={17} /><input aria-label="搜索新闻" autoFocus onChange={(event) => setSearchText(event.target.value)} placeholder="搜索新闻、主题或来源" value={searchText} /><button type="submit">搜索</button></form>}
     <nav aria-label="新闻分类">{DEMO_CATEGORIES.map((item) => <button className={!query && category === item ? "is-active" : ""} onClick={() => selectCategory(item)} type="button" key={item}>{item}</button>)}</nav>
     <main>
-      {showLead && <section className="news-h5-lead"><img src={newsroomImage} alt="新闻编辑室" /><div><span>今日要闻</span><h2>从信息流到智能体：新闻阅读正在发生结构性变化</h2><p>SDKWork 研究院 · 12 分钟前</p></div></section>}
+      {showLead && <section
+        aria-label={"阅读 " + DEMO_LEAD.title}
+        className="news-h5-lead is-clickable"
+        onClick={() => {
+          setSelectedItem(DEMO_LEAD);
+          onSecondaryPageChange?.(true);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setSelectedItem(DEMO_LEAD);
+            onSecondaryPageChange?.(true);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      ><img src={DEMO_LEAD.image} alt="新闻编辑室" /><div><span>今日要闻</span><h2>{DEMO_LEAD.title}</h2><p>{DEMO_LEAD.source} · {DEMO_LEAD.time}</p></div></section>}
       <div className="news-h5-feed__label"><h2>{query ? `“${query}”的结果` : category === "推荐" ? "最新动态" : `${category}频道`}</h2><span>{visibleItems.length > 0 ? `${visibleItems.length} 条` : "演示内容"}</span></div>
       {visibleItems.length > 0
         ? <section className="news-h5-feed__items">{visibleItems.map((item) => <article className="has-image" key={item.id}><div><div className="news-h5-feed__article-meta"><span>{item.tag}</span></div><h3>{item.title}</h3><footer><div><span>{item.source}</span><span>{item.time}</span></div><button aria-label={`${saved.has(item.id) ? "取消收藏" : "收藏"} ${item.title}`} className={saved.has(item.id) ? "is-saved" : ""} onClick={() => setSaved((current) => withDemoFavorite(current, item.id))} type="button"><Bookmark fill={saved.has(item.id) ? "currentColor" : "none"} size={16} /></button></footer></div><img src={item.image} alt="" /></article>)}</section>
