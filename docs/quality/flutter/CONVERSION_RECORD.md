@@ -133,7 +133,7 @@ pnpm test:node
   16 tests passed.
 
 pnpm test:vitest
-  105 tests passed across 35 files.
+  106 tests passed across 36 files.
 
 pnpm check:flutter
   No issues found.

@@ -59,7 +59,7 @@ pages emitted no console errors.
 | Build-source integrity | Passed |
 | TypeScript typecheck | Passed |
 | Node tests | 16 passed |
-| Vitest | 105 passed across 35 files |
+| Vitest | 106 passed across 36 files |
 | Flutter analyze | Passed |
 | Flutter tests | 19 passed |
 | PC, H5, Flutter Web release builds | Passed |
