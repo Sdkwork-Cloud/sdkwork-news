@@ -15,10 +15,11 @@
     "manifests": ["pubspec.yaml"]
   },
   "contracts": {
-    "layerRole": "frontend-foundation",
+    "layerRole": "frontend-commons",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_commons.dart"],
+    "providedPorts": [],
+    "requiredPorts": [],
     "sdkDependencies": []
   },
   "verification": {"commands": ["flutter test"]}
 }
-

@@ -1,9 +1,10 @@
-use crate::repository::professional_repository::{
-    NewsProfessionalRepository, NewNewsEditorialAssignment, NewNewsReviewTask,
+use crate::{
+    shared_news_professional_repository, NewNewsEditorialAssignment, NewNewsReviewTask,
+    NewsProfessionalRepositoryPort, SharedNewsProfessionalRepository,
 };
 
 pub struct NewsEditorialWorkflowService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -20,6 +21,16 @@ pub struct CreateAssignmentCommand {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UpdateAssignmentCommand {
     pub status: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CreateReviewTaskCommand {
+    pub tenant_id: String,
+    pub target_type: String,
+    pub target_id: String,
+    pub review_type: String,
+    pub reviewer_user_id: Option<String>,
+    pub due_at: Option<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -64,8 +75,13 @@ const VALID_ASSIGNMENT_STATUSES: &[&str] = &["open", "in_progress", "done", "can
 const VALID_REVIEW_DECISIONS: &[&str] = &["approved", "rejected", "changes_requested"];
 
 impl NewsEditorialWorkflowService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_create_assignment(
@@ -123,7 +139,7 @@ impl NewsEditorialWorkflowService {
             now: now.to_string(),
         };
 
-        self.repo
+        self.repository
             .create_assignment(input)
             .await
             .map_err(|e| EditorialError {
@@ -160,7 +176,7 @@ impl NewsEditorialWorkflowService {
     ) -> Result<(), EditorialError> {
         self.validate_update_assignment(status)?;
 
-        self.repo
+        self.repository
             .update_assignment(tenant_id, assignment_id, status, now)
             .await
             .map_err(|e| EditorialError {
@@ -193,28 +209,23 @@ impl NewsEditorialWorkflowService {
 
     pub async fn create_review_task(
         &self,
-        tenant_id: &str,
-        target_type: &str,
-        target_id: &str,
-        review_type: &str,
-        reviewer_user_id: Option<&str>,
-        due_at: Option<&str>,
+        command: CreateReviewTaskCommand,
         now: &str,
     ) -> Result<EditorialResult, EditorialError> {
         let id = uuid::Uuid::new_v4().to_string();
 
         let input = NewNewsReviewTask {
             id: id.clone(),
-            tenant_id: tenant_id.to_string(),
-            target_type: target_type.to_string(),
-            target_id: target_id.to_string(),
-            review_type: review_type.to_string(),
-            reviewer_user_id: reviewer_user_id.map(|s| s.to_string()),
-            due_at: due_at.map(|s| s.to_string()),
+            tenant_id: command.tenant_id,
+            target_type: command.target_type,
+            target_id: command.target_id,
+            review_type: command.review_type,
+            reviewer_user_id: command.reviewer_user_id,
+            due_at: command.due_at,
             now: now.to_string(),
         };
 
-        self.repo
+        self.repository
             .create_review_task(input)
             .await
             .map_err(|e| EditorialError {
@@ -237,7 +248,7 @@ impl NewsEditorialWorkflowService {
         decision_reason: Option<&str>,
         now: &str,
     ) -> Result<(), EditorialError> {
-        self.repo
+        self.repository
             .update_review_task(tenant_id, task_id, decision, decision_reason, now)
             .await
             .map_err(|e| EditorialError {

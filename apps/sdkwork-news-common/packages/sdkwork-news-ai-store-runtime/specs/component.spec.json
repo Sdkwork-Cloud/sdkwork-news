@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-ai-store-runtime",
+    "displayName": "SDKWork News AI Store Runtime",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-ai-store-runtime",
+    "domain": "ai-store",
+    "capability": "news-ai-store-runtime",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Root SDK composition." },
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "Runtime composition boundary." }
+  ],
+  "contracts": {
+    "layerRole": "runtime-composition",
+    "publicExports": [".", "./config", "./runtime"],
+    "providedPorts": [{ "name": "newsAiStoreRuntime", "export": "./runtime" }],
+    "requiredPorts": [
+      { "name": "authTokenManager", "export": ".", "provider": "@sdkwork/sdk-common" },
+      { "name": "newsAiStorePort", "export": ".", "provider": "@sdkwork/news-ai-store-sdk-adapter" },
+      { "name": "newsAiStoreService", "export": ".", "provider": "@sdkwork/news-ai-store-service" }
+    ],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-appstore-app-sdk", "surface": "app-api", "credentialMode": "global-token-manager", "packageName": "@sdkwork/appstore-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-skills-app-sdk", "surface": "app-api", "credentialMode": "global-token-manager", "packageName": "@sdkwork/skills-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "credentialMode": "global-token-manager", "packageName": "@sdkwork/mcp-app-sdk", "status": "active" }
+    ],
+    "events": [],
+    "configKeys": [
+      "VITE_SDKWORK_APPSTORE_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_SKILLS_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_MCP_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_NEWS_PLATFORM_API_GATEWAY_HTTP_URL",
+      "VITE_SDKWORK_NEWS_DEMO_MODE",
+      "VITE_SDKWORK_NEWS_ENVIRONMENT"
+    ]
+  },
+  "verification": {
+    "commands": [
+      "pnpm --filter @sdkwork/news-ai-store-runtime typecheck",
+      "pnpm --filter @sdkwork/news-ai-store-runtime test"
+    ]
+  }
+}

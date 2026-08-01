@@ -15,9 +15,10 @@
     "manifests": ["pubspec.yaml"]
   },
   "contracts": {
-    "layerRole": "platform-adapter",
+    "layerRole": "frontend-host",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_host.dart"],
     "providedPorts": [{"name": "newsSessionStore", "export": "lib/sdkwork_news_flutter_mobile_host.dart"}],
+    "requiredPorts": [],
     "sdkDependencies": [{"workspace": "sdkwork-im-sdk", "surface": "session-model", "credentialMode": "secure-platform-storage", "status": "active"}]
   },
   "verification": {"commands": ["flutter test"]}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-account-service",
+    "displayName": "SDKWork News Account Service",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-service",
+    "domain": "account",
+    "capability": "news-account",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "Capability service boundary." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." }
+  ],
+  "contracts": {
+    "layerRole": "backend-service",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsAccountService", "export": "." }],
+    "requiredPorts": [{ "name": "newsAccountPort", "export": "." }],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": { "commands": ["pnpm --filter @sdkwork/news-account-service typecheck", "pnpm --filter @sdkwork/news-account-service test"] }
+}

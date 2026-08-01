@@ -4,14 +4,13 @@ import {
   BookOpenCheck,
   CalendarClock,
   Check,
-  ChevronDown,
   CirclePause,
+  CirclePlay,
   Clock3,
   ExternalLink,
   FileText,
-  MoreHorizontal,
-  Paperclip,
   Plus,
+  RefreshCw,
   Search,
   Send,
   Settings2,
@@ -21,16 +20,30 @@ import {
 } from "lucide-react";
 import {
   createDefaultNewsReadingSchedule,
+  validateNewsReadingSchedule,
   type NewsConversationMessage,
   type NewsReadingAgent,
 } from "@sdkwork/news-agent-contracts";
 import type { NewsAgentService } from "@sdkwork/news-agent-service";
 
+import { NewsScheduleEditor } from "./schedule-editor";
 import "./styles.css";
 
 export interface NewsPcAssistantProps {
+  demoMode: boolean;
   service?: NewsAgentService;
 }
+
+interface NewsAgentProfileInput {
+  description: string;
+  name: string;
+  readingScope: NewsReadingAgent["readingScope"];
+  schedule: NewsReadingAgent["schedule"];
+  tone: NewsReadingAgent["tone"];
+}
+
+type AssistantLoadState = "demo" | "loading" | "live" | "offline";
+type ConversationLoadState = "idle" | "loading" | "live" | "offline";
 
 const showcaseAgents: NewsReadingAgent[] = [
   createShowcaseAgent({
@@ -92,18 +105,24 @@ const showcaseMessages: NewsConversationMessage[] = [
   },
 ];
 
-export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
-  const [agents, setAgents] = useState(showcaseAgents);
-  const [activeAgentId, setActiveAgentId] = useState(showcaseAgents[0]!.id);
-  const [messages, setMessages] = useState(showcaseMessages);
+export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
+  const [agents, setAgents] = useState<NewsReadingAgent[]>(() => demoMode ? showcaseAgents : []);
+  const [activeAgentId, setActiveAgentId] = useState(() => demoMode ? showcaseAgents[0]!.id : "");
+  const [messages, setMessages] = useState<NewsConversationMessage[]>(() => demoMode ? showcaseMessages : []);
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [loadState, setLoadState] = useState<"idle" | "loading" | "live" | "offline">("idle");
+  const [loadState, setLoadState] = useState<AssistantLoadState>(demoMode ? "demo" : "loading");
+  const [conversationState, setConversationState] = useState<ConversationLoadState>("idle");
+  const [reloadKey, setReloadKey] = useState(0);
+  const [conversationReloadKey, setConversationReloadKey] = useState(0);
+  const [sendError, setSendError] = useState("");
+  const [mutationError, setMutationError] = useState("");
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-  const activeAgent = agents.find((agent) => agent.id === activeAgentId) ?? agents[0]!;
+  const activeAgent = agents.find((agent) => agent.id === activeAgentId) ?? agents[0];
   const filteredAgents = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return normalized
@@ -112,7 +131,18 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
   }, [agents, query]);
 
   useEffect(() => {
+    if (demoMode) {
+      setAgents(showcaseAgents);
+      setActiveAgentId(showcaseAgents[0]!.id);
+      setLoadState("demo");
+      return;
+    }
+
+    setAgents([]);
+    setActiveAgentId("");
+    setMessages([]);
     if (!service) {
+      setLoadState("offline");
       return;
     }
     let disposed = false;
@@ -124,36 +154,68 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
         setLoadState("live");
       }
     }).catch(() => {
-      if (!disposed) setLoadState("offline");
+      if (!disposed) {
+        setAgents([]);
+        setActiveAgentId("");
+        setMessages([]);
+        setLoadState("offline");
+      }
     });
     return () => { disposed = true; };
-  }, [service]);
+  }, [demoMode, reloadKey, service]);
 
   useEffect(() => {
-    if (!service || !activeAgentId) {
+    setSendError("");
+    if (!activeAgentId) {
+      setMessages([]);
+      setConversationState("idle");
+      return;
+    }
+    if (demoMode) {
+      setMessages(showcaseMessages);
+      setConversationState("live");
+      return;
+    }
+    setMessages([]);
+    if (!service) {
+      setConversationState("offline");
       return;
     }
     let disposed = false;
     let close: (() => void) | undefined;
-    void service.listMessages(activeAgentId, { pageSize: 50 }).then((page) => {
-      if (!disposed) setMessages(page.items);
-    });
-    void service.subscribe(activeAgentId, (message) => {
-      if (!disposed) {
-        setMessages((current) => mergeMessages(current, message));
+    setConversationState("loading");
+    void (async () => {
+      try {
+        const page = await service.listMessages(activeAgentId, { pageSize: 50 });
+        if (disposed) return;
+        setMessages(page.items);
+        const subscription = await service.subscribe(activeAgentId, (message) => {
+          if (!disposed) {
+            setMessages((current) => mergeMessages(current, message));
+          }
+        });
+        close = () => subscription.close();
+        if (disposed) {
+          close();
+          return;
+        }
+        setConversationState("live");
+      } catch {
+        if (!disposed) {
+          setMessages([]);
+          setConversationState("offline");
+        }
       }
-    }).then((subscription) => {
-      close = () => subscription.close();
-      if (disposed) close();
-    });
+    })();
     return () => { disposed = true; close?.(); };
-  }, [activeAgentId, service]);
+  }, [activeAgentId, conversationReloadKey, demoMode, service]);
 
   const send = async () => {
     const text = draft.trim();
-    if (!text || isSending) return;
+    if (!activeAgent || !text || isSending || (!service && !demoMode)) return;
+    const optimisticId = `local:${Date.now()}`;
     const optimistic: NewsConversationMessage = {
-      id: `local:${Date.now()}`,
+      id: optimisticId,
       occurredAt: new Date().toISOString(),
       role: "user",
       status: "sent",
@@ -162,10 +224,11 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
     setMessages((current) => [...current, optimistic]);
     setDraft("");
     setIsSending(true);
+    setSendError("");
     try {
       if (service) {
         await service.sendText(activeAgent.id, text);
-      } else {
+      } else if (demoMode) {
         await new Promise((resolve) => setTimeout(resolve, 450));
         setMessages((current) => [...current, {
           id: `showcase:${Date.now()}`,
@@ -175,12 +238,18 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
           text: "我会把这个问题加入本轮增量阅读，并按影响、证据和不确定性三个层次整理。",
         }]);
       }
+    } catch {
+      setMessages((current) => current.map((message) => (
+        message.id === optimisticId ? { ...message, status: "failed" } : message
+      )));
+      setSendError("消息发送失败，请检查连接后重试");
     } finally {
       setIsSending(false);
     }
   };
 
   const createAgent = async (input: { name: string; description: string }) => {
+    if (!service && !demoMode) return;
     const schedule = createDefaultNewsReadingSchedule("Asia/Shanghai");
     const created = service
       ? await service.create({
@@ -212,12 +281,30 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
     setCreateOpen(false);
   };
 
-  const saveAgentSchedule = async (schedule: NewsReadingAgent["schedule"]) => {
+  const saveAgentProfile = async (input: NewsAgentProfileInput) => {
+    if (!activeAgent || (!service && !demoMode)) return;
     const updated = service
-      ? await service.update(activeAgent.id, { schedule })
-      : { ...activeAgent, schedule, updatedAt: new Date().toISOString() };
+      ? await service.update(activeAgent.id, input)
+      : { ...activeAgent, ...input, updatedAt: new Date().toISOString() };
     setAgents((current) => current.map((agent) => agent.id === updated.id ? updated : agent));
     setProfileOpen(false);
+  };
+
+  const toggleAgentStatus = async () => {
+    if (!activeAgent || isUpdatingStatus || (!service && !demoMode)) return;
+    const status: NewsReadingAgent["status"] = activeAgent.status === "paused" ? "active" : "paused";
+    setIsUpdatingStatus(true);
+    setMutationError("");
+    try {
+      const updated = service
+        ? await service.update(activeAgent.id, { status })
+        : { ...activeAgent, status, updatedAt: new Date().toISOString() };
+      setAgents((current) => current.map((agent) => agent.id === updated.id ? updated : agent));
+    } catch {
+      setMutationError("助手状态更新失败，请检查连接后重试");
+    } finally {
+      setIsUpdatingStatus(false);
+    }
   };
 
   return (
@@ -228,7 +315,7 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
             <p>阅读助手</p>
             <span>{agents.length} 个智能体</span>
           </div>
-          <button className="news-icon-button news-icon-button--primary" onClick={() => setCreateOpen(true)} type="button" title="创建智能体">
+          <button className="news-icon-button news-icon-button--primary" disabled={!demoMode && !service} onClick={() => setCreateOpen(true)} type="button" title="创建智能体">
             <Plus size={18} />
           </button>
         </header>
@@ -244,7 +331,7 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
         <div className="news-pc-assistant__agents">
           {filteredAgents.map((agent) => (
             <button
-              className={`news-agent-row${agent.id === activeAgent.id ? " is-active" : ""}`}
+              className={`news-agent-row${agent.id === activeAgent?.id ? " is-active" : ""}`}
               key={agent.id}
               onClick={() => setActiveAgentId(agent.id)}
               type="button"
@@ -262,27 +349,33 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
               </span>
             </button>
           ))}
+          {filteredAgents.length === 0 && (
+            <AssistantListState
+              loadState={loadState}
+              queryActive={Boolean(query.trim())}
+              onRetry={() => setReloadKey((current) => current + 1)}
+            />
+          )}
         </div>
         <footer className="news-pc-assistant__run-status">
           <span className={`news-status-dot news-status-dot--${loadState}`} />
-          <span>{loadState === "offline" ? "等待连接" : "下一轮阅读 18:00"}</span>
+          <span>{formatAssistantStatus(loadState)}</span>
           <CalendarClock size={15} />
         </footer>
       </aside>
 
-      <section className="news-pc-conversation">
+      {activeAgent ? <section className="news-pc-conversation">
         <header className="news-pc-conversation__header">
           <div className="news-pc-conversation__identity">
             <span className="news-agent-row__avatar" style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span>
             <div>
               <h1>{activeAgent.name}</h1>
-              <p><span className="news-live-dot" /> 工作中 · {activeAgent.description}</p>
+              <p><span className={`news-live-dot${activeAgent.status === "paused" ? " is-paused" : ""}`} /> {activeAgent.status === "paused" ? "已暂停" : "工作中"} · {activeAgent.description}</p>
             </div>
           </div>
           <div className="news-pc-conversation__actions">
-            <button className="news-icon-button" type="button" title="暂停阅读"><CirclePause size={18} /></button>
+            <button className="news-icon-button" disabled={isUpdatingStatus} onClick={() => void toggleAgentStatus()} type="button" title={activeAgent.status === "paused" ? "恢复阅读" : "暂停阅读"}>{activeAgent.status === "paused" ? <CirclePlay size={18} /> : <CirclePause size={18} />}</button>
             <button className="news-icon-button" type="button" title="助手设置" onClick={() => setProfileOpen(true)}><Settings2 size={18} /></button>
-            <button className="news-icon-button" type="button" title="更多"><MoreHorizontal size={18} /></button>
           </div>
         </header>
 
@@ -303,7 +396,7 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
             </article>
           ))}
 
-          <article className="news-digest-card">
+          {demoMode && <><article className="news-digest-card">
             <header>
               <span><Sparkles size={16} /> 早间增量简报</span>
               <time>08:31</time>
@@ -333,6 +426,20 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
             <p>今天收盘后复核成交量与北向资金变化；若两项同时转强，再提高判断等级。</p>
             <button type="button"><Check size={15} /> 加入跟踪</button>
           </article>
+          </>}
+          {conversationState === "loading" && <ConversationState message="正在同步消息" />}
+          {conversationState === "offline" && (
+            <ConversationState
+              action="重试"
+              message="消息暂不可用"
+              onAction={() => setConversationReloadKey((current) => current + 1)}
+              tone="error"
+            />
+          )}
+          {conversationState === "live" && messages.length === 0 && !demoMode && (
+            <ConversationState message="暂无消息" />
+          )}
+          {mutationError && <p className="news-conversation-notice" role="alert">{mutationError}</p>}
         </div>
 
         <footer className="news-composer">
@@ -351,25 +458,90 @@ export function NewsPcAssistant({ service }: NewsPcAssistantProps) {
               value={draft}
             />
             <div>
-              <button className="news-icon-button" type="button" title="添加附件"><Paperclip size={18} /></button>
               <span>Enter 发送</span>
               <button className="news-send-button" disabled={!draft.trim() || isSending} onClick={() => void send()} type="button" title="发送">
                 <Send size={17} />
               </button>
             </div>
+            {sendError && <p className="news-composer__error" role="alert">{sendError}</p>}
           </div>
         </footer>
-      </section>
+      </section> : (
+        <section className="news-pc-conversation news-pc-conversation--empty">
+          <ConversationState
+            action={loadState === "offline" ? "重试" : undefined}
+            message={loadState === "loading" ? "正在同步助手" : loadState === "offline" ? "助手列表暂不可用" : "尚未创建阅读助手"}
+            onAction={loadState === "offline" ? () => setReloadKey((current) => current + 1) : undefined}
+            tone={loadState === "offline" ? "error" : "default"}
+          />
+        </section>
+      )}
 
-      {profileOpen && <NewsAgentProfilePanel agent={activeAgent} onClose={() => setProfileOpen(false)} onSave={saveAgentSchedule} />}
+      {profileOpen && activeAgent && <NewsAgentProfilePanel agent={activeAgent} key={activeAgent.id} onClose={() => setProfileOpen(false)} onSave={saveAgentProfile} />}
       {createOpen && <NewsAgentCreatePanel onClose={() => setCreateOpen(false)} onCreate={createAgent} />}
     </div>
   );
 }
 
-function NewsAgentProfilePanel({ agent, onClose, onSave }: { agent: NewsReadingAgent; onClose: () => void; onSave: (schedule: NewsReadingAgent["schedule"]) => Promise<void> }) {
-  const [scheduleEnabled, setScheduleEnabled] = useState(agent.schedule.enabled);
+function AssistantListState({ loadState, onRetry, queryActive }: { loadState: AssistantLoadState; onRetry: () => void; queryActive: boolean }) {
+  if (queryActive) return <p className="news-assistant-list-state">未找到匹配的助手</p>;
+  if (loadState === "loading") return <p className="news-assistant-list-state" role="status">正在同步助手</p>;
+  if (loadState === "offline") {
+    return <div className="news-assistant-list-state" role="alert"><span>助手列表暂不可用</span><button onClick={onRetry} type="button"><RefreshCw size={14} />重试</button></div>;
+  }
+  return <p className="news-assistant-list-state">尚未创建阅读助手</p>;
+}
+
+function ConversationState({ action, message, onAction, tone = "default" }: { action?: string; message: string; onAction?: () => void; tone?: "default" | "error" }) {
+  return <div className={`news-conversation-state news-conversation-state--${tone}`} role={tone === "error" ? "alert" : "status"}>
+    <Sparkles size={20} />
+    <p>{message}</p>
+    {action && onAction && <button onClick={onAction} type="button"><RefreshCw size={14} />{action}</button>}
+  </div>;
+}
+
+function formatAssistantStatus(loadState: AssistantLoadState): string {
+  if (loadState === "demo") return "演示模式";
+  if (loadState === "loading") return "正在同步";
+  if (loadState === "offline") return "连接中断";
+  return "SDKWork IM 已连接";
+}
+
+function NewsAgentProfilePanel({ agent, onClose, onSave }: { agent: NewsReadingAgent; onClose: () => void; onSave: (input: NewsAgentProfileInput) => Promise<void> }) {
+  const [name, setName] = useState(agent.name);
+  const [description, setDescription] = useState(agent.description);
+  const [categories, setCategories] = useState(agent.readingScope.categories.join("、"));
+  const [keywords, setKeywords] = useState(agent.readingScope.keywords.join("、"));
+  const [trustedSources, setTrustedSources] = useState(agent.readingScope.trustedSources.join("、"));
+  const [tone, setTone] = useState(agent.tone);
+  const [schedule, setSchedule] = useState(agent.schedule);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const scheduleIsValid = useMemo(() => validateNewsReadingSchedule(schedule).length === 0, [schedule]);
+  const profileIsValid = Boolean(name.trim() && description.trim());
+  const save = async () => {
+    if (!scheduleIsValid || !profileIsValid) return;
+    setIsSaving(true);
+    setSaveError("");
+    try {
+      await onSave({
+        description: description.trim(),
+        name: name.trim(),
+        readingScope: {
+          ...agent.readingScope,
+          categories: parseProfileList(categories),
+          keywords: parseProfileList(keywords),
+          trustedSources: parseProfileList(trustedSources),
+        },
+        schedule,
+        tone,
+      });
+    } catch {
+      setSaveError("设置保存失败，请检查连接后重试");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
     <aside className="news-agent-profile">
       <header>
@@ -378,34 +550,27 @@ function NewsAgentProfilePanel({ agent, onClose, onSave }: { agent: NewsReadingA
       </header>
       <div className="news-agent-profile__content">
         <section className="news-agent-profile__identity">
-          <span style={{ background: agent.accent }}>{agent.name.slice(0, 1)}</span>
-          <div><h2>{agent.name}</h2><p>{agent.description}</p></div>
+          <span style={{ background: agent.accent }}>{name.trim().slice(0, 1) || "AI"}</span>
+          <div><h2>{name.trim() || "未命名助手"}</h2><p>{description.trim() || "补充稳定、可执行的阅读职责"}</p></div>
         </section>
-        <section>
-          <label className="news-setting-label">阅读重点</label>
-          <div className="news-tag-field"><span>宏观政策</span><span>资本市场</span><span>产业资金</span><button type="button"><Plus size={14} /></button></div>
-        </section>
-        <section>
-          <label className="news-setting-label">可信来源</label>
-          <button className="news-select-row" type="button"><span>权威媒体与官方源优先</span><ChevronDown size={16} /></button>
+        <section className="news-agent-profile__fields">
+          <label><span>名称</span><input aria-label="助手名称" onChange={(event) => setName(event.target.value)} value={name} /></label>
+          <label><span>阅读职责</span><textarea aria-label="阅读职责" onChange={(event) => setDescription(event.target.value)} rows={3} value={description} /></label>
+          <label><span>主题分类</span><input aria-label="主题分类" onChange={(event) => setCategories(event.target.value)} placeholder="宏观政策、资本市场" value={categories} /></label>
+          <label><span>关键词</span><input aria-label="关键词" onChange={(event) => setKeywords(event.target.value)} placeholder="用逗号分隔" value={keywords} /></label>
+          <label><span>可信来源</span><input aria-label="可信来源" onChange={(event) => setTrustedSources(event.target.value)} placeholder="机构或媒体名称，用逗号分隔" value={trustedSources} /></label>
+          <label><span>输出风格</span><select aria-label="输出风格" onChange={(event) => setTone(event.target.value as NewsReadingAgent["tone"])} value={tone}><option value="brief">精简</option><option value="analytical">分析</option><option value="executive">决策摘要</option></select></label>
         </section>
         <section>
           <div className="news-setting-heading">
-            <div><label className="news-setting-label">自动阅读</label><p>Asia/Shanghai</p></div>
-            <button className={`news-switch${scheduleEnabled ? " is-on" : ""}`} onClick={() => setScheduleEnabled((value) => !value)} type="button"><span /></button>
+            <div><label className="news-setting-label">自动阅读</label><p>{schedule.enabled ? "按计划持续执行" : "所有调度已暂停"}</p></div>
+            <button aria-label="启用自动阅读" aria-pressed={schedule.enabled} className={`news-switch${schedule.enabled ? " is-on" : ""}`} onClick={() => setSchedule((current) => ({ ...current, enabled: !current.enabled }))} type="button"><span /></button>
           </div>
-          <div className="news-schedule-list">
-            <div><span className="news-schedule-icon"><Clock3 size={16} /></span><div><strong>每日简报</strong><p>08:30、18:00</p></div><button type="button">编辑</button></div>
-            <div><span className="news-schedule-icon"><CalendarClock size={16} /></span><div><strong>每周总结</strong><p>周五 17:30</p></div><button type="button">编辑</button></div>
-            <div><span className="news-schedule-icon"><FileText size={16} /></span><div><strong>月度复盘</strong><p>每月 1 日 09:30</p></div><button type="button">编辑</button></div>
-          </div>
+          <NewsScheduleEditor onChange={setSchedule} schedule={schedule} />
         </section>
-        <section className="news-cron-preview">
-          <label className="news-setting-label">调度规则</label>
-          <code>30 8 * * *</code><code>0 18 * * *</code><code>30 17 * * 5</code>
-        </section>
+        {saveError && <p className="news-profile-save-error" role="alert">{saveError}</p>}
       </div>
-      <footer><button onClick={onClose} type="button">取消</button><button disabled={isSaving} onClick={() => { setIsSaving(true); void onSave({ ...agent.schedule, enabled: scheduleEnabled }).finally(() => setIsSaving(false)); }} type="button">{isSaving ? "保存中" : "保存设置"}</button></footer>
+      <footer><button onClick={onClose} type="button">取消</button><button disabled={isSaving || !scheduleIsValid || !profileIsValid} onClick={() => void save()} type="button">{isSaving ? "保存中" : "保存设置"}</button></footer>
     </aside>
   );
 }
@@ -414,12 +579,16 @@ function NewsAgentCreatePanel({ onClose, onCreate }: { onClose: () => void; onCr
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!name.trim() || !description.trim() || isCreating) return;
     setIsCreating(true);
+    setCreateError("");
     try {
       await onCreate({ name: name.trim(), description: description.trim() });
+    } catch {
+      setCreateError("智能体创建失败，请检查连接后重试");
     } finally {
       setIsCreating(false);
     }
@@ -432,6 +601,7 @@ function NewsAgentCreatePanel({ onClose, onCreate }: { onClose: () => void; onCr
           <label><span>名称</span><input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：供应链观察" /></label>
           <label><span>阅读目标</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="说明主题、来源与需要输出的结论" rows={5} /></label>
           <section className="news-cron-preview"><label className="news-setting-label">默认调度</label><code>30 8 * * *</code><code>0 18 * * *</code><code>30 17 * * 5</code></section>
+          {createError && <p className="news-agent-create-panel__error" role="alert">{createError}</p>}
         </div>
         <footer><button onClick={onClose} type="button">取消</button><button disabled={!name.trim() || !description.trim() || isCreating} type="submit">{isCreating ? "创建中" : "创建"}</button></footer>
       </form>
@@ -462,6 +632,10 @@ function mergeMessages(current: NewsConversationMessage[], incoming: NewsConvers
   const index = current.findIndex((message) => message.id === incoming.id);
   if (index < 0) return [...current, incoming];
   return current.map((message, messageIndex) => messageIndex === index ? incoming : message);
+}
+
+function parseProfileList(value: string): string[] {
+  return Array.from(new Set(value.split(/[,，、\n]/u).map((item) => item.trim()).filter(Boolean)));
 }
 
 export default NewsPcAssistant;

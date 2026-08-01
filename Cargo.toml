@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "crates/sdkwork-api-news-assembly",
-    "crates/sdkwork-api-news-assembly",
     "crates/sdkwork-content-news-service",
     "crates/sdkwork-news-database-host",
     "crates/sdkwork-content-news-repository-sqlx",
@@ -30,6 +29,7 @@ sdkwork-database-sqlx = { path = "../sdkwork-database/crates/sdkwork-database-sq
 sdkwork-content-news-service = { path = "crates/sdkwork-content-news-service" }
 sdkwork-content-news-repository-sqlx = { path = "crates/sdkwork-content-news-repository-sqlx" }
 sdkwork-content-news-worker = { path = "crates/sdkwork-content-news-worker" }
+sdkwork-api-news-assembly = { path = "crates/sdkwork-api-news-assembly" }
 sdkwork-routes-news-open-api = { path = "crates/sdkwork-routes-news-open-api" }
 sdkwork-routes-news-app-api = { path = "crates/sdkwork-routes-news-app-api" }
 sdkwork-routes-news-backend-api = { path = "crates/sdkwork-routes-news-backend-api" }

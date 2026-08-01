@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-feed-service",
+    "displayName": "SDKWork News Feed Service",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-feed-service",
+    "domain": "content",
+    "capability": "news-feed",
+    "surface": "app",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "Frontend service and injected port boundaries." },
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source structure." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Public naming." },
+    { "file": "MODULE_SPEC.md", "path": "../../../../../sdkwork-specs/MODULE_SPEC.md", "purpose": "Reusable service contract." },
+    { "file": "PAGINATION_SPEC.md", "path": "../../../../../sdkwork-specs/PAGINATION_SPEC.md", "purpose": "Bounded feed pagination." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." }
+  ],
+  "contracts": {
+    "layerRole": "backend-service",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsFeedService", "export": "." }],
+    "requiredPorts": [{ "name": "newsFeedPort", "export": "." }],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "dependencyApiExports": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": [
+      "pnpm --filter @sdkwork/news-feed-service typecheck",
+      "pnpm --filter @sdkwork/news-feed-service test"
+    ]
+  }
+}

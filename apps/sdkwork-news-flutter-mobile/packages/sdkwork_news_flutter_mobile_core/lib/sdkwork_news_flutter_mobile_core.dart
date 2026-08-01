@@ -1,3 +1,4 @@
+export 'composition/composition.dart';
 export 'src/models/news_agent.dart';
 export 'src/models/news_message.dart';
 export 'src/models/reading_schedule.dart';

@@ -1,11 +1,16 @@
 import 'package:sdkwork_agents_app_sdk/sdkwork_agents_app_sdk.dart';
+import 'package:sdkwork_iam_app_sdk/sdkwork_iam_app_sdk.dart' as iam_sdk;
 import 'package:sdkwork_im_flutter_mobile_core/sdkwork_im_flutter_mobile_core.dart';
+import 'package:sdkwork_mcp_app_sdk_generated_flutter/sdkwork_mcp_app_sdk_generated_flutter.dart'
+    as mcp_sdk;
 import 'package:sdkwork_news_flutter_mobile_account/sdkwork_news_flutter_mobile_account.dart';
 import 'package:sdkwork_news_flutter_mobile_agent_sdk_adapter/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart';
 import 'package:sdkwork_news_flutter_mobile_ai_store/sdkwork_news_flutter_mobile_ai_store.dart';
 import 'package:sdkwork_news_flutter_mobile_assistant/sdkwork_news_flutter_mobile_assistant.dart';
 import 'package:sdkwork_news_flutter_mobile_host/sdkwork_news_flutter_mobile_host.dart';
+import 'package:sdkwork_news_flutter_mobile_iam_sdk_adapter/sdkwork_news_flutter_mobile_iam_sdk_adapter.dart';
 import 'package:sdkwork_news_flutter_mobile_im_adapter/sdkwork_news_flutter_mobile_im_adapter.dart';
+import 'package:sdkwork_news_flutter_mobile_mcp_sdk_adapter/sdkwork_news_flutter_mobile_mcp_sdk_adapter.dart';
 import 'package:sdkwork_news_flutter_mobile_news/sdkwork_news_flutter_mobile_news.dart';
 import 'package:sdkwork_news_flutter_mobile_shell/sdkwork_news_flutter_mobile_shell.dart';
 
@@ -21,11 +26,19 @@ class NewsRuntime {
     this.requiresSignIn = false,
   });
 
-  final NewsShellController shellController;
-  final AssistantController assistantController;
-  final NewsFeedController newsController;
-  final AiStoreController storeController;
-  final AccountController accountController;
+  NewsRuntime.signedOut()
+      : shellController = null,
+        assistantController = null,
+        newsController = null,
+        storeController = null,
+        accountController = null,
+        requiresSignIn = true;
+
+  final NewsShellController? shellController;
+  final AssistantController? assistantController;
+  final NewsFeedController? newsController;
+  final AiStoreController? storeController;
+  final AccountController? accountController;
   final bool requiresSignIn;
 
   factory NewsRuntime.demo() => NewsRuntime(
@@ -40,11 +53,11 @@ class NewsRuntime {
       );
 
   void dispose() {
-    shellController.dispose();
-    assistantController.dispose();
-    newsController.dispose();
-    storeController.dispose();
-    accountController.dispose();
+    shellController?.dispose();
+    assistantController?.dispose();
+    newsController?.dispose();
+    storeController?.dispose();
+    accountController?.dispose();
   }
 }
 
@@ -60,15 +73,7 @@ Future<NewsRuntime> bootstrapNewsRuntime({
   final store = sessionStore ?? const SecureNewsSessionStore();
   final session = await store.read();
   if (session == null) {
-    final demo = NewsRuntime.demo();
-    return NewsRuntime(
-      shellController: demo.shellController,
-      assistantController: demo.assistantController,
-      newsController: demo.newsController,
-      storeController: demo.storeController,
-      accountController: demo.accountController,
-      requiresSignIn: true,
-    );
+    return NewsRuntime.signedOut();
   }
 
   final agentsClient = SdkworkAppClient.withBaseUrl(
@@ -85,15 +90,29 @@ Future<NewsRuntime> bootstrapNewsRuntime({
     accessToken: session.accessToken,
     authToken: session.authToken,
   );
+  final iamClient = iam_sdk.SdkworkAppClient.withBaseUrl(
+    baseUrl: _transportBaseUrl(activeConfig.iamAppApiUrl),
+    accessToken: session.accessToken,
+    authToken: session.authToken,
+  );
+  final mcpClient = mcp_sdk.SdkworkAppClient.withBaseUrl(
+    baseUrl: _transportBaseUrl(activeConfig.mcpAppApiUrl),
+    accessToken: session.accessToken,
+    authToken: session.authToken,
+  );
   return NewsRuntime(
     shellController: NewsShellController(),
     assistantController: AssistantController(
       agentRepository: AgentsNewsAgentRepository(agentsClient),
       conversationGateway: SdkworkImNewsConversationGateway(imBundle),
     ),
-    newsController: NewsFeedController(DemoNewsFeedRepository()),
-    storeController: AiStoreController(DemoAiStoreRepository()),
-    accountController: AccountController(DemoAccountRepository()),
+    newsController: NewsFeedController(const UnavailableNewsFeedRepository()),
+    storeController: AiStoreController(
+      McpAiStoreRepository(SdkworkMcpCatalogGateway(mcpClient)),
+    ),
+    accountController: AccountController(
+      IamAccountRepository(SdkworkIamCurrentUserGateway(iamClient)),
+    ),
   );
 }
 

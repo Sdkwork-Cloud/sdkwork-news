@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-account-react",
+    "displayName": "SDKWork News Account React Controller",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-react",
+    "domain": "account",
+    "capability": "news-account-react-controller",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "FRONTEND_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/FRONTEND_CODE_SPEC.md", "purpose": "Shared React state." },
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "Injected service boundary." }
+  ],
+  "contracts": {
+    "layerRole": "frontend-feature",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsAccountReactController", "export": "." }],
+    "requiredPorts": [{ "name": "newsAccountService", "export": ".", "provider": "@sdkwork/news-account-service" }],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": { "commands": ["pnpm --filter @sdkwork/news-account-react typecheck", "pnpm --filter @sdkwork/news-account-react test"] }
+}

@@ -202,7 +202,7 @@ pub async fn create_story(
     .bind(&slug)
     .bind(&request.title)
     .bind(&request.summary)
-    .bind(&request.story_type.as_deref().unwrap_or("standard"))
+    .bind(request.story_type.as_deref().unwrap_or("standard"))
     .bind(&now)
     .bind(&now)
     .execute(&state.pool)

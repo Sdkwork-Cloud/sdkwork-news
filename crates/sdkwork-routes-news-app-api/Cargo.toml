@@ -15,4 +15,5 @@ uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "postgres"] }
 tracing = "0.1"
-sdkwork_routes_news_open_api = { package = "sdkwork-routes-news-open-api", path = "../sdkwork-routes-news-open-api" }
+sdkwork-routes-news-open-api = { workspace = true }
+sdkwork-web-core = { workspace = true }

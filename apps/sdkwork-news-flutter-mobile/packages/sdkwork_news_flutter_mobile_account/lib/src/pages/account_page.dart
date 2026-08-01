@@ -5,9 +5,16 @@ import '../controllers/account_controller.dart';
 import '../models/account_profile.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key, required this.controller});
+  const AccountPage({
+    super.key,
+    required this.controller,
+    this.locale = const Locale('zh', 'CN'),
+    this.onLocaleChanged,
+  });
 
   final AccountController controller;
+  final Locale locale;
+  final ValueChanged<Locale>? onLocaleChanged;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -47,8 +54,11 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                     IconButton(
+                      key: const ValueKey('account.settings.open'),
                       tooltip: strings.text('account.settings'),
-                      onPressed: () {},
+                      onPressed: widget.onLocaleChanged == null
+                          ? null
+                          : () => _showLanguagePicker(context, strings),
                       icon: const Icon(Icons.tune_rounded),
                     ),
                   ],
@@ -56,34 +66,51 @@ class _AccountPageState extends State<AccountPage> {
               ),
               Expanded(
                 child: profile == null
-                    ? const Center(child: CircularProgressIndicator())
+                    ? widget.controller.errorMessage == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : _AccountLoadFailure(
+                            message: strings.text('account.loadFailed'),
+                            retryLabel: strings.text('common.retry'),
+                            onRetry: widget.controller.retry,
+                          )
                     : ListView(
                         key: const PageStorageKey('account'),
                         padding: const EdgeInsets.fromLTRB(12, 12, 12, 30),
                         children: [
                           _ProfileCard(profile: profile, strings: strings),
                           const SizedBox(height: 10),
-                          _PlanCard(profile: profile, strings: strings),
-                          const SizedBox(height: 10),
-                          _SavedTimeCard(strings: strings),
-                          const SizedBox(height: 10),
+                          if (profile.planProgress != null) ...[
+                            _PlanCard(profile: profile, strings: strings),
+                            const SizedBox(height: 10),
+                            _SavedTimeCard(strings: strings),
+                            const SizedBox(height: 10),
+                          ],
                           _SettingsGroup(
                             title: strings.text('account.content'),
                             rows: [
                               _SettingsRowData(
                                 icon: Icons.bookmark_border_rounded,
                                 label: strings.text('account.favorites'),
-                                value: '${profile.favoriteCount}',
+                                value: _countLabel(
+                                  profile.favoriteCount,
+                                  strings,
+                                ),
                               ),
                               _SettingsRowData(
                                 icon: Icons.history_rounded,
                                 label: strings.text('account.history'),
-                                value: '${profile.historyCount}',
+                                value: _countLabel(
+                                  profile.historyCount,
+                                  strings,
+                                ),
                               ),
                               _SettingsRowData(
                                 icon: Icons.download_outlined,
                                 label: strings.text('account.offline'),
-                                value: '${profile.offlineCount}',
+                                value: _countLabel(
+                                  profile.offlineCount,
+                                  strings,
+                                ),
                               ),
                             ],
                           ),
@@ -94,17 +121,26 @@ class _AccountPageState extends State<AccountPage> {
                               _SettingsRowData(
                                 icon: Icons.notifications_none_rounded,
                                 label: strings.text('account.notifications'),
-                                value: '重要更新',
+                                value:
+                                    strings.text('account.notificationsValue'),
                               ),
                               _SettingsRowData(
                                 icon: Icons.translate_rounded,
                                 label: strings.text('account.language'),
-                                value: '简体中文',
+                                value: widget.locale.languageCode == 'en'
+                                    ? strings.text('account.language.enUS')
+                                    : strings.text('account.language.zhCN'),
+                                onTap: widget.onLocaleChanged == null
+                                    ? null
+                                    : () => _showLanguagePicker(
+                                          context,
+                                          strings,
+                                        ),
                               ),
                               _SettingsRowData(
                                 icon: Icons.dark_mode_outlined,
                                 label: strings.text('account.appearance'),
-                                value: '跟随系统',
+                                value: strings.text('account.appearanceValue'),
                               ),
                             ],
                           ),
@@ -129,6 +165,91 @@ class _AccountPageState extends State<AccountPage> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _showLanguagePicker(
+    BuildContext context,
+    NewsStrings strings,
+  ) async {
+    final selectedLocale = await showModalBottomSheet<Locale>(
+      context: context,
+      useSafeArea: true,
+      builder: (context) => _LanguagePicker(
+        selectedLocale: widget.locale,
+        strings: strings,
+      ),
+    );
+    if (selectedLocale != null && mounted) {
+      widget.onLocaleChanged?.call(selectedLocale);
+    }
+  }
+}
+
+class _LanguagePicker extends StatelessWidget {
+  const _LanguagePicker({
+    required this.selectedLocale,
+    required this.strings,
+  });
+
+  final Locale selectedLocale;
+  final NewsStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            strings.text('account.language'),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 8),
+          _LanguageOption(
+            key: const ValueKey('account.locale.zh-CN'),
+            locale: const Locale('zh', 'CN'),
+            label: strings.text('account.language.zhCN'),
+            selected: selectedLocale.languageCode == 'zh',
+          ),
+          _LanguageOption(
+            key: const ValueKey('account.locale.en-US'),
+            locale: const Locale('en', 'US'),
+            label: strings.text('account.language.enUS'),
+            selected: selectedLocale.languageCode == 'en',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  const _LanguageOption({
+    super.key,
+    required this.locale,
+    required this.label,
+    required this.selected,
+  });
+
+  final Locale locale;
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      title: Text(label),
+      trailing: selected
+          ? const Icon(Icons.check_circle_rounded, color: NewsPalette.primary)
+          : null,
+      onTap: () => Navigator.of(context).pop(locale),
     );
   }
 }
@@ -174,23 +295,30 @@ class _ProfileCard extends StatelessWidget {
                 Text(profile.displayName,
                     style: const TextStyle(
                         fontSize: 17, fontWeight: FontWeight.w800)),
-                Text(profile.email,
+                if (profile.email?.isNotEmpty == true)
+                  Text(
+                    profile.email!,
                     style: const TextStyle(
-                        color: NewsPalette.muted, fontSize: 10)),
-                const SizedBox(height: 5),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                  color: NewsPalette.primarySoft,
-                  child: Text(
-                    strings.text('account.enterprise'),
-                    style: const TextStyle(
-                      color: NewsPalette.primary,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
+                      color: NewsPalette.muted,
+                      fontSize: 10,
                     ),
                   ),
-                ),
+                if (profile.planProgress != null) ...[
+                  const SizedBox(height: 5),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    color: NewsPalette.primarySoft,
+                    child: Text(
+                      strings.text('account.enterprise'),
+                      style: const TextStyle(
+                        color: NewsPalette.primary,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -209,6 +337,7 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = profile.planProgress!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -233,7 +362,7 @@ class _PlanCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${(profile.planProgress * 100).round()}%',
+                '${(progress * 100).round()}%',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -247,7 +376,7 @@ class _PlanCard extends StatelessWidget {
               style: const TextStyle(color: Colors.white70, fontSize: 10)),
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            value: profile.planProgress,
+            value: progress,
             minHeight: 5,
             borderRadius: BorderRadius.circular(3),
             color: const Color(0xFF74C5AD),
@@ -257,7 +386,7 @@ class _PlanCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: null,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: Colors.white30),
@@ -268,6 +397,44 @@ class _PlanCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+String _countLabel(int? value, NewsStrings strings) =>
+    value == null ? strings.text('common.unavailable') : '$value';
+
+class _AccountLoadFailure extends StatelessWidget {
+  const _AccountLoadFailure({
+    required this.message,
+    required this.retryLabel,
+    required this.onRetry,
+  });
+
+  final String message;
+  final String retryLabel;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cloud_off_outlined, color: NewsPalette.muted),
+            const SizedBox(height: 10),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            IconButton.filledTonal(
+              tooltip: retryLabel,
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -313,11 +480,13 @@ class _SettingsRowData {
     required this.icon,
     required this.label,
     this.value,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String? value;
+  final VoidCallback? onTap;
 }
 
 class _SettingsGroup extends StatelessWidget {
@@ -365,7 +534,7 @@ class _SettingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: row.onTap,
       child: SizedBox(
         height: 52,
         child: Row(

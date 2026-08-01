@@ -1,6 +1,9 @@
 use sdkwork_content_news_repository_sqlx::repository::professional_repository::{
     NewNewsStory, NewNewsStoryItem, NewsProfessionalRepository,
 };
+use sdkwork_content_news_service::{
+    NewNewsStory as PortNewNewsStory, NewsProfessionalRepositoryPort,
+};
 use sqlx::sqlite::SqlitePoolOptions;
 
 async fn setup_repo() -> NewsProfessionalRepository {
@@ -50,6 +53,33 @@ async fn create_and_retrieve_story() {
 }
 
 #[tokio::test]
+async fn implements_service_owned_repository_port() {
+    let repo = setup_repo().await;
+    let story = NewsProfessionalRepositoryPort::create_story(
+        &repo,
+        PortNewNewsStory {
+            id: "port_story_1".to_string(),
+            tenant_id: "100001".to_string(),
+            organization_id: "org1".to_string(),
+            slug: "port-story".to_string(),
+            title: "Port Story".to_string(),
+            summary: "Created through the service-owned port".to_string(),
+            story_type: "standard".to_string(),
+            now: "2026-08-01T00:00:00Z".to_string(),
+        },
+    )
+    .await
+    .expect("create story through repository port");
+
+    assert_eq!(story.id, "port_story_1");
+    let retrieved = NewsProfessionalRepositoryPort::retrieve_story(&repo, "100001", "port_story_1")
+        .await
+        .expect("retrieve story through repository port")
+        .expect("stored story");
+    assert_eq!(retrieved.title, "Port Story");
+}
+
+#[tokio::test]
 async fn list_stories_filters_by_status() {
     let repo = setup_repo().await;
     repo.create_story(NewNewsStory {
@@ -65,7 +95,10 @@ async fn list_stories_filters_by_status() {
     .await
     .unwrap();
 
-    let drafts = repo.list_stories("100001", Some("draft"), 10).await.unwrap();
+    let drafts = repo
+        .list_stories("100001", Some("draft"), 10)
+        .await
+        .unwrap();
     assert_eq!(drafts.len(), 1);
 
     let published = repo

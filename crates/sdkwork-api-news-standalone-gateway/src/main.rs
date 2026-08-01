@@ -1,8 +1,4 @@
 mod bootstrap;
-mod http_route_manifest;
-mod middleware;
-mod readiness;
-mod web_bootstrap;
 
 use anyhow::Result;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -21,7 +17,7 @@ async fn main() -> Result<()> {
     let app = bootstrap::create_app().await?;
 
     // Start server
-    let bind = std::env::var("BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".to_string());
+    let bind = std::env::var("SDKWORK_NEWS_APPLICATION_PUBLIC_INGRESS_BIND")?;
     let listener = tokio::net::TcpListener::bind(&bind).await?;
     tracing::info!("News API server listening on {}", bind);
 

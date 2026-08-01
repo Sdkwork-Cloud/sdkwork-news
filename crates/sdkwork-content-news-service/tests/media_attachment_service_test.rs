@@ -76,7 +76,16 @@ async fn attach_media_requires_valid_role() {
 async fn attach_media_valid_roles_pass() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsMediaAttachmentService::new(repo);
-    for role in &["hero", "thumbnail", "inline", "gallery", "video", "audio", "document", "embed"] {
+    for role in &[
+        "hero",
+        "thumbnail",
+        "inline",
+        "gallery",
+        "video",
+        "audio",
+        "document",
+        "embed",
+    ] {
         let cmd = AttachDriveMediaCommand {
             tenant_id: "100001".to_string(),
             item_id: "item1".to_string(),
@@ -85,7 +94,11 @@ async fn attach_media_valid_roles_pass() {
             sort_order: Some(0),
             actor_user_id: Some("user1".to_string()),
         };
-        assert!(service.validate_attach_drive_media(&cmd).is_ok(), "role '{}' should be valid", role);
+        assert!(
+            service.validate_attach_drive_media(&cmd).is_ok(),
+            "role '{}' should be valid",
+            role
+        );
     }
 }
 
@@ -111,12 +124,16 @@ async fn validate_media_reference_rejects_empty() {
 
 #[tokio::test]
 async fn validate_media_reference_rejects_http_url() {
-    assert!(!NewsMediaAttachmentService::validate_media_reference("https://example.com/image.jpg"));
+    assert!(!NewsMediaAttachmentService::validate_media_reference(
+        "https://example.com/image.jpg"
+    ));
 }
 
 #[tokio::test]
 async fn validate_media_reference_accepts_drive_id() {
-    assert!(NewsMediaAttachmentService::validate_media_reference("drive_node_123"));
+    assert!(NewsMediaAttachmentService::validate_media_reference(
+        "drive_node_123"
+    ));
 }
 
 #[tokio::test]

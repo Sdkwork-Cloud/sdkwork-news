@@ -15,10 +15,28 @@
     "manifests": ["pubspec.yaml"]
   },
   "contracts": {
-    "layerRole": "domain-contract",
+    "layerRole": "frontend-core",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_core.dart"],
-    "sdkDependencies": []
+    "providedPorts": [
+      {"name": "newsAgentRepository", "export": "lib/sdkwork_news_flutter_mobile_core.dart"},
+      {"name": "newsConversationGateway", "export": "lib/sdkwork_news_flutter_mobile_core.dart"}
+    ],
+    "requiredPorts": [],
+    "sdkDependencies": [
+      {"workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "credentialMode": "authenticated-app-api", "packageName": "sdkwork_agents_app_sdk", "status": "active"},
+      {"workspace": "sdkwork-im-sdk", "surface": "open-api", "credentialMode": "protected-open-api-api-key-or-dual-token", "packageName": "sdkwork_im_flutter_mobile_chat", "status": "active"}
+    ],
+    "permissionComposition": {
+      "inheritanceMode": "module-catalog-with-overrides",
+      "moduleCatalogRefs": [
+        {"moduleId": "agents", "manifestRef": "../../../../../sdkwork-agents/specs/iam.module.manifest.json", "inheritPermissions": true, "inheritRoles": true},
+        {"moduleId": "im", "manifestRef": "../../../../../sdkwork-im/specs/iam.module.manifest.json", "inheritPermissions": true, "inheritRoles": true}
+      ],
+      "consumerPolicy": {
+        "forbidLocalPermissionCatalogForDependencyDomains": true,
+        "allowExplicitOverridesOnly": true
+      }
+    }
   },
   "verification": {"commands": ["dart test"]}
 }
-

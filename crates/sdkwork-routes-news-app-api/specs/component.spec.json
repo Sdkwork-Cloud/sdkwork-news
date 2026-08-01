@@ -36,11 +36,12 @@
     }
   ],
   "contracts": {
+    "layerRole": "backend-route",
     "publicExports": [
       "."
     ],
     "runtimeEntrypoints": [],
-    "routeManifest": "src/lib.rs#app_routes",
+    "routeManifest": "src/lib.rs#gateway_route_manifest",
     "sdkClients": [],
     "events": [],
     "configKeys": []

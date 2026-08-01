@@ -6,7 +6,7 @@ function readIfPresent(fileName) {
   return existsSync(fileName) ? readFileSync(fileName, "utf8") : null;
 }
 
-test("news workspace does not include sdkwork-appbase packages", () => {
+test("news workspace references only approved appbase composition packages", () => {
   for (const [fileName, contents] of Object.entries({
     "pnpm-workspace.yaml": readIfPresent("pnpm-workspace.yaml"),
     "pnpm-lock.yaml": readIfPresent("pnpm-lock.yaml"),
@@ -14,8 +14,16 @@ test("news workspace does not include sdkwork-appbase packages", () => {
     if (contents === null) {
       continue;
     }
-    assert.doesNotMatch(contents, /sdkwork-appbase/iu, `${fileName} must not reference sdkwork-appbase`);
-    assert.doesNotMatch(contents, /apps[\\/]+sdkwork-appbase/iu, `${fileName} must not import appbase workspaces`);
-    assert.doesNotMatch(contents, /appbase-pc-react/iu, `${fileName} must not import appbase PC React packages`);
+    const appbaseReferences = contents
+      .split(/\r?\n/u)
+      .filter((line) => /sdkwork-appbase|appbase-pc-react/iu.test(line));
+    for (const reference of appbaseReferences) {
+      assert.match(
+        reference,
+        /(?:sdkwork-runtime-bootstrap|(?:sdkwork-)?appbase-pc-react|sdkwork-i18n-pc-react)/u,
+        `${fileName} contains an unapproved appbase package: ${reference}`,
+      );
+      assert.doesNotMatch(reference, /apps[\\/]+sdkwork-appbase/iu, `${fileName} must not import an appbase app root`);
+    }
   }
 });

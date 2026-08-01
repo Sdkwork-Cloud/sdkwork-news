@@ -117,13 +117,13 @@ class AssistantController extends ChangeNotifier {
     }
   }
 
-  Future<void> saveSchedule(NewsAgent updated) async {
+  Future<void> saveProfile(NewsAgent updated) async {
     final current = selectedAgent;
     if (current == null || current.id != updated.id) {
       return;
     }
     try {
-      final saved = await _agentRepository.updateSchedule(current, updated);
+      final saved = await _agentRepository.update(current, updated);
       selectedAgent = saved;
       _replaceAgent(saved);
       errorMessage = null;

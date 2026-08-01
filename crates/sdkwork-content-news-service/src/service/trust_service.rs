@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::{NewsProfessionalRepository, NewNewsItemRights, NewNewsC2paProvenance};
+use crate::{
+    shared_news_professional_repository, NewNewsC2paProvenance, NewNewsItemRights,
+    NewsProfessionalRepositoryPort, SharedNewsProfessionalRepository,
+};
 
 pub struct NewsTrustService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -62,8 +65,13 @@ const VALID_PROVENANCE_STATUSES: &[&str] =
     &["unverified", "verified", "failed", "tampered", "expired"];
 
 impl NewsTrustService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_upsert_rights(
@@ -114,10 +122,13 @@ impl NewsTrustService {
             now: now.to_string(),
         };
 
-        self.repo.upsert_item_rights(input).await.map_err(|e| TrustError {
-            code: "storage/error",
-            message: e.to_string(),
-        })?;
+        self.repository
+            .upsert_item_rights(input)
+            .await
+            .map_err(|e| TrustError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
 
         Ok(TrustResult {
             id: command.item_id,
@@ -183,10 +194,13 @@ impl NewsTrustService {
             now: now.to_string(),
         };
 
-        self.repo.upsert_c2pa_provenance(input).await.map_err(|e| TrustError {
-            code: "storage/error",
-            message: e.to_string(),
-        })?;
+        self.repository
+            .upsert_c2pa_provenance(input)
+            .await
+            .map_err(|e| TrustError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
 
         Ok(TrustResult {
             id: command.item_id,

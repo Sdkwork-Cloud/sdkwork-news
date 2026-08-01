@@ -42,6 +42,10 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       animation: widget.controller,
       builder: (context, _) {
         final strings = NewsStrings.of(context);
+        final articles = widget.controller.articles;
+        final failed = widget.controller.errorMessage != null &&
+            articles.isEmpty &&
+            !widget.controller.isLoading;
         return SafeArea(
           bottom: false,
           child: Column(
@@ -62,20 +66,21 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       ),
                     ),
                     IconButton(
-                      tooltip:
-                          MaterialLocalizations.of(context).searchFieldLabel,
-                      onPressed: () {},
+                      key: const ValueKey('news.search.open'),
+                      tooltip: strings.text('news.search'),
+                      onPressed: () => _showSearchSheet(context, strings),
                       icon: const Icon(Icons.search_rounded),
-                    ),
-                    IconButton(
-                      tooltip: strings.text('news.recommended'),
-                      onPressed: () {},
-                      icon: const Icon(Icons.tune_rounded),
                     ),
                   ],
                 ),
               ),
               _CategoryTabs(controller: widget.controller, strings: strings),
+              if (widget.controller.query != null)
+                _SearchContextBar(
+                  onClear: () => widget.controller.search(null),
+                  query: widget.controller.query!,
+                  strings: strings,
+                ),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: widget.controller.refresh,
@@ -83,49 +88,76 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                     controller: _scrollController,
                     key: const PageStorageKey('news-feed'),
                     slivers: [
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(14, 13, 14, 0),
-                        sliver: SliverToBoxAdapter(
-                          child: _LeadStory(strings: strings),
+                      if (articles.isNotEmpty)
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(14, 13, 14, 0),
+                          sliver: SliverToBoxAdapter(
+                            child: _LeadStory(article: articles.first),
+                          ),
                         ),
-                      ),
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(14, 18, 14, 4),
-                        sliver: SliverToBoxAdapter(
-                          child: NewsSectionHeader(
-                            title: strings.text('news.latest'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.local_fire_department_outlined,
-                                    size: 15, color: NewsPalette.danger),
-                                const SizedBox(width: 3),
-                                Text(
-                                  strings.text('news.live'),
-                                  style: const TextStyle(
+                      if (articles.length > 1 ||
+                          widget.controller.query != null)
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(14, 18, 14, 4),
+                          sliver: SliverToBoxAdapter(
+                            child: NewsSectionHeader(
+                              title: widget.controller.query == null
+                                  ? strings.text('news.latest')
+                                  : strings.text('news.searchResults'),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.local_fire_department_outlined,
+                                    size: 15,
                                     color: NewsPalette.danger,
-                                    fontSize: 10,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    strings.text('news.live'),
+                                    style: const TextStyle(
+                                      color: NewsPalette.danger,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (widget.controller.isLoading &&
-                          widget.controller.articles.isEmpty)
+                      if (widget.controller.isLoading && articles.isEmpty)
                         const SliverFillRemaining(
                           hasScrollBody: false,
                           child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (failed)
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: _NewsLoadFailure(
+                            message: strings.text('news.loadFailed'),
+                            retryLabel: strings.text('common.retry'),
+                            onRetry: widget.controller.refresh,
+                          ),
+                        )
+                      else if (articles.isEmpty)
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Text(
+                              strings.text(widget.controller.query == null
+                                  ? 'news.empty'
+                                  : 'news.searchEmpty'),
+                            ),
+                          ),
                         )
                       else
                         SliverPadding(
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           sliver: SliverList.separated(
-                            itemCount: widget.controller.articles.length,
+                            itemCount: articles.length - 1,
                             separatorBuilder: (_, __) => const Divider(),
                             itemBuilder: (context, index) {
-                              final article = widget.controller.articles[index];
+                              final article = articles[index + 1];
                               return _ArticleRow(
                                 article: article,
                                 saved: widget.controller.savedIds
@@ -154,6 +186,148 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _showSearchSheet(
+    BuildContext context,
+    NewsStrings strings,
+  ) async {
+    final selectedQuery = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => _NewsSearchSheet(
+        initialQuery: widget.controller.query ?? '',
+        strings: strings,
+      ),
+    );
+    if (selectedQuery != null && mounted) {
+      await widget.controller.search(selectedQuery);
+    }
+  }
+}
+
+class _NewsSearchSheet extends StatefulWidget {
+  const _NewsSearchSheet({
+    required this.initialQuery,
+    required this.strings,
+  });
+
+  final String initialQuery;
+  final NewsStrings strings;
+
+  @override
+  State<_NewsSearchSheet> createState() => _NewsSearchSheetState();
+}
+
+class _NewsSearchSheetState extends State<_NewsSearchSheet> {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.initialQuery);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    Navigator.of(context).pop(_controller.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        14,
+        16,
+        16 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.strings.text('news.search'),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            key: const ValueKey('news.search.input'),
+            autofocus: true,
+            controller: _controller,
+            onSubmitted: (_) => _submit(),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: widget.strings.text('news.searchHint'),
+              prefixIcon: const Icon(Icons.search_rounded),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              key: const ValueKey('news.search.submit'),
+              onPressed: _submit,
+              icon: const Icon(Icons.search_rounded, size: 18),
+              label: Text(widget.strings.text('news.searchAction')),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchContextBar extends StatelessWidget {
+  const _SearchContextBar({
+    required this.onClear,
+    required this.query,
+    required this.strings,
+  });
+
+  final VoidCallback onClear;
+  final String query;
+  final NewsStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 42,
+      padding: const EdgeInsets.only(left: 16, right: 6),
+      decoration: const BoxDecoration(
+        color: NewsPalette.primarySoft,
+        border: Border(bottom: BorderSide(color: NewsPalette.line)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search_rounded,
+              color: NewsPalette.primary, size: 16),
+          const SizedBox(width: 7),
+          Expanded(
+            child: Text(
+              '“$query”',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: NewsPalette.primaryDark,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          IconButton(
+            key: const ValueKey('news.search.clear'),
+            tooltip: strings.text('news.clearSearch'),
+            onPressed: onClear,
+            icon: const Icon(Icons.close_rounded, size: 18),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -188,7 +362,8 @@ class _CategoryTabs extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final item = categories[index];
-          final selected = controller.category == item.$1;
+          final selected =
+              controller.query == null && controller.category == item.$1;
           return TextButton(
             onPressed: () => controller.selectCategory(item.$1),
             style: TextButton.styleFrom(
@@ -216,9 +391,9 @@ class _CategoryTabs extends StatelessWidget {
 }
 
 class _LeadStory extends StatelessWidget {
-  const _LeadStory({required this.strings});
+  const _LeadStory({required this.article});
 
-  final NewsStrings strings;
+  final NewsArticle article;
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +404,7 @@ class _LeadStory extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(NewsAssets.newsroom, fit: BoxFit.cover),
+            Image.asset(article.imageAsset, fit: BoxFit.cover),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -246,7 +421,7 @@ class _LeadStory extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    strings.text('news.today'),
+                    NewsStrings.of(context).text('news.today'),
                     style: const TextStyle(
                       color: Color(0xFFB9EAD9),
                       fontSize: 10,
@@ -254,9 +429,11 @@ class _LeadStory extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 7),
-                  const Text(
-                    '从信息流到智能体：新闻阅读正在发生结构性变化',
-                    style: TextStyle(
+                  Text(
+                    article.title,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 19,
                       height: 1.4,
@@ -264,12 +441,52 @@ class _LeadStory extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 7),
-                  const Text(
-                    'SDKWork 研究院 · 12 分钟前',
-                    style: TextStyle(color: Colors.white70, fontSize: 10),
+                  Text(
+                    '${article.source} · ${article.timeLabel}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                    ),
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewsLoadFailure extends StatelessWidget {
+  const _NewsLoadFailure({
+    required this.message,
+    required this.retryLabel,
+    required this.onRetry,
+  });
+
+  final String message;
+  final String retryLabel;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cloud_off_outlined, color: NewsPalette.muted),
+            const SizedBox(height: 10),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            IconButton.filledTonal(
+              tooltip: retryLabel,
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
             ),
           ],
         ),

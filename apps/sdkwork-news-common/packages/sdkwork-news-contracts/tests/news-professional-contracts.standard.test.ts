@@ -152,7 +152,7 @@ describe("sdkwork-news professional contract blueprint", () => {
         "NewsCompliancePolicyService",
       ]),
     );
-    expect(NEWS_PROFESSIONAL_MODULES.every((module) => module.filePath.startsWith("crates/") || module.filePath.startsWith("packages/") || module.filePath.startsWith("jobs/"))).toBe(true);
+    expect(NEWS_PROFESSIONAL_MODULES.every((module) => module.filePath.startsWith("apps/") || module.filePath.startsWith("crates/") || module.filePath.startsWith("jobs/"))).toBe(true);
     expect(NEWS_PROFESSIONAL_MODULES.every((module) => module.methods.length > 0)).toBe(true);
     expect(NEWS_PROFESSIONAL_MODULES.flatMap((module) => module.methods).every((method) => method.todo.startsWith("TODO"))).toBe(true);
   });

@@ -13,6 +13,7 @@ axum = "0.8"
 tokio = { version = "1.48", features = ["macros", "rt-multi-thread"] }
 sdkwork-web-bootstrap.workspace = true
 sdkwork-web-core.workspace = true
+serde_json = "1"
 sdkwork-news-database-host = { workspace = true }
 sdkwork-database-sqlx = { workspace = true }
 sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "postgres"] }

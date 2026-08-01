@@ -113,6 +113,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.7"
+  cupertino_icons:
+    dependency: "direct main"
+    description:
+      name: cupertino_icons
+      sha256: "41e005c33bd814be4d3096aff55b1908d419fde52ca656c8c47719ec745873cd"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.9"
   fake_async:
     dependency: transitive
     description:
@@ -545,6 +553,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  sdkwork_iam_app_sdk:
+    dependency: "direct main"
+    description:
+      path: "../../../sdkwork-iam/sdks/sdkwork-iam-app-sdk/sdkwork-iam-app-sdk-flutter/generated/server-openapi"
+      relative: true
+    source: path
+    version: "1.0.0"
   sdkwork_im_flutter_mobile_chat:
     dependency: transitive
     description:
@@ -570,6 +585,13 @@ packages:
     dependency: transitive
     description:
       path: "../../../sdkwork-im/apps/sdkwork-im-flutter-mobile/packages/sdkwork_im_flutter_mobile_shell"
+      relative: true
+    source: path
+    version: "0.1.0"
+  sdkwork_mcp_app_sdk_generated_flutter:
+    dependency: "direct main"
+    description:
+      path: "../../../sdkwork-mcp/sdks/sdkwork-mcp-app-sdk/sdkwork-mcp-app-sdk-flutter/generated/server-openapi"
       relative: true
     source: path
     version: "0.1.0"
@@ -622,10 +644,24 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  sdkwork_news_flutter_mobile_iam_sdk_adapter:
+    dependency: "direct main"
+    description:
+      path: "packages/sdkwork_news_flutter_mobile_iam_sdk_adapter"
+      relative: true
+    source: path
+    version: "0.1.0"
   sdkwork_news_flutter_mobile_im_adapter:
     dependency: "direct main"
     description:
       path: "packages/sdkwork_news_flutter_mobile_im_adapter"
+      relative: true
+    source: path
+    version: "0.1.0"
+  sdkwork_news_flutter_mobile_mcp_sdk_adapter:
+    dependency: "direct main"
+    description:
+      path: "packages/sdkwork_news_flutter_mobile_mcp_sdk_adapter"
       relative: true
     source: path
     version: "0.1.0"

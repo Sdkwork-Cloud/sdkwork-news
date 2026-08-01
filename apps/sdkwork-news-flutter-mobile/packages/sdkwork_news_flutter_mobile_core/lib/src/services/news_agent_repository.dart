@@ -9,8 +9,8 @@ abstract interface class NewsAgentRepository {
 
   Future<NewsAgent> create(NewsAgentDraft draft);
 
-  Future<NewsAgent> updateSchedule(
-    NewsAgent agent,
+  Future<NewsAgent> update(
+    NewsAgent current,
     NewsAgent updated,
   );
 

@@ -13,11 +13,14 @@ This README is the SDKWork module entrypoint for `@sdkwork/news-runtime`. The ma
 
 ## Required SDK Surface
 
-- None declared in `specs/component.spec.json`.
+- `@sdkwork/news-app-sdk` is composed behind `createNewsFeedRuntime`.
+- The application root owns the shared `AuthTokenManager`; this package never reads tokens from environment variables.
 
 ## Configuration
 
 Configuration keys, runtime entrypoints, and integration contracts are declared in `specs/component.spec.json`. Shared modules must receive configuration through typed bootstrap or service boundaries rather than reading host-local environment state directly.
+
+`resolveNewsFeedBootstrap` resolves the News application public HTTP URL from `VITE_SDKWORK_NEWS_APPLICATION_PUBLIC_HTTP_URL` or the platform gateway. Production and staging fail closed when configuration is missing. Demo mode is restricted to development and test.
 
 ## SaaS/Private/Local Behavior
 

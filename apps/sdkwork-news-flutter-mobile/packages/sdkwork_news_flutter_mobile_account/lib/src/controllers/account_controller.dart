@@ -11,8 +11,10 @@ class AccountController extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  Future<void> initialize() async {
-    if (isLoading || profile != null) {
+  Future<void> retry() => initialize(force: true);
+
+  Future<void> initialize({bool force = false}) async {
+    if (isLoading || (!force && profile != null)) {
       return;
     }
     isLoading = true;

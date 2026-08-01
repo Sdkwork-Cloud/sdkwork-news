@@ -115,7 +115,7 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/app/v3/api/news/items/{itemId}/reactions",
-            "reactions.upsert",
+            "reactions.update",
         ),
         route(
             HttpMethod::Get,
@@ -157,7 +157,7 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/app/v3/api/news/interests",
-            "interests.upsert",
+            "interests.update",
         ),
         route(
             HttpMethod::Get,
@@ -167,7 +167,7 @@ pub fn app_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/app/v3/api/news/notification/subscriptions",
-            "notification.subscriptions.upsert",
+            "notification.subscriptions.update",
         ),
         route(
             HttpMethod::Delete,
@@ -217,10 +217,37 @@ pub fn required_dual_token_headers() -> [&'static str; 2] {
     ["Authorization", "Access-Token"]
 }
 
+pub fn gateway_route_manifest() -> sdkwork_web_core::HttpRouteManifest {
+    let routes = app_routes()
+        .into_iter()
+        .map(|route| {
+            sdkwork_web_core::HttpRoute::dual_token(
+                framework_method(route.method),
+                route.path,
+                route.tag,
+                route.operation_id,
+            )
+        })
+        .collect();
+    sdkwork_web_core::HttpRouteManifest::from_owned_routes(routes)
+}
+
+fn framework_method(method: HttpMethod) -> sdkwork_web_core::HttpMethod {
+    match method {
+        HttpMethod::Delete => sdkwork_web_core::HttpMethod::Delete,
+        HttpMethod::Get => sdkwork_web_core::HttpMethod::Get,
+        HttpMethod::Patch => sdkwork_web_core::HttpMethod::Patch,
+        HttpMethod::Post => sdkwork_web_core::HttpMethod::Post,
+        HttpMethod::Put => sdkwork_web_core::HttpMethod::Put,
+    }
+}
+
 fn route(method: HttpMethod, path: &'static str, operation_id: &'static str) -> NewsHttpRoute {
     NewsHttpRoute::new(method, path, "news", operation_id)
 }
 
-pub fn gateway_mount(state: std::sync::Arc<sdkwork_routes_news_open_api::state::NewsHttpState>) -> axum::Router {
+pub fn gateway_mount(
+    state: std::sync::Arc<sdkwork_routes_news_open_api::state::NewsHttpState>,
+) -> axum::Router {
     routes::gateway_mount(state)
 }

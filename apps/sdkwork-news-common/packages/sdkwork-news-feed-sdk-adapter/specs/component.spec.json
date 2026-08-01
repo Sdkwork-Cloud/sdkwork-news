@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-feed-sdk-adapter",
+    "displayName": "SDKWork News Feed SDK Adapter",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-feed-sdk-adapter",
+    "domain": "content",
+    "capability": "news-feed-sdk-adapter",
+    "surface": "app",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Composed SDK consumption." },
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "L4 adapter boundary." },
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source structure." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Public naming." },
+    { "file": "PAGINATION_SPEC.md", "path": "../../../../../sdkwork-specs/PAGINATION_SPEC.md", "purpose": "Server page preservation." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript adapter rules." }
+  ],
+  "contracts": {
+    "layerRole": "sdk-facade",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsFeedPort", "export": "." }],
+    "requiredPorts": [{ "name": "newsFeedServiceContracts", "export": ".", "provider": "@sdkwork/news-feed-service" }],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-news-app-sdk", "surface": "app-api", "credentialMode": "dual-token-manager", "packageName": "@sdkwork/news-app-sdk", "status": "active" }
+    ],
+    "permissionComposition": {
+      "inheritanceMode": "module-catalog-with-overrides",
+      "moduleCatalogRefs": [
+        { "moduleId": "news", "manifestRef": "../../../../specs/iam.module.manifest.json", "inheritPermissions": true, "inheritRoles": true }
+      ],
+      "consumerPolicy": {
+        "forbidLocalPermissionCatalogForDependencyDomains": true,
+        "allowExplicitOverridesOnly": true
+      }
+    },
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": [
+      "pnpm --filter @sdkwork/news-feed-sdk-adapter typecheck",
+      "pnpm --filter @sdkwork/news-feed-sdk-adapter test",
+      "node ../sdkwork-specs/tools/check-app-sdk-consumer-imports.mjs --workspace ."
+    ]
+  }
+}

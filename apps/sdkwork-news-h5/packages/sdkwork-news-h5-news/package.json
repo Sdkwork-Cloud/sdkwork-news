@@ -1,1 +1,23 @@
-{"name":"@sdkwork/news-h5-news","private":true,"version":"0.1.0","type":"module","dependencies":{"lucide-react":"catalog:","react":"catalog:"},"exports":{".":{"types":"./src/index.tsx","import":"./src/index.tsx","default":"./src/index.tsx"}}}
+{
+  "name": "@sdkwork/news-h5-news",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@sdkwork/news-feed-react": "workspace:*",
+    "@sdkwork/news-feed-service": "workspace:*",
+    "lucide-react": "catalog:",
+    "react": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.tsx",
+      "import": "./src/index.tsx",
+      "default": "./src/index.tsx"
+    }
+  },
+  "scripts": {
+    "test": "vitest run apps/sdkwork-news-h5/packages/sdkwork-news-h5-news/tests --root ../../../.. --config vitest.config.ts --configLoader native --pool vmThreads",
+    "typecheck": "tsc --noEmit"
+  }
+}

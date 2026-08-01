@@ -1,0 +1,21 @@
+{
+  "news.title": "新闻",
+  "news.recommended": "推荐",
+  "news.headlines": "要闻",
+  "news.technology": "科技",
+  "news.finance": "财经",
+  "news.business": "商业",
+  "news.world": "国际",
+  "news.policy": "政策",
+  "news.today": "今日要闻",
+  "news.latest": "最新动态",
+  "news.live": "实时更新",
+  "news.search": "搜索新闻",
+  "news.searchHint": "搜索新闻、主题或来源",
+  "news.searchAction": "搜索",
+  "news.searchResults": "搜索结果",
+  "news.searchEmpty": "暂无匹配新闻",
+  "news.clearSearch": "清除搜索",
+  "news.empty": "当前分类暂无内容",
+  "news.loadFailed": "新闻服务暂时不可用"
+}

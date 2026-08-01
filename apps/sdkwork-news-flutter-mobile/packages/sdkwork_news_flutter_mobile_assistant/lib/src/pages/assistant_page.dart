@@ -460,8 +460,8 @@ class _AssistantConversationState extends State<_AssistantConversation> {
                   ),
                 ),
                 IconButton(
-                  tooltip: strings.text('assistant.schedule'),
-                  onPressed: () => _showScheduleSheet(
+                  tooltip: strings.text('assistant.settings'),
+                  onPressed: () => _showProfileSheet(
                     context,
                     widget.controller,
                     widget.agent,
@@ -869,11 +869,7 @@ class _CreateAgentSheetState extends State<_CreateAgentSheet> {
                         name: _name.text.trim(),
                         description: _description.text.trim(),
                         scopes: [_scope.text.trim()],
-                        schedule: const ReadingSchedule(
-                          cadence: ReadingCadence.daily,
-                          hour: 8,
-                          minute: 30,
-                        ),
+                        schedule: const ReadingSchedule.standard(),
                       ),
                     );
                   },
@@ -888,7 +884,7 @@ class _CreateAgentSheetState extends State<_CreateAgentSheet> {
   }
 }
 
-Future<void> _showScheduleSheet(
+Future<void> _showProfileSheet(
   BuildContext context,
   AssistantController controller,
   NewsAgent agent,
@@ -897,75 +893,193 @@ Future<void> _showScheduleSheet(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (_) => _ScheduleSheet(agent: agent),
+    builder: (_) => SafeArea(
+      child: SingleChildScrollView(child: _ProfileSheet(agent: agent)),
+    ),
   );
   if (updated != null) {
-    await controller.saveSchedule(updated);
+    await controller.saveProfile(updated);
   }
 }
 
-class _ScheduleSheet extends StatefulWidget {
-  const _ScheduleSheet({required this.agent});
+class _ProfileSheet extends StatefulWidget {
+  const _ProfileSheet({required this.agent});
 
   final NewsAgent agent;
 
   @override
-  State<_ScheduleSheet> createState() => _ScheduleSheetState();
+  State<_ProfileSheet> createState() => _ProfileSheetState();
 }
 
-class _ScheduleSheetState extends State<_ScheduleSheet> {
-  late ReadingCadence _cadence = widget.agent.schedule.cadence;
+class _ProfileSheetState extends State<_ProfileSheet> {
+  late final TextEditingController _name =
+      TextEditingController(text: widget.agent.name);
+  late final TextEditingController _description =
+      TextEditingController(text: widget.agent.description);
+  late final TextEditingController _scopes =
+      TextEditingController(text: widget.agent.scopes.join('、'));
+  late final TextEditingController _trustedSources =
+      TextEditingController(text: widget.agent.trustedSources.join('、'));
+  late NewsAgentOutputStyle _outputStyle = widget.agent.outputStyle;
   late bool _enabled = widget.agent.schedule.enabled;
   late bool _trustedOnly = widget.agent.trustedSourcesOnly;
+  late List<ReadingDailySlot> _daily = [...widget.agent.schedule.daily];
+  late ReadingWeeklyRule _weekly = widget.agent.schedule.weekly;
+  late ReadingMonthlyRule _monthly = widget.agent.schedule.monthly;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _description.dispose();
+    _scopes.dispose();
+    _trustedSources.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final strings = NewsStrings.of(context);
     final schedule = widget.agent.schedule.copyWith(
-      cadence: _cadence,
+      daily: _daily,
       enabled: _enabled,
+      monthly: _monthly,
+      weekly: _weekly,
     );
+    final profileIsValid =
+        _name.text.trim().isNotEmpty && _description.text.trim().isNotEmpty;
+    final scheduleIsValid = !_enabled ||
+        _daily.any((slot) => slot.enabled) ||
+        (_weekly.enabled && _weekly.weekdays.isNotEmpty) ||
+        _monthly.enabled;
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(strings.text('assistant.schedule'),
+          Text(strings.text('assistant.settings'),
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 3),
           Text(
-            strings.text('assistant.scheduleSubtitle'),
+            strings.text('assistant.settingsSubtitle'),
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
                 ?.copyWith(color: NewsPalette.muted),
           ),
           const SizedBox(height: 16),
-          SegmentedButton<ReadingCadence>(
-            segments: [
-              ButtonSegment(
-                value: ReadingCadence.daily,
-                label: Text(strings.text('assistant.daily')),
+          TextField(
+            controller: _name,
+            decoration: InputDecoration(
+              labelText: strings.text('assistant.name'),
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _description,
+            decoration: InputDecoration(
+              labelText: strings.text('assistant.description'),
+            ),
+            maxLines: 2,
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _scopes,
+            decoration: InputDecoration(
+              labelText: strings.text('assistant.scope'),
+              helperText: strings.text('assistant.listHint'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _trustedSources,
+            decoration: InputDecoration(
+              labelText: strings.text('assistant.trustedSources'),
+              helperText: strings.text('assistant.listHint'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<NewsAgentOutputStyle>(
+            initialValue: _outputStyle,
+            decoration: InputDecoration(
+              labelText: strings.text('assistant.outputStyle'),
+            ),
+            items: [
+              DropdownMenuItem(
+                value: NewsAgentOutputStyle.brief,
+                child: Text(strings.text('assistant.outputBrief')),
               ),
-              ButtonSegment(
-                value: ReadingCadence.weekly,
-                label: Text(strings.text('assistant.weekly')),
+              DropdownMenuItem(
+                value: NewsAgentOutputStyle.analytical,
+                child: Text(strings.text('assistant.outputAnalytical')),
               ),
-              ButtonSegment(
-                value: ReadingCadence.monthly,
-                label: Text(strings.text('assistant.monthly')),
+              DropdownMenuItem(
+                value: NewsAgentOutputStyle.executive,
+                child: Text(strings.text('assistant.outputExecutive')),
               ),
             ],
-            selected: {_cadence},
-            onSelectionChanged: (selection) {
-              setState(() => _cadence = selection.single);
+            onChanged: (value) {
+              if (value != null) setState(() => _outputStyle = value);
             },
           ),
+          const SizedBox(height: 18),
+          Text(
+            strings.text('assistant.schedule'),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 10),
+          _buildDailyEditor(context, strings),
+          const Divider(height: 22),
+          _buildWeeklyEditor(context, strings),
+          const Divider(height: 22),
+          _buildMonthlyEditor(context, strings),
           const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(11),
+            decoration: BoxDecoration(
+              color: const Color(0xFF18251F),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Cron',
+                  style: TextStyle(
+                    color: Color(0xFF9ED9C6),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                for (final expression in schedule.toCronExpressions())
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: Text(
+                      expression,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                if (schedule.toCronExpressions().isEmpty)
+                  const Text(
+                    '已暂停',
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+              ],
+            ),
+          ),
           SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
             title: Text(strings.text('assistant.enabled')),
@@ -983,17 +1097,250 @@ class _ScheduleSheetState extends State<_ScheduleSheet> {
           ),
           const SizedBox(height: 8),
           FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              widget.agent.copyWith(
-                schedule: schedule,
-                trustedSourcesOnly: _trustedOnly,
-              ),
-            ),
+            onPressed: profileIsValid && scheduleIsValid
+                ? () => Navigator.pop(
+                      context,
+                      widget.agent.copyWith(
+                        name: _name.text.trim(),
+                        description: _description.text.trim(),
+                        scopes: _parseProfileList(_scopes.text),
+                        trustedSources:
+                            _parseProfileList(_trustedSources.text),
+                        outputStyle: _outputStyle,
+                        schedule: schedule,
+                        trustedSourcesOnly: _trustedOnly,
+                      ),
+                    )
+                : null,
             child: Text(strings.text('assistant.save')),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDailyEditor(BuildContext context, NewsStrings strings) {
+    return Column(
+      children: [
+        SwitchListTile.adaptive(
+          contentPadding: EdgeInsets.zero,
+          title: Text(strings.text('assistant.daily')),
+          subtitle: Text(strings.text('assistant.dailyHint')),
+          value: _daily.any((slot) => slot.enabled),
+          onChanged: (enabled) => setState(
+            () => _daily = [
+              for (final slot in _daily) slot.copyWith(enabled: enabled),
+            ],
+          ),
+        ),
+        for (var index = 0; index < _daily.length; index += 1)
+          _TimeRow(
+            label: strings
+                .text('assistant.dailySlot')
+                .replaceAll('{index}', '${index + 1}'),
+            time: TimeOfDay(
+              hour: _daily[index].hour,
+              minute: _daily[index].minute,
+            ),
+            onTap: () => _pickDailyTime(context, index),
+            onDelete: _daily.length > 1
+                ? () => setState(
+                      () => _daily = [
+                        for (var itemIndex = 0;
+                            itemIndex < _daily.length;
+                            itemIndex += 1)
+                          if (itemIndex != index) _daily[itemIndex],
+                      ],
+                    )
+                : null,
+          ),
+        if (_daily.length < 4)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => setState(
+                () => _daily = [
+                  ..._daily,
+                  ReadingDailySlot(
+                    id: 'daily-${_daily.length + 1}',
+                    hour: 18,
+                    minute: 0,
+                  ),
+                ],
+              ),
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: Text(strings.text('assistant.addDailySlot')),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildWeeklyEditor(BuildContext context, NewsStrings strings) {
+    final weekdayLabels = MaterialLocalizations.of(context).narrowWeekdays;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile.adaptive(
+          contentPadding: EdgeInsets.zero,
+          title: Text(strings.text('assistant.weekly')),
+          subtitle: Text(strings.text('assistant.weeklyHint')),
+          value: _weekly.enabled,
+          onChanged: (value) =>
+              setState(() => _weekly = _weekly.copyWith(enabled: value)),
+        ),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (var day = DateTime.monday;
+                day <= DateTime.sunday;
+                day += 1)
+              FilterChip(
+                label: Text(
+                  day == DateTime.sunday
+                      ? weekdayLabels.first
+                      : weekdayLabels[day],
+                ),
+                selected: _weekly.weekdays.contains(day),
+                onSelected: (selected) => setState(() {
+                  final weekdays = selected
+                      ? {..._weekly.weekdays, day}.toList()
+                      : _weekly.weekdays.where((item) => item != day).toList();
+                  weekdays.sort();
+                  _weekly = _weekly.copyWith(weekdays: weekdays);
+                }),
+              ),
+          ],
+        ),
+        _TimeRow(
+          label: strings.text('assistant.summaryTime'),
+          time: TimeOfDay(hour: _weekly.hour, minute: _weekly.minute),
+          onTap: () => _pickWeeklyTime(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthlyEditor(BuildContext context, NewsStrings strings) {
+    return Column(
+      children: [
+        SwitchListTile.adaptive(
+          contentPadding: EdgeInsets.zero,
+          title: Text(strings.text('assistant.monthly')),
+          subtitle: Text(strings.text('assistant.monthlyHint')),
+          value: _monthly.enabled,
+          onChanged: (value) =>
+              setState(() => _monthly = _monthly.copyWith(enabled: value)),
+        ),
+        DropdownButtonFormField<int>(
+          initialValue: _monthly.day,
+          decoration: InputDecoration(
+            labelText: strings.text('assistant.monthlyDay'),
+            prefixIcon: const Icon(Icons.event_outlined),
+          ),
+          items: [
+            for (var day = 1; day <= 28; day += 1)
+              DropdownMenuItem(value: day, child: Text('$day')),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              setState(() => _monthly = _monthly.copyWith(day: value));
+            }
+          },
+        ),
+        const SizedBox(height: 8),
+        _TimeRow(
+          label: strings.text('assistant.reviewTime'),
+          time: TimeOfDay(hour: _monthly.hour, minute: _monthly.minute),
+          onTap: () => _pickMonthlyTime(context),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickDailyTime(BuildContext context, int index) async {
+    final current = _daily[index];
+    final value = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: current.hour, minute: current.minute),
+    );
+    if (value != null) {
+      setState(() {
+        _daily = [
+          for (var itemIndex = 0; itemIndex < _daily.length; itemIndex += 1)
+            itemIndex == index
+                ? current.copyWith(hour: value.hour, minute: value.minute)
+                : _daily[itemIndex],
+        ];
+      });
+    }
+  }
+
+  Future<void> _pickWeeklyTime(BuildContext context) async {
+    final value = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: _weekly.hour, minute: _weekly.minute),
+    );
+    if (value != null) {
+      setState(() => _weekly =
+          _weekly.copyWith(hour: value.hour, minute: value.minute));
+    }
+  }
+
+  Future<void> _pickMonthlyTime(BuildContext context) async {
+    final value = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: _monthly.hour, minute: _monthly.minute),
+    );
+    if (value != null) {
+      setState(() => _monthly =
+          _monthly.copyWith(hour: value.hour, minute: value.minute));
+    }
+  }
+}
+
+List<String> _parseProfileList(String value) {
+  return value
+      .split(RegExp(r'[,，、\n]'))
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .toSet()
+      .toList(growable: false);
+}
+
+class _TimeRow extends StatelessWidget {
+  const _TimeRow({
+    required this.label,
+    required this.time,
+    required this.onTap,
+    this.onDelete,
+  });
+
+  final String label;
+  final TimeOfDay time;
+  final VoidCallback onTap;
+  final VoidCallback? onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.schedule_outlined),
+      title: Text(label),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextButton(onPressed: onTap, child: Text(time.format(context))),
+          if (onDelete != null)
+            IconButton(
+              tooltip: '删除时段',
+              onPressed: onDelete,
+              icon: const Icon(Icons.close_rounded, size: 18),
+            ),
+        ],
+      ),
+      onTap: onTap,
     );
   }
 }

@@ -15,10 +15,11 @@
     "manifests": ["pubspec.yaml"]
   },
   "contracts": {
-    "layerRole": "infrastructure-adapter",
+    "layerRole": "frontend-core",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_im_adapter.dart"],
-    "requiredPorts": [{"name": "newsConversationGateway", "package": "sdkwork_news_flutter_mobile_core"}],
+    "providedPorts": [{"name": "newsImConversationGateway", "export": "lib/sdkwork_news_flutter_mobile_im_adapter.dart"}],
+    "requiredPorts": [{"name": "newsConversationGateway", "export": "lib/sdkwork_news_flutter_mobile_core.dart", "package": "sdkwork_news_flutter_mobile_core"}],
     "sdkDependencies": [{"workspace": "sdkwork-im-sdk", "surface": "open-api", "credentialMode": "protected-open-api-api-key-or-dual-token", "packageName": "sdkwork_im_flutter_mobile_chat", "status": "active"}]
   },
-  "verification": {"commands": ["flutter analyze"]}
+  "verification": {"commands": ["flutter analyze", "flutter test"]}
 }

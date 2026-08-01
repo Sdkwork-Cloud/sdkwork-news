@@ -1,1 +1,38 @@
-{"schemaVersion":1,"kind":"sdkwork.component.spec","component":{"name":"@sdkwork/news-pc-ai-store","displayName":"SDKWork News PC AI Store","version":"0.1.0","type":"node-package","root":"sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-ai-store","domain":"content","capability":"news-pc-ai-store","languages":["typescript"],"generated":false,"manifests":["package.json"]},"canonicalSpecs":[{"file":"APP_PC_REACT_UI_SPEC.md","path":"../../../../../sdkwork-specs/APP_PC_REACT_UI_SPEC.md","purpose":"PC feature UI."},{"file":"APP_SDK_INTEGRATION_SPEC.md","path":"../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md","purpose":"App store SDK composition."}],"contracts":{"layerRole":"frontend-feature","publicExports":["."],"providedPorts":[{"name":"newsPcAiStoreFeature","export":"."}],"requiredPorts":[],"runtimeEntrypoints":[],"routeManifest":null,"sdkClients":[],"sdkDependencies":[{"workspace":"sdkwork-appstore-app-sdk","surface":"app-api","credentialMode":"dual-token-manager"},{"workspace":"sdkwork-skills-app-sdk","surface":"app-api","credentialMode":"dual-token-manager"},{"workspace":"sdkwork-mcp-app-sdk","surface":"app-api","credentialMode":"dual-token-manager"}],"events":[],"configKeys":[]},"verification":{"commands":["pnpm --dir apps/sdkwork-news-pc build"]}}
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-pc-ai-store",
+    "displayName": "SDKWork News PC AI Store",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-ai-store",
+    "domain": "ai-store",
+    "capability": "news-pc-ai-store",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical package and capability naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "FRONTEND_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/FRONTEND_CODE_SPEC.md", "purpose": "Frontend service injection." },
+    { "file": "APP_PC_REACT_UI_SPEC.md", "path": "../../../../../sdkwork-specs/APP_PC_REACT_UI_SPEC.md", "purpose": "PC AI Store UI." }
+  ],
+  "contracts": {
+    "layerRole": "frontend-feature",
+    "publicExports": ["."],
+    "providedPorts": [{ "name": "newsPcAiStoreFeature", "export": "." }],
+    "requiredPorts": [{ "name": "newsAiStoreService", "export": ".", "provider": "@sdkwork/news-ai-store-service" }],
+    "runtimeEntrypoints": [],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [],
+    "events": [],
+    "configKeys": []
+  },
+  "verification": {
+    "commands": ["pnpm --filter @sdkwork/news-pc-ai-store test", "pnpm --dir apps/sdkwork-news-pc build"]
+  }
+}

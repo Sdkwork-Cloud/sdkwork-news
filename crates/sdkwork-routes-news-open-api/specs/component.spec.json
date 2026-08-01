@@ -36,6 +36,7 @@
     }
   ],
   "contracts": {
+    "layerRole": "backend-route",
     "publicExports": [
       "."
     ],

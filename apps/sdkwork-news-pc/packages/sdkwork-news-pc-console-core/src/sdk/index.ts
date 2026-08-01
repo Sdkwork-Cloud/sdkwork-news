@@ -1,3 +1,5 @@
+export type { NewsApiPort } from '@sdkwork/news-pc-core/sdk';
+
 export interface ConsoleSdkConfig {
   baseUrl: string;
   tokenManager: TokenManager;

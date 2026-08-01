@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-pc-core",
+    "displayName": "SDKWork News PC Core",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-core",
+    "domain": "content",
+    "capability": "news",
+    "surface": "pc-core",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    {"file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored package structure and public exports."},
+    {"file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical frontend package naming."},
+    {"file": "FRONTEND_SPEC.md", "path": "../../../../../sdkwork-specs/FRONTEND_SPEC.md", "purpose": "Frontend core and SDK port boundaries."},
+    {"file": "APP_PC_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APP_PC_ARCHITECTURE_SPEC.md", "purpose": "PC core package architecture."},
+    {"file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Composed App SDK integration."}
+  ],
+  "contracts": {
+    "layerRole": "frontend-core",
+    "publicExports": [".", "./sdk", "./modules", "./host", "./session", "./composition"],
+    "providedPorts": [
+      {"name": "newsPcSdk", "export": "./sdk"},
+      {"name": "newsPcModuleRegistry", "export": "./modules"},
+      {"name": "newsPcHost", "export": "./host"},
+      {"name": "newsPcSession", "export": "./session"},
+      {"name": "newsPcComposition", "export": "./composition"}
+    ],
+    "requiredPorts": [],
+    "runtimeEntrypoints": ["package.json#scripts.typecheck"],
+    "sdkClients": ["@sdkwork/news-app-sdk"],
+    "sdkDependencies": [
+      {"workspace": "sdkwork-news-app-sdk", "surface": "app-api", "credentialMode": "authenticated-app-api", "packageName": "@sdkwork/news-app-sdk", "status": "active"}
+    ],
+    "permissionComposition": {
+      "inheritanceMode": "module-catalog-with-overrides",
+      "moduleCatalogRefs": [
+        {"moduleId": "news", "manifestRef": "../../../../specs/iam.module.manifest.json", "inheritPermissions": true, "inheritRoles": true}
+      ],
+      "consumerPolicy": {
+        "forbidLocalPermissionCatalogForDependencyDomains": true,
+        "allowExplicitOverridesOnly": true
+      }
+    }
+  },
+  "verification": {"commands": ["pnpm --dir apps/sdkwork-news-pc/packages/sdkwork-news-pc-core typecheck", "pnpm --dir apps/sdkwork-news-pc/packages/sdkwork-news-pc-core test"]}
+}

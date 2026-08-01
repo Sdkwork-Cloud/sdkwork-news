@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdkwork_news_flutter_mobile/bootstrap/app_config.dart';
+import 'package:sdkwork_news_flutter_mobile/bootstrap/runtime.dart';
 import 'package:sdkwork_news_flutter_mobile/routes/news_route_registry.dart';
 import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_core.dart';
 import 'package:sdkwork_news_flutter_mobile_shell/sdkwork_news_flutter_mobile_shell.dart';
@@ -14,6 +15,8 @@ void main() {
         applicationPublicHttpUrl: 'https://news.sdkwork.com',
         applicationPublicWebSocketUrl: 'wss://news.sdkwork.com',
         agentsAppApiUrl: 'https://agents.sdkwork.com/app/v3/api',
+        iamAppApiUrl: 'https://iam.sdkwork.com/app/v3/api',
+        mcpAppApiUrl: 'https://mcp.sdkwork.com/app/v3/api',
       );
       expect(config.validate, returnsNormally);
     });
@@ -26,6 +29,8 @@ void main() {
         applicationPublicHttpUrl: '',
         applicationPublicWebSocketUrl: '',
         agentsAppApiUrl: '',
+        iamAppApiUrl: '',
+        mcpAppApiUrl: '',
       );
       expect(invalidProfile.validate, throwsArgumentError);
 
@@ -36,6 +41,8 @@ void main() {
         applicationPublicHttpUrl: 'https://news.sdkwork.com?token=secret',
         applicationPublicWebSocketUrl: 'https://news.sdkwork.com/socket',
         agentsAppApiUrl: 'https://agents.sdkwork.com/v1',
+        iamAppApiUrl: 'https://iam.sdkwork.com/app/v3/api',
+        mcpAppApiUrl: 'https://mcp.sdkwork.com/app/v3/api',
       );
       expect(invalidEndpoint.validate, throwsArgumentError);
     });
@@ -70,5 +77,16 @@ void main() {
         throwsFormatException,
       );
     });
+  });
+
+  test('signed-out production runtime does not construct demo controllers', () {
+    final runtime = NewsRuntime.signedOut();
+
+    expect(runtime.requiresSignIn, isTrue);
+    expect(runtime.shellController, isNull);
+    expect(runtime.assistantController, isNull);
+    expect(runtime.newsController, isNull);
+    expect(runtime.storeController, isNull);
+    expect(runtime.accountController, isNull);
   });
 }

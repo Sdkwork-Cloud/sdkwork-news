@@ -8,7 +8,7 @@ import {
   NEWS_PROFESSIONAL_API_OPERATIONS,
   NEWS_PROFESSIONAL_MODULES,
   NEWS_PROFESSIONAL_TABLES,
-} from "../packages/common/news/sdkwork-news-contracts/src/index.ts";
+} from "../apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/index.ts";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(scriptDir, "..");
@@ -65,7 +65,7 @@ function apiRegistry() {
     owner: "sdkwork-news",
     status: "design",
     sourceModules: [
-      "packages/common/news/sdkwork-news-contracts/src/professional-api.ts",
+      "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-api.ts",
       "crates/sdkwork-routes-news-open-api",
       "crates/sdkwork-routes-news-app-api",
       "crates/sdkwork-routes-news-backend-api",
@@ -159,7 +159,7 @@ function schemaRegistry() {
         "migrations/0006_news_live_coverage_foundation.sql",
       ],
       plannedMigration: "migrations/0007_news_professional_newsroom_foundation.sql",
-      commonContract: "packages/common/news/sdkwork-news-contracts/src/professional-schema.ts",
+      commonContract: "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-schema.ts",
     },
     tableCount: {
       implemented: implementedTables.length,

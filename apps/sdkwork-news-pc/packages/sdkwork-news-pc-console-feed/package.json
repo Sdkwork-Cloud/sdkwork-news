@@ -7,8 +7,7 @@
     "@sdkwork/news-pc-core": "workspace:*",
     "@sdkwork/news-pc-commons": "workspace:*",
     "@sdkwork/news-pc-console-core": "workspace:*",
-    "@sdkwork/news-pc-console-shell": "workspace:*",
-    "@sdkwork/news-app-sdk": "workspace:*"
+    "@sdkwork/news-pc-console-shell": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18.2.0 <20.0.0",

@@ -1,7 +1,12 @@
 use sdkwork_web_core::{HttpMethod, HttpRoute, HttpRouteManifest};
 
 const HTTP_ROUTES: &[HttpRoute] = &[
-    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/items", "news", "items.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/items",
+        "news",
+        "items.list",
+    ),
     HttpRoute::public(
         HttpMethod::Get,
         "/open/v3/api/news/items/{itemId}",
@@ -26,7 +31,12 @@ const HTTP_ROUTES: &[HttpRoute] = &[
         "news",
         "channels.feed.list",
     ),
-    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/topics", "news", "topics.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/topics",
+        "news",
+        "topics.list",
+    ),
     HttpRoute::public(
         HttpMethod::Get,
         "/open/v3/api/news/topics/{topicId}/items",
@@ -45,7 +55,12 @@ const HTTP_ROUTES: &[HttpRoute] = &[
         "news",
         "trending.list",
     ),
-    HttpRoute::public(HttpMethod::Get, "/open/v3/api/news/search", "news", "search.list"),
+    HttpRoute::public(
+        HttpMethod::Get,
+        "/open/v3/api/news/search",
+        "news",
+        "search.list",
+    ),
     HttpRoute::public(
         HttpMethod::Get,
         "/open/v3/api/news/search/suggestions",

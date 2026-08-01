@@ -1,1 +1,23 @@
-{"name":"@sdkwork/news-pc-ai-store","private":true,"version":"0.1.0","type":"module","dependencies":{"lucide-react":"catalog:","react":"catalog:"},"exports":{".":{"types":"./src/index.tsx","import":"./src/index.tsx","default":"./src/index.tsx"}}}
+{
+  "name": "@sdkwork/news-pc-ai-store",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@sdkwork/news-ai-store-react": "workspace:*",
+    "@sdkwork/news-ai-store-service": "workspace:*",
+    "lucide-react": "catalog:",
+    "react": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.tsx",
+      "import": "./src/index.tsx",
+      "default": "./src/index.tsx"
+    }
+  },
+  "scripts": {
+    "test": "vitest run apps/sdkwork-news-pc/packages/sdkwork-news-pc-ai-store/tests --root ../../../.. --config vitest.config.ts --configLoader native --pool vmThreads",
+    "typecheck": "tsc --noEmit"
+  }
+}

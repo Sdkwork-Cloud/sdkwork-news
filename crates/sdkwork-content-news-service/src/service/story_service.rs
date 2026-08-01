@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::{NewsProfessionalRepository, NewNewsStory, NewNewsStoryItem, NewsStoredStory};
+use crate::{
+    shared_news_professional_repository, NewNewsStory, NewNewsStoryItem,
+    NewsProfessionalRepositoryPort, NewsStoredStory, SharedNewsProfessionalRepository,
+};
 
 pub struct NewsStoryService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -63,8 +66,13 @@ impl std::fmt::Display for StoryError {
 impl std::error::Error for StoryError {}
 
 impl NewsStoryService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_create_story(&self, command: &CreateStoryCommand) -> Result<(), StoryError> {
@@ -129,10 +137,13 @@ impl NewsStoryService {
             now: now.clone(),
         };
 
-        self.repo.create_story(input).await.map_err(|e| StoryError {
-            code: "storage/error",
-            message: e.to_string(),
-        })?;
+        self.repository
+            .create_story(input)
+            .await
+            .map_err(|e| StoryError {
+                code: "storage/error",
+                message: e.to_string(),
+            })?;
 
         Ok(StoryResult {
             id,
@@ -146,7 +157,7 @@ impl NewsStoryService {
         tenant_id: &str,
         story_id: &str,
     ) -> Result<Option<NewsStoredStory>, StoryError> {
-        self.repo
+        self.repository
             .retrieve_story(tenant_id, story_id)
             .await
             .map_err(|e| StoryError {
@@ -161,7 +172,7 @@ impl NewsStoryService {
         status: Option<&str>,
         limit: i64,
     ) -> Result<Vec<NewsStoredStory>, StoryError> {
-        self.repo
+        self.repository
             .list_stories(tenant_id, status, limit)
             .await
             .map_err(|e| StoryError {
@@ -182,7 +193,7 @@ impl NewsStoryService {
         let title = command.title.unwrap_or_default();
         let summary = command.summary.unwrap_or_default();
 
-        self.repo
+        self.repository
             .update_story(
                 tenant_id,
                 story_id,
@@ -215,7 +226,7 @@ impl NewsStoryService {
 
         self.validate_publish_story(&story.status)?;
 
-        self.repo
+        self.repository
             .publish_story(tenant_id, story_id, now)
             .await
             .map_err(|e| StoryError {
@@ -230,7 +241,7 @@ impl NewsStoryService {
         story_id: &str,
         now: &str,
     ) -> Result<(), StoryError> {
-        self.repo
+        self.repository
             .delete_story(tenant_id, story_id, now)
             .await
             .map_err(|e| StoryError {
@@ -262,15 +273,20 @@ impl NewsStoryService {
             tenant_id: tenant_id.to_string(),
             story_id: story_id.to_string(),
             item_id: command.item_id,
-            relation_type: command.relation_type.unwrap_or_else(|| "primary".to_string()),
+            relation_type: command
+                .relation_type
+                .unwrap_or_else(|| "primary".to_string()),
             rank: command.rank.unwrap_or(0),
             now: now.to_string(),
         };
 
-        self.repo.attach_story_item(input).await.map_err(|e| StoryError {
-            code: "storage/error",
-            message: e.to_string(),
-        })
+        self.repository
+            .attach_story_item(input)
+            .await
+            .map_err(|e| StoryError {
+                code: "storage/error",
+                message: e.to_string(),
+            })
     }
 
     pub fn validate_update_story(&self, command: &UpdateStoryCommand) -> Result<(), StoryError> {

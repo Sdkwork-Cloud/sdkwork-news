@@ -168,7 +168,12 @@ export function useAdminModeration(options: UseAdminNewsOptions) {
       setLoading(true);
       setError(null);
       const response = await adminNewsService.getModerationQueue();
-      setItems(response || []);
+      const responseItems = Array.isArray(response)
+        ? response
+        : Array.isArray(response.items)
+          ? response.items
+          : [];
+      setItems(responseItems);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch moderation queue'));
     } finally {

@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::NewsProfessionalRepository;
+use crate::{
+    shared_news_professional_repository, NewsProfessionalRepositoryPort,
+    SharedNewsProfessionalRepository,
+};
 
 pub struct NewsCompliancePolicyService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -46,8 +49,13 @@ impl std::fmt::Display for ComplianceError {
 impl std::error::Error for ComplianceError {}
 
 impl NewsCompliancePolicyService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_apply_legal_hold(
@@ -115,7 +123,7 @@ impl NewsCompliancePolicyService {
         format!("{}+{}d", created_at, retention_days)
     }
 
-    pub fn repo(&self) -> &NewsProfessionalRepository {
-        &self.repo
+    pub fn repository(&self) -> &dyn NewsProfessionalRepositoryPort {
+        self.repository.as_ref()
     }
 }

@@ -12,6 +12,45 @@ abstract interface class AiStoreRepository {
   Future<void> uninstall(String entryId);
 }
 
+class AiStoreCapabilityUnavailable implements Exception {
+  const AiStoreCapabilityUnavailable(this.kind, this.operation);
+
+  final AiStoreKind kind;
+  final String operation;
+
+  @override
+  String toString() =>
+      '${kind.name} AI Store capability does not support $operation';
+}
+
+class UnavailableAiStoreRepository implements AiStoreRepository {
+  const UnavailableAiStoreRepository();
+
+  @override
+  Future<AiStorePageResult> list({
+    required AiStoreKind kind,
+    String? cursor,
+    int pageSize = 20,
+  }) =>
+      Future.error(AiStoreCapabilityUnavailable(kind, 'catalog listing'));
+
+  @override
+  Future<void> install(String entryId) => Future.error(
+        const AiStoreCapabilityUnavailable(
+          AiStoreKind.product,
+          'installation',
+        ),
+      );
+
+  @override
+  Future<void> uninstall(String entryId) => Future.error(
+        const AiStoreCapabilityUnavailable(
+          AiStoreKind.product,
+          'uninstallation',
+        ),
+      );
+}
+
 class DemoAiStoreRepository implements AiStoreRepository {
   @override
   Future<AiStorePageResult> list({

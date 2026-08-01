@@ -1,7 +1,7 @@
 import 'package:sdkwork_agents_app_sdk/sdkwork_agents_app_sdk.dart';
 import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_core.dart';
 
-const _newsAgentKind = 'sdkwork.news.reader-agent';
+import 'news_agent_manifest_codec.dart';
 
 class AgentsNewsAgentRepository implements NewsAgentRepository {
   AgentsNewsAgentRepository(this._client);
@@ -28,7 +28,8 @@ class AgentsNewsAgentRepository implements NewsAgentRepository {
         .map(_asMap)
         .whereType<Map<String, dynamic>>()
         .map(AgentRecord.fromJson)
-        .where((record) => record.manifest['kind'] == _newsAgentKind)
+        .where((record) =>
+            record.manifest['kind'] == newsReaderAgentManifestKind)
         .map(_fromRecord)
         .toList(growable: false);
     final pageInfo = _asMap(data?['pageInfo']);
@@ -51,7 +52,7 @@ class AgentsNewsAgentRepository implements NewsAgentRepository {
         code: _slug(draft.name, id),
         displayName: draft.name.trim(),
         description: draft.description.trim(),
-        manifest: _manifestFromDraft(draft),
+        manifest: NewsAgentManifestCodec.fromDraft(draft),
         managementProfile: AgentManagementProfile(
           type: 'news-reader',
           memoryEnabled: true,
@@ -59,7 +60,7 @@ class AgentsNewsAgentRepository implements NewsAgentRepository {
         implementationKind: 'managed-agent',
         implementationType: 'AGENT',
         visibility: 'private',
-        tags: const ['news', 'reader-agent'],
+        tags: const ['news-reader'],
         requestedAt: now.toIso8601String(),
       ),
     );
@@ -71,37 +72,32 @@ class AgentsNewsAgentRepository implements NewsAgentRepository {
     NewsAgent agent,
     String conversationId,
   ) {
-    return _updateManifest(
+    final updated = agent.copyWith(conversationId: conversationId);
+    return _update(
       agent,
-      _manifestFromAgent(agent, conversationId: conversationId),
+      updated,
     );
   }
 
   @override
-  Future<NewsAgent> updateSchedule(
-    NewsAgent agent,
+  Future<NewsAgent> update(
+    NewsAgent current,
     NewsAgent updated,
   ) {
-    return _updateManifest(
-      agent,
-      _manifestFromAgent(
-        updated,
-        conversationId: updated.conversationId,
-      ),
-    );
+    return _update(current, updated);
   }
 
-  Future<NewsAgent> _updateManifest(
-    NewsAgent agent,
-    Map<String, dynamic> manifest,
-  ) async {
+  Future<NewsAgent> _update(NewsAgent current, NewsAgent updated) async {
     final response = await _client.ai.agentsUpdate(
-      agent.id,
+      current.id,
       UpdateAgentRequest(
-        displayName: agent.name,
-        description: agent.description,
-        manifest: manifest,
-        expectedVersion: agent.version,
+        displayName: updated.name,
+        description: updated.description,
+        manifest: NewsAgentManifestCodec.fromAgent(
+          updated,
+          conversationId: updated.conversationId,
+        ),
+        expectedVersion: current.version,
         requestedAt: DateTime.now().toUtc().toIso8601String(),
       ),
     );
@@ -119,8 +115,28 @@ AgentRecord _readAgentRecord(dynamic data) {
 }
 
 NewsAgent _fromRecord(AgentRecord record) {
-  final news = _asMap(record.manifest['news']) ?? const {};
-  final color = record.managementProfile?.color ?? news['color']?.toString();
+  final news = _asMap(record.manifest['newsReader']) ??
+      _asMap(record.manifest['news']) ??
+      const {};
+  final readingScope = _asMap(news['readingScope']) ?? const {};
+  final categories = _asList(readingScope['categories'])
+      .map((item) => '$item')
+      .toList(growable: false);
+  final keywords = _asList(readingScope['keywords'])
+      .map((item) => '$item')
+      .toList(growable: false);
+  final legacyScopes =
+      _asList(news['scopes']).map((item) => '$item').toList(growable: false);
+  final trustedSources = _asList(readingScope['trustedSources']).isNotEmpty
+      ? _asList(readingScope['trustedSources'])
+          .map((item) => '$item')
+          .toList(growable: false)
+      : _asList(news['trustedSources'])
+          .map((item) => '$item')
+          .toList(growable: false);
+  final color = record.managementProfile?.color ??
+      news['accent']?.toString() ??
+      news['color']?.toString();
   return NewsAgent(
     id: record.agentId,
     code: record.code,
@@ -128,45 +144,22 @@ NewsAgent _fromRecord(AgentRecord record) {
     initial: _initial(record.displayName),
     colorValue: _parseColor(color),
     description: record.description ?? '',
-    summary: news['lastSummary']?.toString() ?? '',
+    summary: news['lastDigestSummary']?.toString() ??
+        news['lastSummary']?.toString() ??
+        '',
     lastActivityLabel: news['lastActivityLabel']?.toString() ?? '',
     conversationId: news['conversationId']?.toString(),
     unreadCount: (news['unreadCount'] as num?)?.toInt() ?? 0,
     version: record.version,
     trustedSourcesOnly: news['trustedSourcesOnly'] != false,
-    scopes: _asList(news['scopes']).map((item) => '$item').toList(),
+    trustedSources: trustedSources,
+    scopes: categories.isEmpty && keywords.isEmpty
+        ? legacyScopes
+        : {...categories, ...keywords}.toList(growable: false),
+    outputStyle: _readOutputStyle(news['tone'] ?? news['outputStyle']),
     schedule: ReadingSchedule.fromJson(_asMap(news['schedule'])),
   );
 }
-
-Map<String, dynamic> _manifestFromDraft(NewsAgentDraft draft) => {
-      'kind': _newsAgentKind,
-      'version': 1,
-      'news': {
-        'conversationId': null,
-        'trustedSourcesOnly': draft.trustedSourcesOnly,
-        'scopes': draft.scopes,
-        'schedule': draft.schedule.toJson(),
-      },
-    };
-
-Map<String, dynamic> _manifestFromAgent(
-  NewsAgent agent, {
-  required String? conversationId,
-}) =>
-    {
-      'kind': _newsAgentKind,
-      'version': 1,
-      'news': {
-        'conversationId': conversationId,
-        'trustedSourcesOnly': agent.trustedSourcesOnly,
-        'scopes': agent.scopes,
-        'schedule': agent.schedule.toJson(),
-        'lastSummary': agent.summary,
-        'lastActivityLabel': agent.lastActivityLabel,
-        'color': '#${agent.colorValue.toRadixString(16).padLeft(8, '0')}',
-      },
-    };
 
 String _initial(String name) {
   final trimmed = name.trim();
@@ -202,3 +195,10 @@ Map<String, dynamic>? _asMap(dynamic value) {
 }
 
 List<dynamic> _asList(dynamic value) => value is List ? value : const [];
+
+NewsAgentOutputStyle _readOutputStyle(dynamic value) {
+  return NewsAgentOutputStyle.values.firstWhere(
+    (style) => style.name == value,
+    orElse: () => NewsAgentOutputStyle.analytical,
+  );
+}

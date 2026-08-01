@@ -50,9 +50,17 @@
     }
   ],
   "contracts": {
+    "layerRole": "backend-service",
     "publicExports": [
       "."
     ],
+    "providedPorts": [
+      {
+        "name": "newsProfessionalRepositoryPort",
+        "export": "."
+      }
+    ],
+    "requiredPorts": [],
     "runtimeEntrypoints": [],
     "routeManifest": null,
     "sdkClients": [],

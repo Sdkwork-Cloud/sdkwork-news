@@ -6,6 +6,8 @@ class NewsAppConfig {
     required this.applicationPublicHttpUrl,
     required this.applicationPublicWebSocketUrl,
     required this.agentsAppApiUrl,
+    required this.iamAppApiUrl,
+    required this.mcpAppApiUrl,
   });
 
   final String environment;
@@ -14,6 +16,8 @@ class NewsAppConfig {
   final String applicationPublicHttpUrl;
   final String applicationPublicWebSocketUrl;
   final String agentsAppApiUrl;
+  final String iamAppApiUrl;
+  final String mcpAppApiUrl;
 
   factory NewsAppConfig.fromEnvironment() {
     const environment =
@@ -36,6 +40,14 @@ class NewsAppConfig {
       'SDKWORK_AGENTS_APP_API_URL',
       defaultValue: '',
     );
+    const iamAppApiUrl = String.fromEnvironment(
+      'SDKWORK_IAM_APP_API_URL',
+      defaultValue: '',
+    );
+    const mcpAppApiUrl = String.fromEnvironment(
+      'SDKWORK_MCP_APP_API_URL',
+      defaultValue: '',
+    );
     final config = NewsAppConfig(
       environment: environment,
       deploymentProfile: deploymentProfile,
@@ -43,6 +55,8 @@ class NewsAppConfig {
       applicationPublicHttpUrl: publicHttpUrl,
       applicationPublicWebSocketUrl: publicWebSocketUrl,
       agentsAppApiUrl: agentsAppApiUrl,
+      iamAppApiUrl: iamAppApiUrl,
+      mcpAppApiUrl: mcpAppApiUrl,
     );
     config.validate();
     return config;
@@ -68,20 +82,22 @@ class NewsAppConfig {
       return;
     }
     _requireHttpUrl(applicationPublicHttpUrl, 'applicationPublicHttpUrl');
-    _requireHttpUrl(agentsAppApiUrl, 'agentsAppApiUrl');
+    _requireAppApiUrl(agentsAppApiUrl, 'agentsAppApiUrl');
+    _requireAppApiUrl(iamAppApiUrl, 'iamAppApiUrl');
+    _requireAppApiUrl(mcpAppApiUrl, 'mcpAppApiUrl');
     if (applicationPublicWebSocketUrl.isNotEmpty) {
       _requireWebSocketUrl(
         applicationPublicWebSocketUrl,
         'applicationPublicWebSocketUrl',
       );
     }
-    if (!agentsAppApiUrl.endsWith('/app/v3/api')) {
-      throw ArgumentError.value(
-        agentsAppApiUrl,
-        'agentsAppApiUrl',
-        'must end with /app/v3/api',
-      );
-    }
+  }
+}
+
+void _requireAppApiUrl(String value, String name) {
+  _requireHttpUrl(value, name);
+  if (!value.endsWith('/app/v3/api')) {
+    throw ArgumentError.value(value, name, 'must end with /app/v3/api');
   }
 }
 

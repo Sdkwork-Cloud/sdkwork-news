@@ -7,7 +7,9 @@ class NewsFeedController extends ChangeNotifier {
   NewsFeedController(this._repository);
 
   final NewsFeedRepository _repository;
+  int _requestId = 0;
   String category = 'recommended';
+  String? query;
   List<NewsArticle> articles = const [];
   Set<String> savedIds = const {};
   String? nextCursor;
@@ -19,34 +21,54 @@ class NewsFeedController extends ChangeNotifier {
   Future<void> initialize() => refresh();
 
   Future<void> selectCategory(String value) async {
-    if (category == value) {
+    if (category == value && query == null) {
       return;
     }
     category = value;
-    articles = const [];
-    nextCursor = null;
-    hasMore = false;
-    notifyListeners();
+    query = null;
+    _resetResults();
+    await refresh();
+  }
+
+  Future<void> search(String? value) async {
+    final normalized = value?.trim();
+    final nextQuery =
+        normalized == null || normalized.isEmpty ? null : normalized;
+    if (query == nextQuery && category == 'recommended') {
+      return;
+    }
+    category = 'recommended';
+    query = nextQuery;
+    _resetResults();
     await refresh();
   }
 
   Future<void> refresh() async {
-    if (isLoading) {
-      return;
-    }
+    final requestId = ++_requestId;
     isLoading = true;
     errorMessage = null;
     notifyListeners();
     try {
-      final page = await _repository.list(category: category, pageSize: 20);
+      final page = await _repository.list(
+        category: category,
+        pageSize: 20,
+        query: query,
+      );
+      if (requestId != _requestId) {
+        return;
+      }
       articles = List.unmodifiable(page.items);
       nextCursor = page.nextCursor;
       hasMore = page.hasMore;
     } catch (error) {
-      errorMessage = '$error';
+      if (requestId == _requestId) {
+        errorMessage = '$error';
+      }
     } finally {
-      isLoading = false;
-      notifyListeners();
+      if (requestId == _requestId) {
+        isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -54,6 +76,7 @@ class NewsFeedController extends ChangeNotifier {
     if (!hasMore || isLoadingMore || nextCursor == null) {
       return;
     }
+    final requestId = _requestId;
     isLoadingMore = true;
     notifyListeners();
     try {
@@ -61,7 +84,11 @@ class NewsFeedController extends ChangeNotifier {
         category: category,
         cursor: nextCursor,
         pageSize: 20,
+        query: query,
       );
+      if (requestId != _requestId) {
+        return;
+      }
       final byId = {for (final article in articles) article.id: article};
       for (final article in page.items) {
         byId[article.id] = article;
@@ -70,10 +97,14 @@ class NewsFeedController extends ChangeNotifier {
       nextCursor = page.nextCursor;
       hasMore = page.hasMore;
     } catch (error) {
-      errorMessage = '$error';
+      if (requestId == _requestId) {
+        errorMessage = '$error';
+      }
     } finally {
-      isLoadingMore = false;
-      notifyListeners();
+      if (requestId == _requestId) {
+        isLoadingMore = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -81,6 +112,16 @@ class NewsFeedController extends ChangeNotifier {
     final next = {...savedIds};
     next.contains(id) ? next.remove(id) : next.add(id);
     savedIds = Set.unmodifiable(next);
+    notifyListeners();
+  }
+
+  void _resetResults() {
+    _requestId += 1;
+    articles = const [];
+    nextCursor = null;
+    hasMore = false;
+    isLoadingMore = false;
+    errorMessage = null;
     notifyListeners();
   }
 }

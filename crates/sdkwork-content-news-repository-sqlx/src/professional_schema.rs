@@ -26,18 +26,7 @@ pub struct NewsProfessionalSchemaRegistry {
     pub tables: Vec<NewsProfessionalTable>,
 }
 
-pub trait NewsProfessionalRepositoryPort {
-    fn create_story(&self) -> Result<(), NewsProfessionalRepositoryTodoError>;
-    fn attach_story_item(&self) -> Result<(), NewsProfessionalRepositoryTodoError>;
-    fn create_import_job(&self) -> Result<(), NewsProfessionalRepositoryTodoError>;
-    fn create_export_job(&self) -> Result<(), NewsProfessionalRepositoryTodoError>;
-    fn record_api_operation_audit(&self) -> Result<(), NewsProfessionalRepositoryTodoError>;
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct NewsProfessionalRepositoryTodoError {
-    pub message: &'static str,
-}
+pub use sdkwork_content_news_service::NewsProfessionalRepositoryPort;
 
 pub fn news_professional_schema_registry() -> NewsProfessionalSchemaRegistry {
     let mut tables = crate::news_database_tables()

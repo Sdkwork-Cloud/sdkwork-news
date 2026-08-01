@@ -2,10 +2,12 @@
 
 This directory is the local SDKWork component contract for `@sdkwork/news-runtime`.
 
-- Component root: `sdkwork-news/packages/common/news/sdkwork-news-runtime`
+- Component root: `sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-runtime`
 - Canonical standards: `../../../../../sdkwork-specs/README.md`
 - Machine-readable contract: `specs/component.spec.json`
 
 Read `specs/component.spec.json` before changing this component's public exports, runtime entrypoints, SDK clients, generated artifacts, config keys, or verification commands.
+
+Browser roots import `./config` eagerly and load `./feed-runtime` on demand. The runtime receives the root `AuthTokenManager` and exposes `NewsFeedService`; feature packages never construct the News SDK.
 
 Do not copy root standards into this directory. Link to files under `../../../../../sdkwork-specs/` instead.

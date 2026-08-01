@@ -1,0 +1,21 @@
+{
+  "news.title": "News",
+  "news.recommended": "For you",
+  "news.headlines": "Top",
+  "news.technology": "Tech",
+  "news.finance": "Finance",
+  "news.business": "Business",
+  "news.world": "World",
+  "news.policy": "Policy",
+  "news.today": "Today",
+  "news.latest": "Latest",
+  "news.live": "Live",
+  "news.search": "Search news",
+  "news.searchHint": "Search stories, topics, or sources",
+  "news.searchAction": "Search",
+  "news.searchResults": "Search results",
+  "news.searchEmpty": "No matching stories",
+  "news.clearSearch": "Clear search",
+  "news.empty": "No stories in this category",
+  "news.loadFailed": "The news service is temporarily unavailable"
+}

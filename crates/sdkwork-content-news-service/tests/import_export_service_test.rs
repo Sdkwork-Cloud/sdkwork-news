@@ -47,7 +47,8 @@ async fn import_ninjs_valid_command_passes() {
         organization_id: Some("org1".to_string()),
         source_id: Some("source1".to_string()),
         provider: Some("reuters".to_string()),
-        payload: r#"{"headlines":[{"value":"Breaking News"}],"body_text":"Content here"}"#.to_string(),
+        payload: r#"{"headlines":[{"value":"Breaking News"}],"body_text":"Content here"}"#
+            .to_string(),
         actor_user_id: Some("user1".to_string()),
     };
     assert!(service.validate_import_ninjs(&cmd).is_ok());

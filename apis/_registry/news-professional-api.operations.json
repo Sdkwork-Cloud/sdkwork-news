@@ -6,7 +6,7 @@
   "owner": "sdkwork-news",
   "status": "design",
   "sourceModules": [
-    "packages/common/news/sdkwork-news-contracts/src/professional-api.ts",
+    "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-api.ts",
     "crates/sdkwork-routes-news-open-api",
     "crates/sdkwork-routes-news-app-api",
     "crates/sdkwork-routes-news-backend-api"
@@ -3771,17 +3771,17 @@
     },
     {
       "layer": "integration-adapter",
-      "filePath": "packages/common/news/sdkwork-news-contracts/src/professional-integrations.ts",
+      "filePath": "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-integrations.ts",
       "className": "NewsIndustryFormatAdapter",
       "methodCount": 3,
-      "todo": "TODO(news-module): create NewsIndustryFormatAdapter in packages/common/news/sdkwork-news-contracts/src/professional-integrations.ts and wire it through the SDKWork service boundary."
+      "todo": "TODO(news-module): create NewsIndustryFormatAdapter in apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-integrations.ts and wire it through the SDKWork service boundary."
     },
     {
       "layer": "sdk-port",
-      "filePath": "packages/common/news/sdkwork-news-sdk-ports/src/professional.ts",
+      "filePath": "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/professional.ts",
       "className": "NewsProfessionalSdkPort",
       "methodCount": 3,
-      "todo": "TODO(news-module): create NewsProfessionalSdkPort in packages/common/news/sdkwork-news-sdk-ports/src/professional.ts and wire it through the SDKWork service boundary."
+      "todo": "TODO(news-module): create NewsProfessionalSdkPort in apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/professional.ts and wire it through the SDKWork service boundary."
     }
   ],
   "todo": "TODO(news-api): convert this registry into authored OpenAPI 3.1.2 paths, route manifests, SDK generation inputs, examples, and contract tests."

@@ -7,7 +7,29 @@ abstract interface class NewsFeedRepository {
     required String category,
     String? cursor,
     int pageSize = 20,
+    String? query,
   });
+}
+
+class NewsFeedUnavailable implements Exception {
+  const NewsFeedUnavailable();
+
+  @override
+  String toString() =>
+      'News feed is unavailable until the News Flutter App SDK is configured';
+}
+
+class UnavailableNewsFeedRepository implements NewsFeedRepository {
+  const UnavailableNewsFeedRepository();
+
+  @override
+  Future<NewsArticlePage> list({
+    required String category,
+    String? cursor,
+    int pageSize = 20,
+    String? query,
+  }) =>
+      Future.error(const NewsFeedUnavailable());
 }
 
 class DemoNewsFeedRepository implements NewsFeedRepository {
@@ -16,14 +38,20 @@ class DemoNewsFeedRepository implements NewsFeedRepository {
     required String category,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async {
     final offset = int.tryParse(cursor ?? '') ?? 0;
     final boundedSize = pageSize.clamp(1, 200);
-    final filtered = category == 'recommended'
-        ? demoArticles
-        : demoArticles
-            .where((article) => article.category == category)
-            .toList(growable: false);
+    final normalizedQuery = query?.trim().toLowerCase();
+    final filtered = demoArticles.where((article) {
+      final matchesCategory =
+          category == 'recommended' || article.category == category;
+      final matchesQuery = normalizedQuery == null ||
+          normalizedQuery.isEmpty ||
+          [article.category, article.source, article.summary, article.title]
+              .any((value) => value.toLowerCase().contains(normalizedQuery));
+      return matchesCategory && matchesQuery;
+    }).toList(growable: false);
     final end = (offset + boundedSize).clamp(0, filtered.length);
     return NewsArticlePage(
       items:

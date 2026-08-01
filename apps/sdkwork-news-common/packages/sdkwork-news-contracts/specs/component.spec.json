@@ -6,7 +6,7 @@
     "displayName": "News Contracts",
     "version": "0.1.0",
     "type": "node-package",
-    "root": "sdkwork-news/packages/common/news/sdkwork-news-contracts",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-contracts",
     "domain": "content",
     "capability": "news-contracts",
     "languages": [
@@ -50,15 +50,21 @@
     }
   ],
   "contracts": {
+    "layerRole": "contract",
     "publicExports": [
       "."
     ],
+    "providedPorts": [
+      { "name": "newsContracts", "export": "." }
+    ],
+    "requiredPorts": [],
     "runtimeEntrypoints": [
       "package.json#scripts.typecheck",
       "package.json#scripts.test"
     ],
     "routeManifest": null,
     "sdkClients": [],
+    "sdkDependencies": [],
     "events": [],
     "configKeys": []
   },

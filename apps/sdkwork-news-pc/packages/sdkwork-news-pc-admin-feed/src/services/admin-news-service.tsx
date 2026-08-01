@@ -1,11 +1,11 @@
-import type { NewsApi } from '@sdkwork/news-backend-sdk';
+import type { AdminNewsApiPort } from '@sdkwork/news-pc-admin-core/sdk';
 
 export interface AdminNewsServiceConfig {
-  newsApi: NewsApi;
+  newsApi: AdminNewsApiPort;
 }
 
 export class AdminNewsService {
-  private newsApi: NewsApi;
+  private newsApi: AdminNewsApiPort;
 
   constructor(config: AdminNewsServiceConfig) {
     this.newsApi = config.newsApi;
@@ -166,6 +166,6 @@ export class AdminNewsService {
   }
 }
 
-export function createAdminNewsService(newsApi: NewsApi): AdminNewsService {
+export function createAdminNewsService(newsApi: AdminNewsApiPort): AdminNewsService {
   return new AdminNewsService({ newsApi });
 }

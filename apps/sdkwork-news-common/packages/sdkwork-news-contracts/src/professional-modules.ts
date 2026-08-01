@@ -133,12 +133,12 @@ export const NEWS_PROFESSIONAL_MODULES: readonly NewsProfessionalModuleDefinitio
     method("poll_due_feeds", "async fn poll_due_feeds(now: &str) -> Result<(), NewsWorkerError>", "TODO(news-worker): claim due feeds, call external feed adapter, and persist import jobs.", { tables: ["news_external_feed", "news_external_feed_item", "news_import_job"] }),
     method("retry_failed_feed_items", "async fn retry_failed_feed_items(batch: RetryBatch) -> Result<(), NewsWorkerError>", "TODO(news-worker): retry bounded failures without duplicating imported items.", { tables: ["news_external_feed_item"] }),
   ]),
-  module("integration-adapter", "packages/common/news/sdkwork-news-contracts/src/professional-integrations.ts", "NewsIndustryFormatAdapter", [
+  module("integration-adapter", "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-integrations.ts", "NewsIndustryFormatAdapter", [
     method("import_ninjs", "importNinjs(command: unknown): Promise<unknown>", "TODO(news-integration): parse ninjs into normalized source, author, story, item, media, rights, and trust commands."),
     method("import_newsml_g2", "importNewsmlG2(command: unknown): Promise<unknown>", "TODO(news-integration): parse NewsML-G2 with provider identity and idempotent payload hash."),
     method("export_schema_org", "exportSchemaOrg(command: unknown): Promise<unknown>", "TODO(news-integration): produce JSON-LD with reviewed public fields only."),
   ]),
-  module("sdk-port", "packages/common/news/sdkwork-news-sdk-ports/src/professional.ts", "NewsProfessionalSdkPort", [
+  module("sdk-port", "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/professional.ts", "NewsProfessionalSdkPort", [
     method("bind_open_sdk", "bindOpenSdk(client: GeneratedNewsOpenSdk): SdkworkNewsProfessionalOpenSdkPort", "TODO(news-sdk): bind generated open SDK resource tree to professional open port."),
     method("bind_app_sdk", "bindAppSdk(client: GeneratedNewsAppSdk): SdkworkNewsProfessionalAppSdkPort", "TODO(news-sdk): bind generated app SDK resource tree to professional app port."),
     method("bind_backend_sdk", "bindBackendSdk(client: GeneratedNewsBackendSdk): SdkworkNewsProfessionalBackendSdkPort", "TODO(news-sdk): bind generated backend SDK resource tree to backend-admin professional port."),

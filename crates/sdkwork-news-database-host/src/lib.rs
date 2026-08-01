@@ -30,8 +30,8 @@ pub async fn bootstrap_news_database(pool: DatabasePool) -> Result<NewsDatabaseH
     let manifest = DatabaseManifest::from_file(module.manifest_path())
         .map_err(|error| format!("read news database manifest failed: {error}"))?;
     let options = lifecycle_options_from_env("NEWS", &manifest);
-    let orchestrator = LifecycleOrchestrator::new(pool.clone(), module.clone())
-        .with_applied_by("sdkwork-news");
+    let orchestrator =
+        LifecycleOrchestrator::new(pool.clone(), module.clone()).with_applied_by("sdkwork-news");
 
     orchestrator
         .init()

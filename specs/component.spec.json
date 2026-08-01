@@ -57,9 +57,12 @@
     }
   ],
   "contracts": {
+    "layerRole": "runtime-composition",
     "publicExports": [
       "."
     ],
+    "providedPorts": [],
+    "requiredPorts": [],
     "runtimeEntrypoints": [
       "package.json#scripts.typecheck",
       "package.json#scripts.test"

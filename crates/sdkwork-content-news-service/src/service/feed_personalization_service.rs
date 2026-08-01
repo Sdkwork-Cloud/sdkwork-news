@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::NewsProfessionalRepository;
+use crate::{
+    shared_news_professional_repository, NewsProfessionalRepositoryPort,
+    SharedNewsProfessionalRepository,
+};
 
 pub struct NewsFeedPersonalizationService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -53,8 +56,13 @@ impl std::fmt::Display for PersonalizationError {
 impl std::error::Error for PersonalizationError {}
 
 impl NewsFeedPersonalizationService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_feed_query(&self, query: &FeedQuery) -> Result<(), PersonalizationError> {
@@ -111,7 +119,7 @@ impl NewsFeedPersonalizationService {
         }
     }
 
-    pub fn repo(&self) -> &NewsProfessionalRepository {
-        &self.repo
+    pub fn repository(&self) -> &dyn NewsProfessionalRepositoryPort {
+        self.repository.as_ref()
     }
 }

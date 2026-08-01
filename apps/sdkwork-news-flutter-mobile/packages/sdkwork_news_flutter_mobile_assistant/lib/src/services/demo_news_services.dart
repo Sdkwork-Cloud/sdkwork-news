@@ -52,6 +52,8 @@ class DemoNewsAgentRepository implements NewsAgentRepository {
       schedule: draft.schedule,
       scopes: draft.scopes,
       trustedSourcesOnly: draft.trustedSourcesOnly,
+      trustedSources: draft.trustedSources,
+      outputStyle: draft.outputStyle,
     );
     _agents.insert(0, agent);
     return agent;
@@ -68,8 +70,8 @@ class DemoNewsAgentRepository implements NewsAgentRepository {
   }
 
   @override
-  Future<NewsAgent> updateSchedule(
-    NewsAgent agent,
+  Future<NewsAgent> update(
+    NewsAgent current,
     NewsAgent updated,
   ) async {
     _replace(updated);
@@ -204,12 +206,7 @@ const demoNewsAgents = <NewsAgent>[
     conversationId: 'news-agent-market',
     unreadCount: 3,
     scopes: ['宏观政策', '资本市场', '产业资金'],
-    schedule: ReadingSchedule(
-      cadence: ReadingCadence.daily,
-      hour: 8,
-      minute: 30,
-      additionalDailyTimes: [(hour: 18, minute: 0)],
-    ),
+    schedule: ReadingSchedule.standard(),
   ),
   NewsAgent(
     id: 'ai',
@@ -223,11 +220,7 @@ const demoNewsAgents = <NewsAgent>[
     conversationId: 'news-agent-ai',
     unreadCount: 1,
     scopes: ['模型', 'Agent', '开发工具'],
-    schedule: ReadingSchedule(
-      cadence: ReadingCadence.daily,
-      hour: 7,
-      minute: 30,
-    ),
+    schedule: ReadingSchedule.standard(),
   ),
   NewsAgent(
     id: 'competitor',
@@ -240,12 +233,7 @@ const demoNewsAgents = <NewsAgent>[
     lastActivityLabel: '昨天',
     conversationId: 'news-agent-competitor',
     scopes: ['产品发布', '定价', '客户动向'],
-    schedule: ReadingSchedule(
-      cadence: ReadingCadence.weekly,
-      hour: 9,
-      minute: 0,
-      weekday: DateTime.friday,
-    ),
+    schedule: ReadingSchedule.standard(),
   ),
   NewsAgent(
     id: 'policy',
@@ -258,11 +246,6 @@ const demoNewsAgents = <NewsAgent>[
     lastActivityLabel: '周三',
     conversationId: 'news-agent-policy',
     scopes: ['监管文件', '生效时间', '风险'],
-    schedule: ReadingSchedule(
-      cadence: ReadingCadence.monthly,
-      hour: 9,
-      minute: 0,
-      dayOfMonth: 1,
-    ),
+    schedule: ReadingSchedule.standard(),
   ),
 ];

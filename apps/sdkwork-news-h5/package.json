@@ -4,18 +4,30 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
+    "dev": "node ../../tools/verify-news-build-sources.mjs --scope h5 && vite",
+    "build": "node ../../tools/verify-news-build-sources.mjs --scope h5 && tsc -p tsconfig.json && vite build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run apps/sdkwork-news-h5 --root ../.. --config vitest.config.ts --configLoader native --pool vmThreads",
+    "check": "pnpm typecheck && pnpm test && pnpm build",
+    "verify": "pnpm check",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sdkwork/news-account-runtime": "workspace:*",
+    "@sdkwork/news-account-service": "workspace:*",
+    "@sdkwork/news-agent-bootstrap": "workspace:*",
     "@sdkwork/news-agent-service": "workspace:*",
+    "@sdkwork/news-ai-store-runtime": "workspace:*",
+    "@sdkwork/news-ai-store-service": "workspace:*",
+    "@sdkwork/news-feed-service": "workspace:*",
     "@sdkwork/news-h5-account": "workspace:*",
     "@sdkwork/news-h5-ai-store": "workspace:*",
     "@sdkwork/news-h5-assistant": "workspace:*",
     "@sdkwork/news-h5-news": "workspace:*",
     "@sdkwork/news-h5-shell": "workspace:*",
+    "@sdkwork/news-runtime": "workspace:*",
+    "@sdkwork/sdk-common": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
@@ -24,6 +36,7 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

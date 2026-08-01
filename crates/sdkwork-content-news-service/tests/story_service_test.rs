@@ -210,7 +210,7 @@ async fn determine_timeline_type_review_transition() {
 }
 
 #[tokio::test]
-async fn create_story_persists_to_database() {
+async fn create_story_persists_through_repository_port() {
     let repo = test_helpers::create_test_repo().await;
     let service = NewsStoryService::new(repo);
     let cmd = CreateStoryCommand {
@@ -224,7 +224,7 @@ async fn create_story_persists_to_database() {
         region: Some("US".to_string()),
         actor_user_id: Some("user1".to_string()),
     };
-    
+
     let result = service.create_story(cmd).await;
     assert!(result.is_ok());
     let story_result = result.unwrap();

@@ -1,0 +1,17 @@
+{
+  "name": "@sdkwork/news-account-service",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run apps/sdkwork-news-common/packages/sdkwork-news-account-service/tests --root ../../../.. --config vitest.config.ts --configLoader native --pool vmThreads",
+    "typecheck": "tsc --noEmit"
+  }
+}

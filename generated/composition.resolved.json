@@ -1,0 +1,2714 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.composition.resolved",
+  "repository": "sdkwork-news",
+  "integrations": [
+    {
+      "workspace": "sdkwork-agents-app-sdk",
+      "surface": "app-api",
+      "apiPrefix": "/app/v3/api",
+      "connectivityPlane": "platform",
+      "runtimeMode": "external-via-platform-surface",
+      "mountStatus": null,
+      "envKey": "VITE_SDKWORK_AGENTS_APP_API_BASE_URL",
+      "forbidApplicationSameOriginFallback": true,
+      "sdkOwner": "sdkwork-agents",
+      "apiAuthority": "sdkwork-agents-app-api",
+      "consumerSdkOwner": "sdkwork-news",
+      "corePackage": "sdkwork_news_flutter_mobile_core",
+      "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_core/specs/component.spec.json"
+    },
+    {
+      "workspace": "sdkwork-im-sdk",
+      "surface": "open-api",
+      "apiPrefix": "/im/v3/api",
+      "connectivityPlane": "platform",
+      "runtimeMode": "external-via-platform-surface",
+      "mountStatus": null,
+      "envKey": "VITE_SDKWORK_IM_OPEN_API_BASE_URL",
+      "forbidApplicationSameOriginFallback": true,
+      "sdkOwner": "sdkwork-im",
+      "apiAuthority": "sdkwork-im.im",
+      "consumerSdkOwner": "sdkwork-news",
+      "corePackage": "sdkwork_news_flutter_mobile_core",
+      "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_core/specs/component.spec.json"
+    },
+    {
+      "workspace": "sdkwork-news-app-sdk",
+      "surface": "app-api",
+      "apiPrefix": "/app/v3/api",
+      "connectivityPlane": "application",
+      "runtimeMode": "same-origin-embedded",
+      "mountStatus": null,
+      "envKey": "VITE_SDKWORK_NEWS_APP_API_BASE_URL",
+      "forbidApplicationSameOriginFallback": false,
+      "sdkOwner": "sdkwork-news",
+      "apiAuthority": "sdkwork-news.app",
+      "consumerSdkOwner": "sdkwork-news",
+      "corePackage": "@sdkwork/news-pc-core",
+      "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-core/specs/component.spec.json"
+    },
+    {
+      "workspace": "sdkwork-news-backend-sdk",
+      "surface": "backend-api",
+      "apiPrefix": "/backend/v3/api",
+      "connectivityPlane": "application",
+      "runtimeMode": "same-origin-embedded",
+      "mountStatus": null,
+      "envKey": "VITE_SDKWORK_NEWS_BACKEND_API_BASE_URL",
+      "forbidApplicationSameOriginFallback": false,
+      "sdkOwner": "sdkwork-news",
+      "apiAuthority": "sdkwork-news.backend",
+      "consumerSdkOwner": "sdkwork-news",
+      "corePackage": "@sdkwork/news-pc-admin-core",
+      "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-admin-core/specs/component.spec.json"
+    },
+    {
+      "workspace": "sdkwork-news-app-sdk",
+      "surface": "app-api",
+      "apiPrefix": "/app/v3/api",
+      "connectivityPlane": "application",
+      "runtimeMode": "same-origin-embedded",
+      "mountStatus": null,
+      "envKey": "VITE_SDKWORK_NEWS_APP_API_BASE_URL",
+      "forbidApplicationSameOriginFallback": false,
+      "sdkOwner": "sdkwork-news",
+      "apiAuthority": "sdkwork-news.app",
+      "consumerSdkOwner": "sdkwork-news",
+      "corePackage": "@sdkwork/news-pc-console-core",
+      "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-console-core/specs/component.spec.json"
+    }
+  ],
+  "permissions": {
+    "inheritanceMode": "module-catalog-with-overrides",
+    "inheritedManifests": [
+      {
+        "workspace": "sdkwork-agents-app-sdk",
+        "manifestRef": "../sdkwork-iam/iam/modules/ai/iam.module.manifest.json",
+        "inheritPermissions": true
+      },
+      {
+        "workspace": "sdkwork-im-sdk",
+        "manifestRef": "../sdkwork-im/specs/iam.module.manifest.json",
+        "inheritPermissions": true
+      },
+      {
+        "workspace": "sdkwork-news-app-sdk",
+        "manifestRef": "specs/iam.module.manifest.json",
+        "inheritPermissions": true
+      },
+      {
+        "workspace": "sdkwork-news-backend-sdk",
+        "manifestRef": "specs/iam.module.manifest.json",
+        "inheritPermissions": true
+      },
+      {
+        "workspace": "sdkwork-news-app-sdk",
+        "manifestRef": "specs/iam.module.manifest.json",
+        "inheritPermissions": true
+      }
+    ]
+  },
+  "architecture": {
+    "components": [
+      {
+        "name": "@sdkwork/news-account-iam-adapter",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-iam-adapter",
+        "domain": "account",
+        "capability": "news-account-iam-adapter",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-account-iam-adapter/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAccountPort",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "iamAppSdk",
+            "export": ".",
+            "provider": "@sdkwork/iam-app-sdk"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/iam-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-account-react",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-react",
+        "domain": "account",
+        "capability": "news-account-react-controller",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-account-react/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAccountReactController",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAccountService",
+            "export": ".",
+            "provider": "@sdkwork/news-account-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-account-runtime",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-runtime",
+        "domain": "account",
+        "capability": "news-account-runtime",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-account-runtime/specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          ".",
+          "./config",
+          "./runtime"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAccountRuntime",
+            "export": "./runtime"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "authTokenManager",
+            "export": ".",
+            "provider": "@sdkwork/sdk-common"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/iam-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-account-service",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-service",
+        "domain": "account",
+        "capability": "news-account",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-account-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAccountService",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAccountPort",
+            "export": "."
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-agent-bootstrap",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-bootstrap",
+        "domain": "content",
+        "capability": "news-agent-bootstrap",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-agent-bootstrap/specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          ".",
+          "./config",
+          "./runtime"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentRuntime",
+            "export": "./runtime"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentProfilePort",
+            "export": ".",
+            "package": "@sdkwork/news-agent-sdk-adapter"
+          },
+          {
+            "name": "newsAgentConversationPort",
+            "export": ".",
+            "package": "@sdkwork/news-im-adapter"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "global-token-manager"
+          },
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api-and-realtime",
+            "credentialMode": "global-token-manager"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "src/runtime.ts"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-agent-contracts",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-contracts",
+        "domain": "content",
+        "capability": "news-agent-contracts",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-agent-contracts/specs/component.spec.json",
+        "layerRole": "contract",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentContracts",
+            "export": "."
+          },
+          {
+            "name": "newsAgentConversationPort",
+            "export": "."
+          },
+          {
+            "name": "newsReadingSchedulePolicy",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-agent-sdk-adapter",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-sdk-adapter",
+        "domain": "content",
+        "capability": "news-agent-sdk-adapter",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-agent-sdk-adapter/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentProfiles",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentProfilePort",
+            "export": ".",
+            "package": "@sdkwork/news-agent-contracts"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-agent-service",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-service",
+        "domain": "content",
+        "capability": "news-agent-service",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-agent-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentService",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentProfiles",
+            "export": ".",
+            "package": "@sdkwork/news-agent-contracts"
+          },
+          {
+            "name": "newsAgentConversations",
+            "export": ".",
+            "package": "@sdkwork/news-agent-contracts"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-ai-store-react",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-ai-store-react",
+        "domain": "ai-store",
+        "capability": "news-ai-store-react-controller",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-ai-store-react/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAiStoreReactController",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAiStoreService",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-ai-store-runtime",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-ai-store-runtime",
+        "domain": "ai-store",
+        "capability": "news-ai-store-runtime",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-ai-store-runtime/specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          ".",
+          "./config",
+          "./runtime"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAiStoreRuntime",
+            "export": "./runtime"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "authTokenManager",
+            "export": ".",
+            "provider": "@sdkwork/sdk-common"
+          },
+          {
+            "name": "newsAiStorePort",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-sdk-adapter"
+          },
+          {
+            "name": "newsAiStoreService",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-appstore-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "global-token-manager",
+            "packageName": "@sdkwork/appstore-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-skills-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "global-token-manager",
+            "packageName": "@sdkwork/skills-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "global-token-manager",
+            "packageName": "@sdkwork/mcp-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-ai-store-sdk-adapter",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-ai-store-sdk-adapter",
+        "domain": "ai-store",
+        "capability": "news-ai-store-sdk-adapter",
+        "surface": "app",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-ai-store-sdk-adapter/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAiStorePort",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAiStoreServiceContracts",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-appstore-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/appstore-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-skills-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/skills-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/mcp-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-ai-store-service",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-ai-store-service",
+        "domain": "ai-store",
+        "capability": "news-ai-store",
+        "surface": "app",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-ai-store-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAiStoreService",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAiStorePort",
+            "export": "."
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-contracts",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-contracts",
+        "domain": "content",
+        "capability": "news-contracts",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-contracts/specs/component.spec.json",
+        "layerRole": "contract",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsContracts",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck",
+          "package.json#scripts.test"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-feed-react",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-feed-react",
+        "domain": "content",
+        "capability": "news-feed-react-controller",
+        "surface": "shared-ui",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-feed-react/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsFeedReactController",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsFeedService",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-feed-sdk-adapter",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-feed-sdk-adapter",
+        "domain": "content",
+        "capability": "news-feed-sdk-adapter",
+        "surface": "app",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-feed-sdk-adapter/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsFeedPort",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsFeedServiceContracts",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-feed-service",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-feed-service",
+        "domain": "content",
+        "capability": "news-feed",
+        "surface": "app",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-feed-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsFeedService",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsFeedPort",
+            "export": "."
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.test",
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-im-adapter",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-im-adapter",
+        "domain": "content",
+        "capability": "news-im-adapter",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-im-adapter/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentConversations",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentConversationPort",
+            "export": ".",
+            "package": "@sdkwork/news-agent-contracts"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "protected-open-api-api-key-or-dual-token"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-runtime",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-runtime",
+        "domain": "content",
+        "capability": "news-runtime",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-runtime/specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          ".",
+          "./config",
+          "./feed-runtime"
+        ],
+        "providedPorts": [
+          {
+            "name": "sdkworkNewsRuntime",
+            "export": "."
+          },
+          {
+            "name": "newsFeedRuntime",
+            "export": "./feed-runtime"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "authTokenManager",
+            "export": ".",
+            "provider": "@sdkwork/sdk-common"
+          },
+          {
+            "name": "newsFeedPort",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-sdk-adapter"
+          },
+          {
+            "name": "newsFeedService",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "global-token-manager",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck",
+          "package.json#scripts.test"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-sdk-ports",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports",
+        "domain": "content",
+        "capability": "news-sdk-ports",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/specs/component.spec.json",
+        "layerRole": "contract",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsSdkPorts",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck",
+          "package.json#scripts.test"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-service",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-service",
+        "domain": "content",
+        "capability": "news-service",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-common/packages/sdkwork-news-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsService",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAppSdkPort",
+            "export": ".",
+            "package": "@sdkwork/news-sdk-ports"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck",
+          "package.json#scripts.test"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_account",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_account",
+        "domain": "news",
+        "capability": "account",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_account/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_account.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "accountRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_account.dart"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "injected-repository",
+            "packageName": "sdkwork_iam_app_sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_agent_sdk_adapter",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_agent_sdk_adapter",
+        "domain": "news",
+        "capability": "agent-sdk-adapter",
+        "surface": "app",
+        "languages": [
+          "dart"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_agent_sdk_adapter/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentSdkRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart",
+            "package": "sdkwork_news_flutter_mobile_core"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "sdkwork_agents_app_sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_ai_store",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_ai_store",
+        "domain": "news",
+        "capability": "ai-store",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_ai_store/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_ai_store.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "aiStoreRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_ai_store.dart"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-appstore-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "injected-repository",
+            "status": "planned"
+          },
+          {
+            "workspace": "sdkwork-skills-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "injected-repository",
+            "status": "planned"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "injected-repository",
+            "packageName": "sdkwork_mcp_app_sdk_generated_flutter",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_assistant",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_assistant",
+        "domain": "news",
+        "capability": "assistant",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_assistant/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_assistant.dart"
+        ],
+        "providedPorts": [],
+        "requiredPorts": [
+          {
+            "name": "newsAgentRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart",
+            "package": "sdkwork_news_flutter_mobile_core"
+          },
+          {
+            "name": "newsConversationGateway",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart",
+            "package": "sdkwork_news_flutter_mobile_core"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "injected-via-newsConversationGateway",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_commons",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_commons",
+        "domain": "news",
+        "capability": "commons",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_commons/specs/component.spec.json",
+        "layerRole": "frontend-commons",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_commons.dart"
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_core",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_core",
+        "domain": "news",
+        "capability": "core",
+        "surface": "app",
+        "languages": [
+          "dart"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_core/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_core.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsAgentRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart"
+          },
+          {
+            "name": "newsConversationGateway",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "sdkwork_agents_app_sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "protected-open-api-api-key-or-dual-token",
+            "packageName": "sdkwork_im_flutter_mobile_chat",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_host",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_host",
+        "domain": "news",
+        "capability": "host",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_host/specs/component.spec.json",
+        "layerRole": "frontend-host",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_host.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsSessionStore",
+            "export": "lib/sdkwork_news_flutter_mobile_host.dart"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "session-model",
+            "credentialMode": "secure-platform-storage",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_iam_sdk_adapter",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_iam_sdk_adapter",
+        "domain": "news",
+        "capability": "iam-account-sdk-adapter",
+        "surface": "app",
+        "languages": [
+          "dart"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_iam_sdk_adapter/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_iam_sdk_adapter.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "iamAccountRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_iam_sdk_adapter.dart"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "accountRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_account.dart",
+            "package": "sdkwork_news_flutter_mobile_account"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "sdkwork_iam_app_sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_im_adapter",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_im_adapter",
+        "domain": "news",
+        "capability": "im-adapter",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_im_adapter/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_im_adapter.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsImConversationGateway",
+            "export": "lib/sdkwork_news_flutter_mobile_im_adapter.dart"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsConversationGateway",
+            "export": "lib/sdkwork_news_flutter_mobile_core.dart",
+            "package": "sdkwork_news_flutter_mobile_core"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "protected-open-api-api-key-or-dual-token",
+            "packageName": "sdkwork_im_flutter_mobile_chat",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_mcp_sdk_adapter",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_mcp_sdk_adapter",
+        "domain": "news",
+        "capability": "mcp-store-sdk-adapter",
+        "surface": "app",
+        "languages": [
+          "dart"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_mcp_sdk_adapter/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_mcp_sdk_adapter.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "mcpAiStoreRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_mcp_sdk_adapter.dart"
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "aiStoreRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_ai_store.dart",
+            "package": "sdkwork_news_flutter_mobile_ai_store"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "sdkwork_mcp_app_sdk_generated_flutter",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_news",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_news",
+        "domain": "news",
+        "capability": "feed",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_news/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_news.dart"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsFeedRepository",
+            "export": "lib/sdkwork_news_flutter_mobile_news.dart"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork_news_flutter_mobile_shell",
+        "type": "flutter-package",
+        "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_shell",
+        "domain": "news",
+        "capability": "shell",
+        "surface": "app",
+        "languages": [
+          "dart",
+          "flutter"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_shell/specs/component.spec.json",
+        "layerRole": "frontend-shell",
+        "publicExports": [
+          "lib/sdkwork_news_flutter_mobile_shell.dart"
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-news-flutter-mobile",
+        "type": "flutter-mobile-app-root",
+        "root": "apps/sdkwork-news-flutter-mobile",
+        "domain": "content",
+        "capability": "news-mobile",
+        "surface": "app",
+        "languages": [
+          "dart"
+        ],
+        "source": "apps/sdkwork-news-flutter-mobile/specs/component.spec.json",
+        "layerRole": "frontend-host",
+        "publicExports": [],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "packageName": "sdkwork_agents_app_sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-im",
+            "surface": "im",
+            "packageName": "sdkwork_im_flutter_mobile_chat",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "packageName": "sdkwork_iam_app_sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "packageName": "sdkwork_mcp_app_sdk_generated_flutter",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "lib/main.dart"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-h5-account",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-h5/packages/sdkwork-news-h5-account",
+        "domain": "content",
+        "capability": "news-h5-account",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/packages/sdkwork-news-h5-account/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsH5AccountFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAccountService",
+            "export": ".",
+            "provider": "@sdkwork/news-account-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-h5-ai-store",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-h5/packages/sdkwork-news-h5-ai-store",
+        "domain": "ai-store",
+        "capability": "news-h5-ai-store",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/packages/sdkwork-news-h5-ai-store/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsH5AiStoreFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAiStoreService",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-h5-assistant",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-h5/packages/sdkwork-news-h5-assistant",
+        "domain": "content",
+        "capability": "news-h5-assistant",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/packages/sdkwork-news-h5-assistant/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsH5AssistantFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentService",
+            "export": ".",
+            "package": "@sdkwork/news-agent-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "protected-open-api-api-key-or-dual-token"
+          },
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-h5-news",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-h5/packages/sdkwork-news-h5-news",
+        "domain": "content",
+        "capability": "news-h5-feed",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/packages/sdkwork-news-h5-news/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsH5FeedFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsFeedService",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-h5-shell",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-h5/packages/sdkwork-news-h5-shell",
+        "domain": "content",
+        "capability": "news-h5-shell",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/packages/sdkwork-news-h5-shell/specs/component.spec.json",
+        "layerRole": "frontend-shell",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsH5Shell",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-news-h5",
+        "type": "react-h5-app-root",
+        "root": "apps/sdkwork-news-h5",
+        "domain": "content",
+        "capability": "news-h5",
+        "surface": "h5",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-h5/specs/component.spec.json",
+        "layerRole": "frontend-host",
+        "publicExports": [],
+        "providedPorts": [],
+        "requiredPorts": [
+          {
+            "name": "newsAccountRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-account-runtime"
+          },
+          {
+            "name": "newsAgentRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-agent-bootstrap"
+          },
+          {
+            "name": "newsFeedRuntime",
+            "export": "./feed-runtime",
+            "provider": "@sdkwork/news-runtime"
+          },
+          {
+            "name": "newsAiStoreRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-ai-store-runtime"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/iam-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/agents-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api-and-realtime",
+            "packageName": "@sdkwork/im-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-appstore-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/appstore-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-skills-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/skills-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/mcp-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "src/main.tsx"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-account",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-account",
+        "domain": "content",
+        "capability": "news-pc-account",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-account/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcAccountFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAccountService",
+            "export": ".",
+            "provider": "@sdkwork/news-account-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-admin-core",
+        "type": "node-package",
+        "root": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-admin-core",
+        "domain": "content",
+        "capability": "news",
+        "surface": "backend-admin",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-admin-core/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          ".",
+          "./sdk",
+          "./modules",
+          "./host",
+          "./session",
+          "./composition",
+          "./permissions"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcAdminSdk",
+            "export": "./sdk"
+          },
+          {
+            "name": "newsPcAdminModuleRegistry",
+            "export": "./modules"
+          },
+          {
+            "name": "newsPcAdminHost",
+            "export": "./host"
+          },
+          {
+            "name": "newsPcAdminSession",
+            "export": "./session"
+          },
+          {
+            "name": "newsPcAdminComposition",
+            "export": "./composition"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-news-backend-sdk",
+            "surface": "backend-api",
+            "credentialMode": "authenticated-backend-admin",
+            "packageName": "@sdkwork/news-backend-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-ai-store",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-ai-store",
+        "domain": "ai-store",
+        "capability": "news-pc-ai-store",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-ai-store/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcAiStoreFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAiStoreService",
+            "export": ".",
+            "provider": "@sdkwork/news-ai-store-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-assistant",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-assistant",
+        "domain": "content",
+        "capability": "news-pc-assistant",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-assistant/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcAssistantFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsAgentService",
+            "export": ".",
+            "package": "@sdkwork/news-agent-service"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api",
+            "credentialMode": "protected-open-api-api-key-or-dual-token"
+          },
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "dual-token-manager"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-console-core",
+        "type": "node-package",
+        "root": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-console-core",
+        "domain": "content",
+        "capability": "news",
+        "surface": "console",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-console-core/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          ".",
+          "./sdk",
+          "./modules",
+          "./host",
+          "./session",
+          "./composition",
+          "./permissions"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcConsoleSdk",
+            "export": "./sdk"
+          },
+          {
+            "name": "newsPcConsoleModuleRegistry",
+            "export": "./modules"
+          },
+          {
+            "name": "newsPcConsoleHost",
+            "export": "./host"
+          },
+          {
+            "name": "newsPcConsoleSession",
+            "export": "./session"
+          },
+          {
+            "name": "newsPcConsoleComposition",
+            "export": "./composition"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-core",
+        "type": "node-package",
+        "root": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-core",
+        "domain": "content",
+        "capability": "news",
+        "surface": "pc-core",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-core/specs/component.spec.json",
+        "layerRole": "frontend-core",
+        "publicExports": [
+          ".",
+          "./sdk",
+          "./modules",
+          "./host",
+          "./session",
+          "./composition"
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcSdk",
+            "export": "./sdk"
+          },
+          {
+            "name": "newsPcModuleRegistry",
+            "export": "./modules"
+          },
+          {
+            "name": "newsPcHost",
+            "export": "./host"
+          },
+          {
+            "name": "newsPcSession",
+            "export": "./session"
+          },
+          {
+            "name": "newsPcComposition",
+            "export": "./composition"
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "credentialMode": "authenticated-app-api",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-news",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-news",
+        "domain": "content",
+        "capability": "news-pc-feed",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-news/specs/component.spec.json",
+        "layerRole": "frontend-feature",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcFeedFeature",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsFeedService",
+            "export": ".",
+            "provider": "@sdkwork/news-feed-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-pc-workspace-shell",
+        "type": "node-package",
+        "root": "sdkwork-news/apps/sdkwork-news-pc/packages/sdkwork-news-pc-workspace-shell",
+        "domain": "content",
+        "capability": "news-pc-workspace-shell",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/packages/sdkwork-news-pc-workspace-shell/specs/component.spec.json",
+        "layerRole": "frontend-shell",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsPcWorkspaceShell",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-news-pc",
+        "type": "react-pc-app-root",
+        "root": "apps/sdkwork-news-pc",
+        "domain": "content",
+        "capability": "news-pc",
+        "surface": "pc",
+        "languages": [
+          "typescript"
+        ],
+        "source": "apps/sdkwork-news-pc/specs/component.spec.json",
+        "layerRole": "frontend-host",
+        "publicExports": [],
+        "providedPorts": [],
+        "requiredPorts": [
+          {
+            "name": "newsAccountRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-account-runtime"
+          },
+          {
+            "name": "newsAgentRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-agent-bootstrap"
+          },
+          {
+            "name": "newsFeedRuntime",
+            "export": "./feed-runtime",
+            "provider": "@sdkwork/news-runtime"
+          },
+          {
+            "name": "newsAiStoreRuntime",
+            "export": "./runtime",
+            "provider": "@sdkwork/news-ai-store-runtime"
+          }
+        ],
+        "sdkDependencies": [
+          {
+            "workspace": "sdkwork-iam-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/iam-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-agents-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/agents-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-im-sdk",
+            "surface": "open-api-and-realtime",
+            "packageName": "@sdkwork/im-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-news-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/news-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-appstore-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/appstore-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-skills-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/skills-app-sdk",
+            "status": "active"
+          },
+          {
+            "workspace": "sdkwork-mcp-app-sdk",
+            "surface": "app-api",
+            "packageName": "@sdkwork/mcp-app-sdk",
+            "status": "active"
+          }
+        ],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "src/main.tsx"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-api-news-assembly",
+        "type": "rust-api-assembly",
+        "root": "crates/sdkwork-api-news-assembly",
+        "domain": "application",
+        "capability": "api-assembly",
+        "surface": "api-assembly",
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-api-news-assembly/specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsApiAssembly",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": "assembly-manifest.json",
+        "runtimeEntrypoints": [
+          "src/lib.rs#assemble_api_router"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-api-news-standalone-gateway",
+        "type": "rust-api-standalone-gateway",
+        "root": "crates/sdkwork-api-news-standalone-gateway",
+        "domain": "news",
+        "capability": "api-gateway",
+        "surface": "gateway-api",
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-api-news-standalone-gateway/specs/component.spec.json",
+        "layerRole": "runtime-gateway",
+        "publicExports": [],
+        "providedPorts": [],
+        "requiredPorts": [
+          {
+            "name": "newsApiAssembly",
+            "export": "sdkwork_api_news_assembly::assemble_api_router"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "src/main.rs"
+        ],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-content-news-repository-sqlx",
+        "type": "rust-crate",
+        "root": "sdkwork-news/crates/sdkwork-content-news-repository-sqlx",
+        "domain": "content",
+        "capability": "news",
+        "surface": null,
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-content-news-repository-sqlx/specs/component.spec.json",
+        "layerRole": "backend-repository",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsProfessionalRepositorySqlx",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [
+          {
+            "name": "newsProfessionalRepositoryPort",
+            "export": ".",
+            "package": "sdkwork-content-news-service"
+          }
+        ],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-content-news-service",
+        "type": "rust-crate",
+        "root": "sdkwork-news/crates/sdkwork-content-news-service",
+        "domain": "content",
+        "capability": "news",
+        "surface": null,
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-content-news-service/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [
+          {
+            "name": "newsProfessionalRepositoryPort",
+            "export": "."
+          }
+        ],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-content-news-worker",
+        "type": "rust-crate",
+        "root": "sdkwork-news/crates/sdkwork-content-news-worker",
+        "domain": "content",
+        "capability": "news-worker",
+        "surface": null,
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-content-news-worker/specs/component.spec.json",
+        "layerRole": "backend-service",
+        "publicExports": [
+          ".",
+          "jobs"
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-routes-news-app-api",
+        "type": "web-backend-service",
+        "root": "crates/sdkwork-routes-news-app-api",
+        "domain": "content",
+        "capability": "news",
+        "surface": "app-api",
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-routes-news-app-api/specs/component.spec.json",
+        "layerRole": "backend-route",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": "src/lib.rs#gateway_route_manifest",
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-routes-news-backend-api",
+        "type": "web-backend-service",
+        "root": "crates/sdkwork-routes-news-backend-api",
+        "domain": "content",
+        "capability": "news",
+        "surface": "backend-api",
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-routes-news-backend-api/specs/component.spec.json",
+        "layerRole": "backend-route",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": "src/lib.rs#gateway_route_manifest",
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-routes-news-open-api",
+        "type": "web-backend-service",
+        "root": "crates/sdkwork-routes-news-open-api",
+        "domain": "content",
+        "capability": "news",
+        "surface": "open-api",
+        "languages": [
+          "rust"
+        ],
+        "source": "crates/sdkwork-routes-news-open-api/specs/component.spec.json",
+        "layerRole": "backend-route",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": "src/http_route_manifest.rs#open_route_manifest",
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-app-sdk-workspace",
+        "type": "sdk-family",
+        "root": "sdkwork-news/sdks/sdkwork-news-app-sdk",
+        "domain": "content",
+        "capability": "news-app-sdk-workspace",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "sdks/sdkwork-news-app-sdk/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-backend-sdk-workspace",
+        "type": "sdk-family",
+        "root": "sdkwork-news/sdks/sdkwork-news-backend-sdk",
+        "domain": "content",
+        "capability": "news-backend-sdk-workspace",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "sdks/sdkwork-news-backend-sdk/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "@sdkwork/news-sdk-workspace",
+        "type": "sdk-family",
+        "root": "sdkwork-news/sdks/sdkwork-news-sdk",
+        "domain": "content",
+        "capability": "news-sdk-workspace",
+        "surface": null,
+        "languages": [
+          "typescript"
+        ],
+        "source": "sdks/sdkwork-news-sdk/specs/component.spec.json",
+        "layerRole": "sdk-facade",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [],
+        "dependencyApiSurfaces": []
+      },
+      {
+        "name": "sdkwork-news-workspace",
+        "type": "rust-crate",
+        "root": "sdkwork-news",
+        "domain": "content",
+        "capability": "news-workspace",
+        "surface": null,
+        "languages": [
+          "typescript",
+          "rust"
+        ],
+        "source": "specs/component.spec.json",
+        "layerRole": "runtime-composition",
+        "publicExports": [
+          "."
+        ],
+        "providedPorts": [],
+        "requiredPorts": [],
+        "sdkDependencies": [],
+        "routeManifest": null,
+        "runtimeEntrypoints": [
+          "package.json#scripts.typecheck",
+          "package.json#scripts.test"
+        ],
+        "dependencyApiSurfaces": []
+      }
+    ],
+    "frontend": {
+      "packages": [
+        {
+          "appRoot": "apps/sdkwork-news-h5",
+          "architecture": "h5",
+          "directoryName": "sdkwork-news-h5-account",
+          "name": "@sdkwork/news-h5-account",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-h5",
+          "architecture": "h5",
+          "directoryName": "sdkwork-news-h5-ai-store",
+          "name": "@sdkwork/news-h5-ai-store",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-h5",
+          "architecture": "h5",
+          "directoryName": "sdkwork-news-h5-assistant",
+          "name": "@sdkwork/news-h5-assistant",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-h5",
+          "architecture": "h5",
+          "directoryName": "sdkwork-news-h5-news",
+          "name": "@sdkwork/news-h5-news",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-h5",
+          "architecture": "h5",
+          "directoryName": "sdkwork-news-h5-shell",
+          "name": "@sdkwork/news-h5-shell",
+          "role": "shell"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-account",
+          "name": "@sdkwork/news-pc-account",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-admin-core",
+          "name": "@sdkwork/news-pc-admin-core",
+          "role": "core"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-admin-feed",
+          "name": "@sdkwork/news-pc-admin-feed",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-admin-shell",
+          "name": "@sdkwork/news-pc-admin-shell",
+          "role": "shell"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-ai-store",
+          "name": "@sdkwork/news-pc-ai-store",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-assistant",
+          "name": "@sdkwork/news-pc-assistant",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-commons",
+          "name": "@sdkwork/news-pc-commons",
+          "role": "commons"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-console-core",
+          "name": "@sdkwork/news-pc-console-core",
+          "role": "core"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-console-feed",
+          "name": "@sdkwork/news-pc-console-feed",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-console-shell",
+          "name": "@sdkwork/news-pc-console-shell",
+          "role": "shell"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-core",
+          "name": "@sdkwork/news-pc-core",
+          "role": "core"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-feed",
+          "name": "@sdkwork/news-pc-feed",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-news",
+          "name": "@sdkwork/news-pc-news",
+          "role": "capability"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-shell",
+          "name": "@sdkwork/news-pc-shell",
+          "role": "shell"
+        },
+        {
+          "appRoot": "apps/sdkwork-news-pc",
+          "architecture": "pc",
+          "directoryName": "sdkwork-news-pc-workspace-shell",
+          "name": "@sdkwork/news-pc-workspace-shell",
+          "role": "shell"
+        }
+      ]
+    },
+    "rust": {
+      "crates": [
+        {
+          "packageName": "sdkwork-api-news-assembly",
+          "manifest": "crates/sdkwork-api-news-assembly/Cargo.toml",
+          "dependencies": [
+            "axum",
+            "tokio",
+            "sdkwork-web-bootstrap",
+            "sdkwork-web-core",
+            "serde-json",
+            "sdkwork-news-database-host",
+            "sdkwork-database-sqlx",
+            "sqlx",
+            "sdkwork-routes-news-app-api",
+            "sdkwork-routes-news-backend-api",
+            "sdkwork-routes-news-open-api"
+          ]
+        },
+        {
+          "packageName": "sdkwork-api-news-standalone-gateway",
+          "manifest": "crates/sdkwork-api-news-standalone-gateway/Cargo.toml",
+          "dependencies": [
+            "sdkwork-api-news-assembly",
+            "axum",
+            "tokio",
+            "tower-http",
+            "tracing",
+            "tracing-subscriber",
+            "anyhow",
+            "dotenvy",
+            "sdkwork-iam-web-adapter",
+            "sdkwork-web-bootstrap"
+          ]
+        },
+        {
+          "packageName": "sdkwork-content-news-repository-sqlx",
+          "manifest": "crates/sdkwork-content-news-repository-sqlx/Cargo.toml",
+          "dependencies": [
+            "async-trait",
+            "sdkwork-content-news-service",
+            "sdkwork-news-database-host",
+            "sdkwork-database-config",
+            "sdkwork-database-sqlx",
+            "sqlx",
+            "toml",
+            "serde",
+            "tokio"
+          ]
+        },
+        {
+          "packageName": "sdkwork-content-news-service",
+          "manifest": "crates/sdkwork-content-news-service/Cargo.toml",
+          "dependencies": [
+            "async-trait",
+            "chrono",
+            "uuid",
+            "tokio"
+          ]
+        },
+        {
+          "packageName": "sdkwork-content-news-worker",
+          "manifest": "crates/sdkwork-content-news-worker/Cargo.toml",
+          "dependencies": []
+        },
+        {
+          "packageName": "sdkwork-news-database-host",
+          "manifest": "crates/sdkwork-news-database-host/Cargo.toml",
+          "dependencies": [
+            "dotenvy",
+            "sdkwork-database-config",
+            "sdkwork-database-lifecycle",
+            "sdkwork-database-spi",
+            "sdkwork-database-sqlx"
+          ]
+        },
+        {
+          "packageName": "sdkwork-routes-news-app-api",
+          "manifest": "crates/sdkwork-routes-news-app-api/Cargo.toml",
+          "dependencies": [
+            "axum",
+            "serde",
+            "serde-json",
+            "uuid",
+            "chrono",
+            "sqlx",
+            "tracing",
+            "sdkwork-routes-news-open-api",
+            "sdkwork-web-core"
+          ]
+        },
+        {
+          "packageName": "sdkwork-routes-news-backend-api",
+          "manifest": "crates/sdkwork-routes-news-backend-api/Cargo.toml",
+          "dependencies": [
+            "axum",
+            "serde",
+            "serde-json",
+            "uuid",
+            "chrono",
+            "sqlx",
+            "tracing",
+            "sdkwork-routes-news-open-api",
+            "sdkwork-web-core"
+          ]
+        },
+        {
+          "packageName": "sdkwork-routes-news-open-api",
+          "manifest": "crates/sdkwork-routes-news-open-api/Cargo.toml",
+          "dependencies": [
+            "sdkwork-web-core",
+            "axum",
+            "serde",
+            "serde-json",
+            "sqlx",
+            "tracing",
+            "sdkwork-iam-web-adapter",
+            "sdkwork-web-axum",
+            "sdkwork-web-bootstrap",
+            "sdkwork-web-core"
+          ]
+        }
+      ]
+    },
+    "routes": {
+      "manifests": []
+    },
+    "runtime": {
+      "dependencyApiSurfaces": []
+    }
+  },
+  "env": {},
+  "requiresPlatformApiSurface": true,
+  "issues": [],
+  "meta": {
+    "resolver": "sdkwork-specs/tools/lib/composition-resolver.mjs",
+    "credentialModes": {
+      "sdkwork-agents-app-sdk": "authenticated-app-api",
+      "sdkwork-im-sdk": "protected-open-api-api-key-or-dual-token",
+      "sdkwork-news-app-sdk": "authenticated-app-api",
+      "sdkwork-news-backend-sdk": "authenticated-backend-admin"
+    }
+  }
+}

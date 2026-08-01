@@ -4,6 +4,8 @@ import 'package:sdkwork_im_flutter_mobile_chat/sdkwork_im_flutter_mobile_chat.da
 import 'package:sdkwork_im_flutter_mobile_core/sdkwork_im_flutter_mobile_core.dart';
 import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_core.dart';
 
+import 'news_message_tracker.dart';
+
 class SdkworkImNewsConversationGateway implements NewsConversationGateway {
   SdkworkImNewsConversationGateway(this._bundle)
       : _conversationService = createChatConversationService(_bundle),
@@ -13,7 +15,7 @@ class SdkworkImNewsConversationGateway implements NewsConversationGateway {
   final ChatConversationService _conversationService;
   final ChatRealtimeService _realtimeService;
   final Map<String, StreamController<NewsMessage>> _controllers = {};
-  final Set<String> _seenMessageIds = {};
+  final NewsMessageTracker _messageTracker = NewsMessageTracker();
   bool _disposed = false;
 
   @override
@@ -42,13 +44,26 @@ class SdkworkImNewsConversationGateway implements NewsConversationGateway {
     String? cursor,
     int pageSize = 50,
   }) async {
+    final page = await _fetchMessagePage(
+      conversationId,
+      cursor: cursor,
+      pageSize: pageSize,
+    );
+    _messageTracker.track(conversationId, page.items);
+    return page;
+  }
+
+  Future<NewsMessagePage> _fetchMessagePage(
+    String conversationId, {
+    String? cursor,
+    int pageSize = 50,
+  }) async {
     final response = await _conversationService.fetchMessageHistory(
       conversationId,
       cursor: cursor,
       pageSize: pageSize,
     );
     final items = response.items.map(_fromEntry).toList(growable: false);
-    _seenMessageIds.addAll(items.map((item) => item.id));
     return NewsMessagePage(
       items: items,
       nextCursor: response.pagination.nextCursor,
@@ -90,9 +105,10 @@ class SdkworkImNewsConversationGateway implements NewsConversationGateway {
     StreamController<NewsMessage> controller,
   ) async {
     try {
-      final page = await loadMessages(conversationId, pageSize: 50);
-      for (final message in page.items) {
-        if (_seenMessageIds.add(message.id) && !controller.isClosed) {
+      final page = await _fetchMessagePage(conversationId, pageSize: 50);
+      for (final message
+          in _messageTracker.takeUnseen(conversationId, page.items)) {
+        if (!controller.isClosed) {
           controller.add(message);
         }
       }
@@ -122,7 +138,7 @@ class SdkworkImNewsConversationGateway implements NewsConversationGateway {
       occurredAt: DateTime.now().toUtc(),
       sequence: result.messageSeq,
     );
-    _seenMessageIds.add(message.id);
+    _messageTracker.track(conversationId, [message]);
     return message;
   }
 
@@ -145,7 +161,7 @@ class SdkworkImNewsConversationGateway implements NewsConversationGateway {
       await controller.close();
     }
     _controllers.clear();
-    _seenMessageIds.clear();
+    _messageTracker.clear();
   }
 }
 

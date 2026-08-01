@@ -22,10 +22,7 @@ pub fn gateway_mount(state: Arc<NewsHttpState>) -> Router {
             "/app/v3/api/news/feed/personalized",
             get(handlers::app::get_personalized_feed),
         )
-        .route(
-            "/app/v3/api/news/events",
-            post(handlers::app::create_event),
-        )
+        .route("/app/v3/api/news/events", post(handlers::app::create_event))
         .route(
             "/app/v3/api/news/favorites",
             get(handlers::app::list_favorites),

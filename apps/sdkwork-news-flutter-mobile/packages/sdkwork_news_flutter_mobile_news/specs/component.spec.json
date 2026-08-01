@@ -18,6 +18,7 @@
     "layerRole": "frontend-feature",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_news.dart"],
     "providedPorts": [{"name": "newsFeedRepository", "export": "lib/sdkwork_news_flutter_mobile_news.dart"}],
+    "requiredPorts": [],
     "sdkDependencies": []
   },
   "verification": {"commands": ["flutter test"]}

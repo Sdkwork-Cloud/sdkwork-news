@@ -14,7 +14,7 @@
       "pathPrefix": "/app/v3/api",
       "mountOrder": 0,
       "componentRef": "crates/sdkwork-routes-news-app-api/specs/component.spec.json",
-      "routeManifestRef": "crates/sdkwork-routes-news-app-api/src/lib.rs#app_routes",
+      "routeManifestRef": "crates/sdkwork-routes-news-app-api/src/lib.rs#gateway_route_manifest",
       "sourceRef": "crates/sdkwork-routes-news-app-api/Cargo.toml"
     },
     {
@@ -25,7 +25,7 @@
       "pathPrefix": "/backend/v3/api",
       "mountOrder": 1,
       "componentRef": "crates/sdkwork-routes-news-backend-api/specs/component.spec.json",
-      "routeManifestRef": "crates/sdkwork-routes-news-backend-api/src/lib.rs#backend_routes",
+      "routeManifestRef": "crates/sdkwork-routes-news-backend-api/src/lib.rs#gateway_route_manifest",
       "sourceRef": "crates/sdkwork-routes-news-backend-api/Cargo.toml"
     },
     {

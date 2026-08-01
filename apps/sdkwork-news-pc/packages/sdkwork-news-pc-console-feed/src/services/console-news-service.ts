@@ -1,11 +1,11 @@
-import type { NewsApi } from '@sdkwork/news-app-sdk';
+import type { NewsApiPort } from '@sdkwork/news-pc-console-core/sdk';
 
 export interface ConsoleNewsServiceConfig {
-  newsApi: NewsApi;
+  newsApi: NewsApiPort;
 }
 
 export class ConsoleNewsService {
-  private newsApi: NewsApi;
+  private newsApi: NewsApiPort;
 
   constructor(config: ConsoleNewsServiceConfig) {
     this.newsApi = config.newsApi;
@@ -13,7 +13,8 @@ export class ConsoleNewsService {
 
   // News management
   async getNewsList(params?: { status?: string; categoryId?: string; q?: string }) {
-    return this.newsApi.items.list(params);
+    const response = await this.newsApi.items.list(params);
+    return readListResponse(response, 'items');
   }
 
   async getNewsItem(itemId: string) {
@@ -63,7 +64,8 @@ export class ConsoleNewsService {
 
   // Channel management
   async getChannels() {
-    return this.newsApi.channels.list();
+    const response = await this.newsApi.channels.list();
+    return readListResponse(response, 'channels');
   }
 
   async getChannel(channelId: string) {
@@ -99,7 +101,8 @@ export class ConsoleNewsService {
 
   // Topic management
   async getTopics() {
-    return this.newsApi.topics.list();
+    const response = await this.newsApi.topics.list();
+    return readListResponse(response, 'topics');
   }
 
   async getTopic(topicId: string) {
@@ -159,6 +162,25 @@ export class ConsoleNewsService {
   }
 }
 
-export function createConsoleNewsService(newsApi: NewsApi): ConsoleNewsService {
+export function createConsoleNewsService(newsApi: NewsApiPort): ConsoleNewsService {
   return new ConsoleNewsService({ newsApi });
+}
+
+function readListResponse(
+  response: unknown,
+  legacyKey: string,
+): Record<string, unknown>[] {
+  if (Array.isArray(response)) {
+    return response.filter(isRecord);
+  }
+  if (!isRecord(response)) {
+    return [];
+  }
+  const data = isRecord(response.data) ? response.data : response;
+  const items = data.items ?? data[legacyKey];
+  return Array.isArray(items) ? items.filter(isRecord) : [];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

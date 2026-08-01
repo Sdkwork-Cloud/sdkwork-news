@@ -15,11 +15,11 @@
     "manifests": ["pubspec.yaml"]
   },
   "contracts": {
-    "layerRole": "infrastructure-adapter",
+    "layerRole": "frontend-core",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart"],
-    "requiredPorts": [{"name": "newsAgentRepository", "package": "sdkwork_news_flutter_mobile_core"}],
+    "providedPorts": [{"name": "newsAgentSdkRepository", "export": "lib/sdkwork_news_flutter_mobile_agent_sdk_adapter.dart"}],
+    "requiredPorts": [{"name": "newsAgentRepository", "export": "lib/sdkwork_news_flutter_mobile_core.dart", "package": "sdkwork_news_flutter_mobile_core"}],
     "sdkDependencies": [{"workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "credentialMode": "authenticated-app-api", "packageName": "sdkwork_agents_app_sdk", "status": "active"}]
   },
   "verification": {"commands": ["dart analyze"]}
 }
-

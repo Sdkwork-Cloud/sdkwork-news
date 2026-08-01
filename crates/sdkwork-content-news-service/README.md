@@ -10,6 +10,7 @@ This README is the SDKWork module entrypoint for `sdkwork-content-news-service`.
 ## Public API
 
 - `.`
+- `NewsProfessionalRepositoryPort`: service-owned persistence boundary injected by runtime composition.
 
 ## Required SDK Surface
 

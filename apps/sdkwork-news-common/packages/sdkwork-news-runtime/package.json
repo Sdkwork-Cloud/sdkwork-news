@@ -4,7 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
+    "@sdkwork/news-app-sdk": "workspace:*",
     "@sdkwork/news-contracts": "workspace:*",
+    "@sdkwork/news-feed-sdk-adapter": "workspace:*",
+    "@sdkwork/news-feed-service": "workspace:*",
+    "@sdkwork/sdk-common": "workspace:*",
     "@sdkwork/news-service": "workspace:*"
   },
   "exports": {
@@ -12,10 +16,20 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./config": {
+      "types": "./src/config.ts",
+      "import": "./src/config.ts",
+      "default": "./src/config.ts"
+    },
+    "./feed-runtime": {
+      "types": "./src/feed-runtime.ts",
+      "import": "./src/feed-runtime.ts",
+      "default": "./src/feed-runtime.ts"
     }
   },
   "scripts": {
-    "test": "vitest run tests --config ../../../../vitest.config.ts --configLoader native --pool vmThreads",
+    "test": "vitest run apps/sdkwork-news-common/packages/sdkwork-news-runtime/tests --root ../../../.. --config vitest.config.ts --configLoader native --pool vmThreads",
     "typecheck": "tsc --noEmit"
   }
 }

@@ -2,7 +2,7 @@
 
 This directory is the local SDKWork component contract for `@sdkwork/news-service`.
 
-- Component root: `sdkwork-news/packages/common/news/sdkwork-news-service`
+- Component root: `sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-service`
 - Canonical standards: `../../../../../sdkwork-specs/README.md`
 - Machine-readable contract: `specs/component.spec.json`
 

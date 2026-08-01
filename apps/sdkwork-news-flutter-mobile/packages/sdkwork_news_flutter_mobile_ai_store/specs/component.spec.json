@@ -18,10 +18,11 @@
     "layerRole": "frontend-feature",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_ai_store.dart"],
     "providedPorts": [{"name": "aiStoreRepository", "export": "lib/sdkwork_news_flutter_mobile_ai_store.dart"}],
+    "requiredPorts": [],
     "sdkDependencies": [
       {"workspace": "sdkwork-appstore-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"},
       {"workspace": "sdkwork-skills-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"},
-      {"workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "status": "planned"}
+      {"workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "packageName": "sdkwork_mcp_app_sdk_generated_flutter", "status": "active"}
     ]
   },
   "verification": {"commands": ["flutter test"]}

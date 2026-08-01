@@ -1,0 +1,20 @@
+name: sdkwork_news_flutter_mobile_mcp_sdk_adapter
+description: SDKWork News Flutter adapter for the MCP App SDK catalog
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  sdkwork_mcp_app_sdk_generated_flutter:
+    path: ../../../../../sdkwork-mcp/sdks/sdkwork-mcp-app-sdk/sdkwork-mcp-app-sdk-flutter/generated/server-openapi
+  sdkwork_news_flutter_mobile_ai_store:
+    path: ../sdkwork_news_flutter_mobile_ai_store
+
+dependency_overrides:
+  sdkwork_common_flutter:
+    path: ../../../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter
+
+dev_dependencies:
+  test: ^1.25.0

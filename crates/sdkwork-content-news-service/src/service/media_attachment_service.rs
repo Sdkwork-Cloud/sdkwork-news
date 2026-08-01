@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::NewsProfessionalRepository;
+use crate::{
+    shared_news_professional_repository, NewsProfessionalRepositoryPort,
+    SharedNewsProfessionalRepository,
+};
 
 pub struct NewsMediaAttachmentService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -47,8 +50,13 @@ const VALID_MEDIA_ROLES: &[&str] = &[
 ];
 
 impl NewsMediaAttachmentService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_attach_drive_media(
@@ -101,7 +109,7 @@ impl NewsMediaAttachmentService {
         !media_id.trim().is_empty() && !media_id.starts_with("http")
     }
 
-    pub fn repo(&self) -> &NewsProfessionalRepository {
-        &self.repo
+    pub fn repository(&self) -> &dyn NewsProfessionalRepositoryPort {
+        self.repository.as_ref()
     }
 }

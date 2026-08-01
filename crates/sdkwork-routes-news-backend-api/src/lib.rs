@@ -201,7 +201,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Post,
             "/backend/v3/api/news/items/{itemId}/media",
-            "items.media.attach",
+            "items.media.create",
         ),
         route(
             HttpMethod::Delete,
@@ -251,7 +251,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/backend/v3/api/news/trending/metrics",
-            "trending.metrics.upsert",
+            "trending.metrics.update",
         ),
         route(
             HttpMethod::Get,
@@ -276,7 +276,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/backend/v3/api/news/feed/candidates",
-            "feed.candidates.upsert",
+            "feed.candidates.update",
         ),
         route(
             HttpMethod::Delete,
@@ -306,7 +306,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/backend/v3/api/news/search/suggestions",
-            "search.suggestions.upsert",
+            "search.suggestions.update",
         ),
         route(
             HttpMethod::Delete,
@@ -396,7 +396,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Post,
             "/backend/v3/api/news/digests/{digestId}/items",
-            "digests.items.attach",
+            "digests.items.create",
         ),
         route(
             HttpMethod::Get,
@@ -406,7 +406,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/backend/v3/api/news/trust/sources",
-            "trust.sources.upsert",
+            "trust.sources.update",
         ),
         route(
             HttpMethod::Get,
@@ -416,7 +416,7 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Put,
             "/backend/v3/api/news/trust/items/{itemId}",
-            "trust.items.upsert",
+            "trust.items.update",
         ),
         route(
             HttpMethod::Get,
@@ -501,15 +501,42 @@ pub fn backend_routes() -> Vec<NewsHttpRoute> {
         route(
             HttpMethod::Post,
             "/backend/v3/api/news/live/events/{eventId}/items",
-            "live.items.attach",
+            "live.items.create",
         ),
     ]
+}
+
+pub fn gateway_route_manifest() -> sdkwork_web_core::HttpRouteManifest {
+    let routes = backend_routes()
+        .into_iter()
+        .map(|route| {
+            sdkwork_web_core::HttpRoute::dual_token(
+                framework_method(route.method),
+                route.path,
+                route.tag,
+                route.operation_id,
+            )
+        })
+        .collect();
+    sdkwork_web_core::HttpRouteManifest::from_owned_routes(routes)
+}
+
+fn framework_method(method: HttpMethod) -> sdkwork_web_core::HttpMethod {
+    match method {
+        HttpMethod::Delete => sdkwork_web_core::HttpMethod::Delete,
+        HttpMethod::Get => sdkwork_web_core::HttpMethod::Get,
+        HttpMethod::Patch => sdkwork_web_core::HttpMethod::Patch,
+        HttpMethod::Post => sdkwork_web_core::HttpMethod::Post,
+        HttpMethod::Put => sdkwork_web_core::HttpMethod::Put,
+    }
 }
 
 fn route(method: HttpMethod, path: &'static str, operation_id: &'static str) -> NewsHttpRoute {
     NewsHttpRoute::new(method, path, "news", operation_id)
 }
 
-pub fn gateway_mount(state: std::sync::Arc<sdkwork_routes_news_open_api::state::NewsHttpState>) -> axum::Router {
+pub fn gateway_mount(
+    state: std::sync::Arc<sdkwork_routes_news_open_api::state::NewsHttpState>,
+) -> axum::Router {
     routes::gateway_mount(state)
 }

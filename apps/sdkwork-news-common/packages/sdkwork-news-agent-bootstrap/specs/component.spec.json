@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-agent-bootstrap",
+    "displayName": "SDKWork News Agent Bootstrap",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-agent-bootstrap",
+    "domain": "content",
+    "capability": "news-agent-bootstrap",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json", "tsconfig.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Global TokenManager and composed SDK bootstrap." },
+    { "file": "COMPOSABLE_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/COMPOSABLE_ARCHITECTURE_SPEC.md", "purpose": "Application composition boundary." },
+    { "file": "CONFIG_SPEC.md", "path": "../../../../../sdkwork-specs/CONFIG_SPEC.md", "purpose": "Typed public runtime configuration." }
+  ],
+  "contracts": {
+    "layerRole": "runtime-composition",
+    "publicExports": [".", "./config", "./runtime"],
+    "providedPorts": [{ "name": "newsAgentRuntime", "export": "./runtime" }],
+    "requiredPorts": [
+      { "name": "newsAgentProfilePort", "export": ".", "package": "@sdkwork/news-agent-sdk-adapter" },
+      { "name": "newsAgentConversationPort", "export": ".", "package": "@sdkwork/news-im-adapter" }
+    ],
+    "runtimeEntrypoints": ["src/runtime.ts"],
+    "routeManifest": null,
+    "sdkClients": ["@sdkwork/agents-app-sdk", "@sdkwork/im-sdk"],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "credentialMode": "global-token-manager" },
+      { "workspace": "sdkwork-im-sdk", "surface": "open-api-and-realtime", "credentialMode": "global-token-manager" }
+    ],
+    "events": [],
+    "configKeys": [
+      "VITE_SDKWORK_NEWS_AGENTS_APP_API_BASE_URL",
+      "VITE_SDKWORK_NEWS_IM_API_BASE_URL",
+      "VITE_SDKWORK_NEWS_IM_WEBSOCKET_URL",
+      "VITE_SDKWORK_NEWS_PLATFORM_API_GATEWAY_HTTP_URL",
+      "VITE_SDKWORK_NEWS_DEMO_MODE"
+    ]
+  },
+  "verification": {
+    "commands": [
+      "pnpm --filter @sdkwork/news-agent-bootstrap typecheck",
+      "pnpm --filter @sdkwork/news-agent-bootstrap test",
+      "node ../../../../../sdkwork-specs/tools/check-app-sdk-consumer-imports.mjs --workspace ../../../../.."
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "@sdkwork/news-account-runtime",
+    "displayName": "SDKWork News Account Runtime",
+    "version": "0.1.0",
+    "type": "node-package",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-account-runtime",
+    "domain": "account",
+    "capability": "news-account-runtime",
+    "languages": ["typescript"],
+    "generated": false,
+    "manifests": ["package.json"]
+  },
+  "canonicalSpecs": [
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "IAM runtime composition." },
+    { "file": "APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "path": "../../../../../sdkwork-specs/APPLICATION_LAYERED_ARCHITECTURE_SPEC.md", "purpose": "Root runtime boundary." }
+  ],
+  "contracts": {
+    "layerRole": "runtime-composition",
+    "publicExports": [".", "./config", "./runtime"],
+    "providedPorts": [{ "name": "newsAccountRuntime", "export": "./runtime" }],
+    "requiredPorts": [{ "name": "authTokenManager", "export": ".", "provider": "@sdkwork/sdk-common" }],
+    "runtimeEntrypoints": ["package.json#scripts.test", "package.json#scripts.typecheck"],
+    "routeManifest": null,
+    "sdkClients": [],
+    "sdkDependencies": [{ "workspace": "sdkwork-iam-app-sdk", "surface": "app-api", "credentialMode": "dual-token-manager", "packageName": "@sdkwork/iam-app-sdk", "status": "active" }],
+    "events": [],
+    "configKeys": [
+      "VITE_SDKWORK_IAM_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_IAM_DEPLOYMENT_MODE",
+      "VITE_SDKWORK_NEWS_APP_ID",
+      "VITE_SDKWORK_NEWS_PLATFORM_API_GATEWAY_HTTP_URL",
+      "VITE_SDKWORK_NEWS_DEMO_MODE",
+      "VITE_SDKWORK_NEWS_ENVIRONMENT"
+    ]
+  },
+  "verification": { "commands": ["pnpm --filter @sdkwork/news-account-runtime typecheck", "pnpm --filter @sdkwork/news-account-runtime test"] }
+}

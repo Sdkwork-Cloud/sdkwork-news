@@ -413,9 +413,7 @@ impl RuntimeConfigLocation {
                 data_directory: PathBuf::from("%USERPROFILE%/.sdkwork/news/data"),
             },
             ("macos", RuntimeConfigProfile::Server) => Self {
-                config_file: PathBuf::from(
-                    "/Library/Application Support/sdkwork/news/news.toml",
-                ),
+                config_file: PathBuf::from("/Library/Application Support/sdkwork/news/news.toml"),
                 data_directory: PathBuf::from("/Library/Application Support/sdkwork/news/Data"),
             },
             ("macos", RuntimeConfigProfile::Desktop) => Self {
@@ -517,9 +515,7 @@ fn structured_postgres_url(database: RuntimeDatabaseConfig) -> Result<String, St
         })
         .ok_or("runtime config [database] must provide password or password_file for PostgreSQL")?;
 
-    let ssl_mode = database
-        .ssl_mode
-        .unwrap_or_else(|| "require".to_owned());
+    let ssl_mode = database.ssl_mode.unwrap_or_else(|| "require".to_owned());
 
     Ok(format!(
         "postgresql://{}:{}@{}:{}/{}?sslmode={}",

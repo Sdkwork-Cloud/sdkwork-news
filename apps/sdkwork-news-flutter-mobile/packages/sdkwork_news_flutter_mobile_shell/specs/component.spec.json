@@ -17,8 +17,9 @@
   "contracts": {
     "layerRole": "frontend-shell",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_shell.dart"],
+    "providedPorts": [],
+    "requiredPorts": [],
     "sdkDependencies": []
   },
   "verification": {"commands": ["flutter test"]}
 }
-

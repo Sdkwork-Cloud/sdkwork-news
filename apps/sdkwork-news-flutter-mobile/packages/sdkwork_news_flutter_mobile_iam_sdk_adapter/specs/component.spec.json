@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork_news_flutter_mobile_iam_sdk_adapter",
+    "displayName": "SDKWork News Flutter IAM SDK Adapter",
+    "version": "0.1.0",
+    "type": "flutter-package",
+    "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_iam_sdk_adapter",
+    "domain": "news",
+    "capability": "iam-account-sdk-adapter",
+    "surface": "app",
+    "languages": ["dart"],
+    "generated": false,
+    "manifests": ["pubspec.yaml"]
+  },
+  "contracts": {
+    "layerRole": "frontend-core",
+    "publicExports": ["lib/sdkwork_news_flutter_mobile_iam_sdk_adapter.dart"],
+    "providedPorts": [{"name": "iamAccountRepository", "export": "lib/sdkwork_news_flutter_mobile_iam_sdk_adapter.dart"}],
+    "requiredPorts": [{"name": "accountRepository", "export": "lib/sdkwork_news_flutter_mobile_account.dart", "package": "sdkwork_news_flutter_mobile_account"}],
+    "sdkDependencies": [{"workspace": "sdkwork-iam-app-sdk", "surface": "app-api", "credentialMode": "authenticated-app-api", "packageName": "sdkwork_iam_app_sdk", "status": "active"}]
+  },
+  "verification": {"commands": ["dart analyze", "dart test"]}
+}

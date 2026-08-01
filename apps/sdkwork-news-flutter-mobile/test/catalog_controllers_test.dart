@@ -21,6 +21,22 @@ void main() {
     expect(repository.cursors, [null, 'cursor-2']);
   });
 
+  test('news search resets the category and filters demo results', () async {
+    final controller = NewsFeedController(DemoNewsFeedRepository());
+
+    await controller.initialize();
+    await controller.selectCategory('finance');
+    await controller.search('供应链');
+
+    expect(controller.category, 'recommended');
+    expect(controller.query, '供应链');
+    expect(controller.articles.map((article) => article.id), ['supply-chain']);
+
+    await controller.search('   ');
+    expect(controller.query, isNull);
+    expect(controller.articles, hasLength(4));
+  });
+
   test('AI Store serializes install lifecycle and preserves state on failure',
       () async {
     final repository = _StoreRepository();
@@ -62,6 +78,7 @@ class _PagedNewsRepository implements NewsFeedRepository {
     required String category,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async {
     cursors.add(cursor);
     if (cursor == null) {
@@ -89,7 +106,20 @@ class _StoreRepository implements AiStoreRepository {
     String? cursor,
     int pageSize = 20,
   }) async =>
-      const AiStorePageResult(items: [], hasMore: false);
+      const AiStorePageResult(
+        items: [
+          AiStoreEntry(
+            id: 'deep-research',
+            kind: AiStoreKind.product,
+            name: 'Deep Research',
+            publisher: 'SDKWork',
+            description: 'Research assistant',
+            monogram: 'DR',
+            colorValue: 0xFF15634F,
+          ),
+        ],
+        hasMore: false,
+      );
 
   @override
   Future<void> install(String entryId) {

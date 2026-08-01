@@ -20,13 +20,41 @@
     { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Public composed SDK integration." }
   ],
   "contracts": {
-    "layerRole": "frontend-app-root",
+    "layerRole": "frontend-host",
     "publicExports": [],
+    "providedPorts": [],
+    "requiredPorts": [
+      { "name": "newsAccountRuntime", "export": "./runtime", "provider": "@sdkwork/news-account-runtime" },
+      { "name": "newsAgentRuntime", "export": "./runtime", "provider": "@sdkwork/news-agent-bootstrap" },
+      { "name": "newsFeedRuntime", "export": "./feed-runtime", "provider": "@sdkwork/news-runtime" },
+      { "name": "newsAiStoreRuntime", "export": "./runtime", "provider": "@sdkwork/news-ai-store-runtime" }
+    ],
     "runtimeEntrypoints": ["src/main.tsx"],
-    "sdkClients": ["SdkworkAppClient", "ImSdkClient"],
+    "sdkClients": [],
     "sdkDependencies": [
+      { "workspace": "sdkwork-iam-app-sdk", "surface": "app-api", "packageName": "@sdkwork/iam-app-sdk", "status": "active" },
       { "workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "packageName": "@sdkwork/agents-app-sdk", "status": "active" },
-      { "workspace": "sdkwork-im-sdk", "surface": "im", "packageName": "@sdkwork/im-sdk", "status": "active" }
+      { "workspace": "sdkwork-im-sdk", "surface": "open-api-and-realtime", "packageName": "@sdkwork/im-sdk", "status": "active" },
+      { "workspace": "sdkwork-news-app-sdk", "surface": "app-api", "packageName": "@sdkwork/news-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-appstore-app-sdk", "surface": "app-api", "packageName": "@sdkwork/appstore-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-skills-app-sdk", "surface": "app-api", "packageName": "@sdkwork/skills-app-sdk", "status": "active" },
+      { "workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "packageName": "@sdkwork/mcp-app-sdk", "status": "active" }
+    ],
+    "events": [],
+    "configKeys": [
+      "VITE_SDKWORK_IAM_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_IAM_DEPLOYMENT_MODE",
+      "VITE_SDKWORK_NEWS_APP_ID",
+      "VITE_SDKWORK_NEWS_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_NEWS_AGENTS_APP_API_BASE_URL",
+      "VITE_SDKWORK_NEWS_IM_API_BASE_URL",
+      "VITE_SDKWORK_NEWS_IM_WEBSOCKET_URL",
+      "VITE_SDKWORK_APPSTORE_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_SKILLS_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_MCP_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_NEWS_PLATFORM_API_GATEWAY_HTTP_URL",
+      "VITE_SDKWORK_NEWS_DEMO_MODE",
+      "VITE_SDKWORK_NEWS_ENVIRONMENT"
     ]
   },
   "verification": { "commands": ["pnpm --dir apps/sdkwork-news-pc build"] }

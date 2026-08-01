@@ -1,22 +1,25 @@
-import type { NewsApi } from '@sdkwork/news-app-sdk';
+import type { NewsApiPort } from '@sdkwork/news-pc-core/sdk';
+import type { NewsCategory, NewsItem } from '../types';
 
 export interface NewsServiceConfig {
-  newsApi: NewsApi;
+  newsApi: NewsApiPort;
 }
 
 export class NewsService {
-  private newsApi: NewsApi;
+  private newsApi: NewsApiPort;
 
   constructor(config: NewsServiceConfig) {
     this.newsApi = config.newsApi;
   }
 
   async getCategories() {
-    return this.newsApi.categories.list();
+    const response = await this.newsApi.categories.list();
+    return readListResponse<NewsCategory>(response, 'categories');
   }
 
   async getItems(params?: { categoryId?: string; q?: string; status?: string }) {
-    return this.newsApi.items.list(params);
+    const response = await this.newsApi.items.list(params);
+    return readListResponse<NewsItem>(response, 'items');
   }
 
   async getItem(itemId: string) {
@@ -175,7 +178,23 @@ export class NewsService {
   }
 }
 
-export function createNewsService(newsApi: NewsApi): NewsService {
+export function createNewsService(newsApi: NewsApiPort): NewsService {
   return new NewsService({ newsApi });
+}
+
+function readListResponse<T>(response: unknown, legacyKey: string): T[] {
+  if (Array.isArray(response)) {
+    return response as T[];
+  }
+  if (!isRecord(response)) {
+    return [];
+  }
+  const data = isRecord(response.data) ? response.data : response;
+  const items = data.items ?? data[legacyKey];
+  return Array.isArray(items) ? items as T[] : [];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 

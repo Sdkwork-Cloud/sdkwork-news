@@ -55,8 +55,22 @@
     }
   ],
   "contracts": {
+    "layerRole": "backend-repository",
     "publicExports": [
       "."
+    ],
+    "providedPorts": [
+      {
+        "name": "newsProfessionalRepositorySqlx",
+        "export": "."
+      }
+    ],
+    "requiredPorts": [
+      {
+        "name": "newsProfessionalRepositoryPort",
+        "export": ".",
+        "package": "sdkwork-content-news-service"
+      }
     ],
     "runtimeEntrypoints": [],
     "routeManifest": null,

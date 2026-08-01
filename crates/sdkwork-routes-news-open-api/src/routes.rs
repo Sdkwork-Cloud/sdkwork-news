@@ -1,7 +1,4 @@
-use axum::{
-    routing::{get},
-    Router,
-};
+use axum::{routing::get, Router};
 use std::sync::Arc;
 
 use crate::handlers;
@@ -35,9 +32,6 @@ pub fn gateway_mount(state: Arc<NewsHttpState>) -> Router {
             "/open/v3/api/news/trending",
             get(handlers::open::list_trending),
         )
-        .route(
-            "/open/v3/api/news/search",
-            get(handlers::open::search),
-        )
+        .route("/open/v3/api/news/search", get(handlers::open::search))
         .with_state(state)
 }

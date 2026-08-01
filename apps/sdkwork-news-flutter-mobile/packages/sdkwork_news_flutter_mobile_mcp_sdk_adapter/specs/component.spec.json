@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "sdkwork.component.spec",
+  "component": {
+    "name": "sdkwork_news_flutter_mobile_mcp_sdk_adapter",
+    "displayName": "SDKWork News Flutter MCP SDK Adapter",
+    "version": "0.1.0",
+    "type": "flutter-package",
+    "root": "apps/sdkwork-news-flutter-mobile/packages/sdkwork_news_flutter_mobile_mcp_sdk_adapter",
+    "domain": "news",
+    "capability": "mcp-store-sdk-adapter",
+    "surface": "app",
+    "languages": ["dart"],
+    "generated": false,
+    "manifests": ["pubspec.yaml"]
+  },
+  "contracts": {
+    "layerRole": "frontend-core",
+    "publicExports": ["lib/sdkwork_news_flutter_mobile_mcp_sdk_adapter.dart"],
+    "providedPorts": [{"name": "mcpAiStoreRepository", "export": "lib/sdkwork_news_flutter_mobile_mcp_sdk_adapter.dart"}],
+    "requiredPorts": [{"name": "aiStoreRepository", "export": "lib/sdkwork_news_flutter_mobile_ai_store.dart", "package": "sdkwork_news_flutter_mobile_ai_store"}],
+    "sdkDependencies": [{"workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "credentialMode": "authenticated-app-api", "packageName": "sdkwork_mcp_app_sdk_generated_flutter", "status": "active"}]
+  },
+  "verification": {"commands": ["dart analyze", "dart test"]}
+}

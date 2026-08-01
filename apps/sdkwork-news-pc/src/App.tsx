@@ -8,6 +8,9 @@ import {
   type NewsPcWorkspaceTab,
 } from "@sdkwork/news-pc-workspace-shell";
 import type { NewsAgentService } from "@sdkwork/news-agent-service";
+import type { NewsAccountService } from "@sdkwork/news-account-service";
+import type { AiStoreService } from "@sdkwork/news-ai-store-service";
+import type { NewsFeedService } from "@sdkwork/news-feed-service";
 
 const TAB_HASHES: Record<NewsPcWorkspaceTab, string> = {
   account: "account",
@@ -22,7 +25,27 @@ function resolveInitialTab(): NewsPcWorkspaceTab {
     ?? "assistant";
 }
 
-export default function App({ agentService }: { agentService?: NewsAgentService }) {
+export interface NewsPcAppProps {
+  accountDemoMode: boolean;
+  accountService?: NewsAccountService;
+  agentService?: NewsAgentService;
+  aiStoreDemoMode: boolean;
+  aiStoreService?: AiStoreService;
+  assistantDemoMode: boolean;
+  newsDemoMode: boolean;
+  newsService?: NewsFeedService;
+}
+
+export default function App({
+  accountDemoMode,
+  accountService,
+  agentService,
+  aiStoreDemoMode,
+  aiStoreService,
+  assistantDemoMode,
+  newsDemoMode,
+  newsService,
+}: NewsPcAppProps) {
   const [activeTab, setActiveTab] = useState<NewsPcWorkspaceTab>(resolveInitialTab);
 
   useEffect(() => {
@@ -31,10 +54,18 @@ export default function App({ agentService }: { agentService?: NewsAgentService 
 
   return (
     <NewsPcWorkspaceShell activeTab={activeTab} onTabChange={setActiveTab}>
-      {activeTab === "assistant" && <NewsPcAssistant service={agentService} />}
-      {activeTab === "news" && <NewsPcNews />}
-      {activeTab === "store" && <NewsPcAiStore />}
-      {activeTab === "account" && <NewsPcAccount />}
+      {activeTab === "assistant" && (
+        <NewsPcAssistant demoMode={assistantDemoMode} service={agentService} />
+      )}
+      {activeTab === "news" && (
+        <NewsPcNews demoMode={newsDemoMode} service={newsService} />
+      )}
+      {activeTab === "store" && (
+        <NewsPcAiStore demoMode={aiStoreDemoMode} service={aiStoreService} />
+      )}
+      {activeTab === "account" && (
+        <NewsPcAccount demoMode={accountDemoMode} service={accountService} />
+      )}
     </NewsPcWorkspaceShell>
   );
 }

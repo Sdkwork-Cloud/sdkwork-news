@@ -20,13 +20,17 @@
     { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "Public composed SDK integration." }
   ],
   "contracts": {
-    "layerRole": "frontend-app-root",
+    "layerRole": "frontend-host",
     "publicExports": [],
+    "providedPorts": [],
+    "requiredPorts": [],
     "runtimeEntrypoints": ["lib/main.dart"],
-    "sdkClients": ["SdkworkAppClient", "ImSdkClientBundle"],
+    "sdkClients": ["AgentsSdkworkAppClient", "IamSdkworkAppClient", "McpSdkworkAppClient", "ImSdkClientBundle"],
     "sdkDependencies": [
       { "workspace": "sdkwork-agents-app-sdk", "surface": "app-api", "packageName": "sdkwork_agents_app_sdk", "status": "active" },
-      { "workspace": "sdkwork-im", "surface": "im", "packageName": "sdkwork_im_flutter_mobile_chat", "status": "active" }
+      { "workspace": "sdkwork-im", "surface": "im", "packageName": "sdkwork_im_flutter_mobile_chat", "status": "active" },
+      { "workspace": "sdkwork-iam-app-sdk", "surface": "app-api", "packageName": "sdkwork_iam_app_sdk", "status": "active" },
+      { "workspace": "sdkwork-mcp-app-sdk", "surface": "app-api", "packageName": "sdkwork_mcp_app_sdk_generated_flutter", "status": "active" }
     ]
   },
   "verification": { "commands": ["flutter analyze", "flutter test", "dart test"] }

@@ -14,10 +14,26 @@ class AiStorePage extends StatefulWidget {
 }
 
 class _AiStorePageState extends State<AiStorePage> {
+  final _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_handleScroll);
     widget.controller.initialize();
+  }
+
+  void _handleScroll() {
+    if (_scrollController.position.extentAfter < 240) {
+      widget.controller.loadMore();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,6 +83,7 @@ class _AiStorePageState extends State<AiStorePage> {
               _StoreTabs(controller: widget.controller, strings: strings),
               Expanded(
                 child: ListView(
+                  controller: _scrollController,
                   key: const PageStorageKey('ai-store'),
                   padding: const EdgeInsets.fromLTRB(14, 14, 14, 30),
                   children: [
@@ -86,6 +103,13 @@ class _AiStorePageState extends State<AiStorePage> {
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator()),
                       )
+                    else if (widget.controller.errorMessage != null &&
+                        widget.controller.entries.isEmpty)
+                      _StoreLoadFailure(
+                        message: strings.text('store.loadFailed'),
+                        retryLabel: strings.text('common.retry'),
+                        onRetry: widget.controller.retry,
+                      )
                     else
                       for (final entry in widget.controller.entries)
                         _StoreEntryRow(
@@ -97,6 +121,13 @@ class _AiStorePageState extends State<AiStorePage> {
                               widget.controller.toggleInstalled(entry.id),
                           strings: strings,
                         ),
+                    if (widget.controller.isLoadingMore)
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -267,51 +298,96 @@ class _StoreEntryRow extends StatelessWidget {
                 Text(entry.description,
                     style: const TextStyle(fontSize: 12, height: 1.4)),
                 const SizedBox(height: 7),
-                Row(
-                  children: [
-                    const Icon(Icons.star_rounded,
-                        size: 14, color: NewsPalette.warning),
-                    Text('${entry.rating}',
-                        style: const TextStyle(fontSize: 10)),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.download_outlined,
-                        size: 14, color: NewsPalette.muted),
-                    Text(entry.userCount,
-                        style: const TextStyle(
-                            color: NewsPalette.muted, fontSize: 10)),
-                  ],
-                ),
+                if (entry.rating != null || entry.userCount != null)
+                  Row(
+                    children: [
+                      if (entry.rating != null) ...[
+                        const Icon(Icons.star_rounded,
+                            size: 14, color: NewsPalette.warning),
+                        Text('${entry.rating}',
+                            style: const TextStyle(fontSize: 10)),
+                      ],
+                      if (entry.rating != null && entry.userCount != null)
+                        const SizedBox(width: 12),
+                      if (entry.userCount != null) ...[
+                        const Icon(Icons.download_outlined,
+                            size: 14, color: NewsPalette.muted),
+                        Text(entry.userCount!,
+                            style: const TextStyle(
+                                color: NewsPalette.muted, fontSize: 10)),
+                      ],
+                    ],
+                  ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          installed
-              ? IconButton.filledTonal(
-                  tooltip: strings.text('store.installed'),
-                  onPressed: busy ? null : onToggle,
-                  icon: busy
-                      ? const SizedBox.square(
-                          dimension: 17,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.check_rounded),
-                )
-              : FilledButton(
-                  onPressed: busy ? null : onToggle,
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(60, 38),
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                  ),
-                  child: busy
-                      ? const SizedBox.square(
-                          dimension: 15,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          strings.text('store.install'),
-                          style: const TextStyle(fontSize: 11),
-                        ),
-                ),
+          if (!entry.installable)
+            const SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(Icons.info_outline_rounded, color: NewsPalette.muted),
+            )
+          else if (installed)
+            IconButton.filledTonal(
+              tooltip: strings.text('store.uninstall'),
+              onPressed: busy ? null : onToggle,
+              icon: busy
+                  ? const SizedBox.square(
+                      dimension: 17,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check_rounded),
+            )
+          else
+            FilledButton(
+              onPressed: busy ? null : onToggle,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(60, 38),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+              ),
+              child: busy
+                  ? const SizedBox.square(
+                      dimension: 15,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(
+                      strings.text('store.install'),
+                      style: const TextStyle(fontSize: 11),
+                    ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StoreLoadFailure extends StatelessWidget {
+  const _StoreLoadFailure({
+    required this.message,
+    required this.retryLabel,
+    required this.onRetry,
+  });
+
+  final String message;
+  final String retryLabel;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 38),
+      child: Column(
+        children: [
+          const Icon(Icons.cloud_off_outlined, color: NewsPalette.muted),
+          const SizedBox(height: 10),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          IconButton.filledTonal(
+            tooltip: retryLabel,
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
         ],
       ),
     );

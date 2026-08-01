@@ -36,7 +36,7 @@ void main() {
       expect(gateway.markedReadSequence, 2);
     });
 
-    test('creates an agent, links one conversation, and persists schedule',
+    test('creates an agent, links one conversation, and persists its profile',
         () async {
       final repository = _MemoryAgentRepository([_agent()]);
       final gateway = _MemoryConversationGateway();
@@ -52,12 +52,7 @@ void main() {
           name: '政策观察',
           description: '跟踪政策变化',
           scopes: ['政策'],
-          schedule: ReadingSchedule(
-            cadence: ReadingCadence.weekly,
-            hour: 17,
-            minute: 30,
-            weekday: DateTime.friday,
-          ),
+          schedule: ReadingSchedule.standard(),
         ),
       );
 
@@ -68,20 +63,40 @@ void main() {
 
       await controller.selectAgent(created);
       final updated = created.copyWith(
+        name: '政策周报',
+        description: '跟踪政策变化并输出决策摘要',
+        scopes: const ['政策', '监管'],
+        trustedSources: const ['国务院', '央行'],
+        outputStyle: NewsAgentOutputStyle.executive,
         schedule: created.schedule.copyWith(
-          cadence: ReadingCadence.monthly,
-          dayOfMonth: 1,
-          hour: 9,
-          minute: 15,
+          monthly: created.schedule.monthly.copyWith(
+            day: 1,
+            hour: 9,
+            minute: 15,
+          ),
         ),
       );
-      await controller.saveSchedule(updated);
+      await controller.saveProfile(updated);
 
-      expect(repository.scheduleCalls, 1);
-      expect(controller.selectedAgent?.schedule.toCronExpressions(),
-          ['15 9 1 * *']);
+      expect(repository.updateCalls, 1);
+      expect(controller.selectedAgent?.name, '政策周报');
+      expect(controller.selectedAgent?.trustedSources, ['国务院', '央行']);
       expect(
-          controller.agents.first.schedule.toCronExpressions(), ['15 9 1 * *']);
+        controller.selectedAgent?.outputStyle,
+        NewsAgentOutputStyle.executive,
+      );
+      expect(controller.selectedAgent?.schedule.toCronExpressions(), [
+        '30 8 * * *',
+        '0 18 * * *',
+        '30 17 * * 5',
+        '15 9 1 * *',
+      ]);
+      expect(controller.agents.first.schedule.toCronExpressions(), [
+        '30 8 * * *',
+        '0 18 * * *',
+        '30 17 * * 5',
+        '15 9 1 * *',
+      ]);
     });
   });
 }
@@ -96,11 +111,7 @@ NewsAgent _agent({String? conversationId = 'conversation-market'}) => NewsAgent(
       summary: '今日摘要',
       lastActivityLabel: '08:30',
       conversationId: conversationId,
-      schedule: const ReadingSchedule(
-        cadence: ReadingCadence.daily,
-        hour: 8,
-        minute: 30,
-      ),
+      schedule: const ReadingSchedule.standard(),
     );
 
 NewsMessage _message({
@@ -123,7 +134,7 @@ class _MemoryAgentRepository implements NewsAgentRepository {
 
   final List<NewsAgent> agents;
   int linkCalls = 0;
-  int scheduleCalls = 0;
+  int updateCalls = 0;
 
   @override
   Future<NewsAgentPage> list({
@@ -163,8 +174,8 @@ class _MemoryAgentRepository implements NewsAgentRepository {
   }
 
   @override
-  Future<NewsAgent> updateSchedule(NewsAgent agent, NewsAgent updated) async {
-    scheduleCalls += 1;
+  Future<NewsAgent> update(NewsAgent current, NewsAgent updated) async {
+    updateCalls += 1;
     _replace(updated);
     return updated;
   }

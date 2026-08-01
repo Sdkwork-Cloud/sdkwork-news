@@ -1009,7 +1009,7 @@ export function createNewsProfessionalImplementationChecklist(): readonly NewsPr
     },
     {
       owner: "sdk",
-      target: "packages/common/news/sdkwork-news-sdk-ports/src/professional.ts",
+      target: "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/professional.ts",
       todo: "TODO(news-sdk): bind generated open/app/backend SDK resource methods to professional service ports.",
     },
     {

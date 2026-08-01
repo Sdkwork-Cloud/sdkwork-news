@@ -1,0 +1,9 @@
+{
+  "app.name": "Signal",
+  "auth.required": "Sign in to your SDKWork account to continue",
+  "auth.login": "Sign in",
+  "nav.assistant": "Assistant",
+  "nav.news": "News",
+  "nav.store": "AI Store",
+  "nav.account": "Account"
+}

@@ -9,9 +9,10 @@ class AiStoreEntry {
     required this.description,
     required this.monogram,
     required this.colorValue,
-    required this.rating,
-    required this.userCount,
+    this.rating,
+    this.userCount,
     this.verified = true,
+    this.installable = true,
   });
 
   final String id;
@@ -21,9 +22,10 @@ class AiStoreEntry {
   final String description;
   final String monogram;
   final int colorValue;
-  final double rating;
-  final String userCount;
+  final double? rating;
+  final String? userCount;
   final bool verified;
+  final bool installable;
 }
 
 class AiStorePageResult {

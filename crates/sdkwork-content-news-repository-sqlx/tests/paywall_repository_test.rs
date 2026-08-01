@@ -62,7 +62,10 @@ async fn find_matching_rule_returns_created_policy() {
     .await
     .unwrap();
 
-    let rule = repo.find_matching_rule("100001", "subscription").await.unwrap();
+    let rule = repo
+        .find_matching_rule("100001", "subscription")
+        .await
+        .unwrap();
     assert!(rule.is_some());
     assert_eq!(rule.unwrap().policy_type, "subscription");
 }

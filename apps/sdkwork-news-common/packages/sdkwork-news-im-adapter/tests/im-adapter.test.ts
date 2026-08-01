@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { ImSdkClient } from "@sdkwork/im-sdk";
+import type { ImDecodedMessage, ImMessageContext, ImSdkClient } from "@sdkwork/im-sdk";
 import { createSdkworkImNewsAgentConversationPort } from "../src/index.js";
 
 describe("news IM adapter", () => {
@@ -35,5 +35,68 @@ describe("news IM adapter", () => {
     const page = await port.listMessages("conversation-7");
     expect(page.items[0]).toMatchObject({ id: "message-8", role: "agent", text: "Policy changed" });
     expect(page.pageInfo).toEqual({ hasMore: true, mode: "cursor", nextCursor: "cursor-8", pageSize: 50 });
+  });
+
+  it("maps, acknowledges, and closes composed realtime messages", async () => {
+    const acknowledge = vi.fn(async () => undefined);
+    const disconnect = vi.fn();
+    const unsubscribe = vi.fn();
+    let emitMessage:
+      | ((message: ImDecodedMessage, context: ImMessageContext) => void)
+      | undefined;
+    const onConversation = vi.fn((
+      _conversationId: string,
+      listener: (message: ImDecodedMessage, context: ImMessageContext) => void,
+    ) => {
+      emitMessage = listener;
+      return unsubscribe;
+    });
+    const connect = vi.fn(async () => ({
+      disconnect,
+      messages: { onConversation },
+    }));
+    const client = { connect } as unknown as ImSdkClient;
+    const port = createSdkworkImNewsAgentConversationPort(client);
+    const received: Array<{ id: string; status?: string; text: string }> = [];
+
+    const subscription = port.subscribe("conversation-7", (message) => {
+      received.push(message);
+    });
+    await vi.waitFor(() => {
+      expect(onConversation).toHaveBeenCalledWith("conversation-7", expect.any(Function));
+    });
+    if (!emitMessage) {
+      throw new Error("Realtime listener was not registered.");
+    }
+    emitMessage(
+      {
+        attachments: [],
+        messageId: "message-stream-9",
+        messageType: "standard",
+        occurredAt: "2026-08-01T08:00:00.000Z",
+        sender: { id: "agent-7", kind: "agent" },
+        text: "Incremental insight",
+        type: "stream.delta",
+      } as ImDecodedMessage,
+      {
+        ack: acknowledge,
+        messageId: "message-stream-9",
+        receivedAt: "2026-08-01T08:00:00.000Z",
+        sequence: 9,
+      } as ImMessageContext,
+    );
+
+    expect(received).toEqual([
+      expect.objectContaining({
+        id: "message-stream-9",
+        status: "streaming",
+        text: "Incremental insight",
+      }),
+    ]);
+    expect(acknowledge).toHaveBeenCalledOnce();
+
+    subscription.close();
+    expect(unsubscribe).toHaveBeenCalledOnce();
+    expect(disconnect).toHaveBeenCalledOnce();
   });
 });

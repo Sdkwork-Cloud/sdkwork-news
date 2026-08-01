@@ -18,7 +18,10 @@
     "layerRole": "frontend-feature",
     "publicExports": ["lib/sdkwork_news_flutter_mobile_account.dart"],
     "providedPorts": [{"name": "accountRepository", "export": "lib/sdkwork_news_flutter_mobile_account.dart"}],
-    "sdkDependencies": []
+    "requiredPorts": [],
+    "sdkDependencies": [
+      {"workspace": "sdkwork-iam-app-sdk", "surface": "app-api", "credentialMode": "injected-repository", "packageName": "sdkwork_iam_app_sdk", "status": "active"}
+    ]
   },
   "verification": {"commands": ["flutter test"]}
 }

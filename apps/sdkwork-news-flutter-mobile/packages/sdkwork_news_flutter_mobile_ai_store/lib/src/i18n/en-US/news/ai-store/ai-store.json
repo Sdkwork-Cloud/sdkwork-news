@@ -1,0 +1,15 @@
+{
+  "store.title": "AI Store",
+  "store.subtitle": "Extend how assistants read and act",
+  "store.products": "AI Products",
+  "store.skills": "Skills",
+  "store.mcp": "MCP",
+  "store.featured": "Editors pick",
+  "store.featureTitle": "Build your news intelligence workspace",
+  "store.featureSubtitle": "Combine products, Skills, and connectors",
+  "store.popular": "Popular",
+  "store.install": "Install",
+  "store.installed": "Installed",
+  "store.uninstall": "Uninstall",
+  "store.loadFailed": "This catalog is temporarily unavailable"
+}

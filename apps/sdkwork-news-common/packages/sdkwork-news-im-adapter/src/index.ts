@@ -106,7 +106,7 @@ function mapRealtimeMessage(
   context: ImMessageContext,
 ): NewsConversationMessage {
   const messageId = message.messageId ?? context.messageId ?? `realtime:${context.sequence}`;
-  const messageType = String(message.messageType ?? message.type ?? "");
+  const messageType = `${message.messageType ?? ""} ${message.type ?? ""}`;
   return {
     id: messageId,
     occurredAt: message.occurredAt ?? context.receivedAt,

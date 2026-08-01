@@ -8,6 +8,8 @@ name = "sdkwork_content_news_repository_sqlx"
 path = "src/lib.rs"
 
 [dependencies]
+async-trait = "0.1"
+sdkwork-content-news-service.workspace = true
 sdkwork-news-database-host.workspace = true
 sdkwork-database-config.workspace = true
 sdkwork-database-sqlx.workspace = true

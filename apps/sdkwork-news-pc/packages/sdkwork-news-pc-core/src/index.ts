@@ -3,4 +3,6 @@ export * from './session';
 export * from './runtime';
 export * from './config';
 export * from './host';
+export * from './modules';
+export * from './composition';
 

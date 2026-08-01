@@ -1,7 +1,8 @@
 mod test_helpers;
 
 use sdkwork_content_news_service::service::editorial_workflow_service::{
-    CreateAssignmentCommand, DecideReviewTaskCommand, NewsEditorialWorkflowService,
+    CreateAssignmentCommand, CreateReviewTaskCommand, DecideReviewTaskCommand,
+    NewsEditorialWorkflowService,
 };
 
 #[tokio::test]
@@ -204,6 +205,27 @@ async fn decide_review_changes_requested_passes() {
         reviewer_user_id: "reviewer1".to_string(),
     };
     assert!(service.validate_decide_review(&cmd).is_ok());
+}
+
+#[tokio::test]
+async fn create_review_task_persists_through_repository_port() {
+    let repo = test_helpers::create_test_repo().await;
+    let service = NewsEditorialWorkflowService::new(repo);
+    let command = CreateReviewTaskCommand {
+        tenant_id: "100001".to_string(),
+        target_type: "story".to_string(),
+        target_id: "story1".to_string(),
+        review_type: "editorial".to_string(),
+        reviewer_user_id: Some("reviewer1".to_string()),
+        due_at: None,
+    };
+
+    let result = service
+        .create_review_task(command, "2026-08-01T00:00:00Z")
+        .await
+        .expect("review task should persist");
+
+    assert_eq!(result.status, "open");
 }
 
 #[tokio::test]

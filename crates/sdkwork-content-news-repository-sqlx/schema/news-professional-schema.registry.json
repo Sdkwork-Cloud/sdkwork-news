@@ -5,7 +5,7 @@
   "capability": "news",
   "owner": "sdkwork-news",
   "schemaVersionName": "news.storage.professional.v1",
-  "status": "migration_ready",
+  "status": "design",
   "sourceOfTruth": {
     "implementedMigrations": [
       "migrations/0001_news_foundation.sql",
@@ -16,7 +16,7 @@
       "migrations/0006_news_live_coverage_foundation.sql"
     ],
     "plannedMigration": "migrations/0007_news_professional_newsroom_foundation.sql",
-    "commonContract": "packages/common/news/sdkwork-news-contracts/src/professional-schema.ts"
+    "commonContract": "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/professional-schema.ts"
   },
   "tableCount": {
     "implemented": 53,

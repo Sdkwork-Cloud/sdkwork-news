@@ -12,7 +12,9 @@ dependencies:
   sdkwork_news_flutter_mobile_core:
     path: ../sdkwork_news_flutter_mobile_core
 
+dev_dependencies:
+  test: ^1.25.0
+
 dependency_overrides:
   sdkwork_common_flutter:
     path: ../../../../../sdkwork-sdk-commons/sdkwork-sdk-common-flutter
-

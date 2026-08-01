@@ -9,6 +9,15 @@ import 'package:sdkwork_news_flutter_mobile_shell/sdkwork_news_flutter_mobile_sh
 
 import 'bootstrap/runtime.dart';
 
+const _newsLocaleFragments = <NewsLocaleFragment>[
+  ...newsCommonsLocaleFragments,
+  ...newsShellLocaleFragments,
+  ...newsAssistantLocaleFragments,
+  ...newsFeedLocaleFragments,
+  ...newsAiStoreLocaleFragments,
+  ...newsAccountLocaleFragments,
+];
+
 class NewsApp extends StatefulWidget {
   const NewsApp({super.key, required this.runtime});
 
@@ -19,6 +28,15 @@ class NewsApp extends StatefulWidget {
 }
 
 class _NewsAppState extends State<NewsApp> {
+  Locale _locale = const Locale('zh', 'CN');
+
+  void _selectLocale(Locale locale) {
+    if (_locale == locale) {
+      return;
+    }
+    setState(() => _locale = locale);
+  }
+
   @override
   void dispose() {
     widget.runtime.dispose();
@@ -31,9 +49,10 @@ class _NewsAppState extends State<NewsApp> {
       debugShowCheckedModeBanner: false,
       title: 'SDKWork News',
       theme: NewsTheme.light(),
-      locale: const Locale('zh', 'CN'),
+      locale: _locale,
       supportedLocales: NewsStrings.supportedLocales,
       localizationsDelegates: const [
+        NewsStringsDelegate(_newsLocaleFragments),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -41,14 +60,17 @@ class _NewsAppState extends State<NewsApp> {
       home: widget.runtime.requiresSignIn
           ? const NewsAuthRequiredPage()
           : NewsMobileShell(
-              controller: widget.runtime.shellController,
+              controller: widget.runtime.shellController!,
               assistant: AssistantPage(
-                controller: widget.runtime.assistantController,
+                controller: widget.runtime.assistantController!,
               ),
-              news: NewsFeedPage(controller: widget.runtime.newsController),
-              store: AiStorePage(controller: widget.runtime.storeController),
-              account:
-                  AccountPage(controller: widget.runtime.accountController),
+              news: NewsFeedPage(controller: widget.runtime.newsController!),
+              store: AiStorePage(controller: widget.runtime.storeController!),
+              account: AccountPage(
+                controller: widget.runtime.accountController!,
+                locale: _locale,
+                onLocaleChanged: _selectLocale,
+              ),
             ),
     );
   }
@@ -87,16 +109,16 @@ class NewsAuthRequiredPage extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  '登录 SDKWork 账号后继续',
+                Text(
+                  NewsStrings.of(context).text('auth.required'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: NewsPalette.muted),
+                  style: const TextStyle(color: NewsPalette.muted),
                 ),
                 const SizedBox(height: 18),
                 FilledButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.login_rounded),
-                  label: const Text('登录'),
+                  label: Text(NewsStrings.of(context).text('auth.login')),
                 ),
               ],
             ),

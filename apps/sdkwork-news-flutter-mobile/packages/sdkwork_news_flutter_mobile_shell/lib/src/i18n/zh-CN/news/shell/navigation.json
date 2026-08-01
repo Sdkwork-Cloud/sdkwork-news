@@ -1,0 +1,9 @@
+{
+  "app.name": "智阅",
+  "auth.required": "登录 SDKWork 账号后继续",
+  "auth.login": "登录",
+  "nav.assistant": "助手",
+  "nav.news": "新闻",
+  "nav.store": "AI Store",
+  "nav.account": "我的"
+}

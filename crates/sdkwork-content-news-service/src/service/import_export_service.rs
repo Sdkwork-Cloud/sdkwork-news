@@ -1,7 +1,10 @@
-use crate::repository::professional_repository::{NewsProfessionalRepository, NewNewsImportJob, NewNewsExportJob};
+use crate::{
+    shared_news_professional_repository, NewNewsExportJob, NewNewsImportJob,
+    NewsProfessionalRepositoryPort, SharedNewsProfessionalRepository,
+};
 
 pub struct NewsImportExportService {
-    repo: NewsProfessionalRepository,
+    repository: SharedNewsProfessionalRepository,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -57,8 +60,13 @@ impl std::fmt::Display for ImportExportError {
 impl std::error::Error for ImportExportError {}
 
 impl NewsImportExportService {
-    pub fn new(repo: NewsProfessionalRepository) -> Self {
-        Self { repo }
+    pub fn new<R>(repository: R) -> Self
+    where
+        R: NewsProfessionalRepositoryPort + 'static,
+    {
+        Self {
+            repository: shared_news_professional_repository(repository),
+        }
     }
 
     pub fn validate_import_ninjs(
@@ -104,7 +112,7 @@ impl NewsImportExportService {
             now: now.to_string(),
         };
 
-        self.repo
+        self.repository
             .create_import_job(input)
             .await
             .map_err(|e| ImportExportError {
@@ -163,7 +171,7 @@ impl NewsImportExportService {
             now: now.to_string(),
         };
 
-        self.repo
+        self.repository
             .create_import_job(input)
             .await
             .map_err(|e| ImportExportError {
@@ -215,7 +223,7 @@ impl NewsImportExportService {
             now: now.to_string(),
         };
 
-        self.repo
+        self.repository
             .create_export_job(input)
             .await
             .map_err(|e| ImportExportError {

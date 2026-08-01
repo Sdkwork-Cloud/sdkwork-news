@@ -6,7 +6,7 @@
     "displayName": "News Service",
     "version": "0.1.0",
     "type": "node-package",
-    "root": "sdkwork-news/packages/common/news/sdkwork-news-service",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-service",
     "domain": "content",
     "capability": "news-service",
     "languages": [
@@ -50,8 +50,15 @@
     }
   ],
   "contracts": {
+    "layerRole": "backend-service",
     "publicExports": [
       "."
+    ],
+    "providedPorts": [
+      { "name": "newsService", "export": "." }
+    ],
+    "requiredPorts": [
+      { "name": "newsAppSdkPort", "export": ".", "package": "@sdkwork/news-sdk-ports" }
     ],
     "runtimeEntrypoints": [
       "package.json#scripts.typecheck",
@@ -59,6 +66,7 @@
     ],
     "routeManifest": null,
     "sdkClients": [],
+    "sdkDependencies": [],
     "events": [],
     "configKeys": []
   },

@@ -65,12 +65,18 @@
     }
   ],
   "contracts": {
+    "layerRole": "sdk-facade",
     "publicExports": [
       "."
     ],
+    "providedPorts": [],
+    "requiredPorts": [],
     "runtimeEntrypoints": [],
     "routeManifest": null,
     "sdkClients": [],
+    "sdkDependencies": [],
+    "dependencyApiExports": [],
+    "dependencyApiSurfaces": [],
     "events": [],
     "configKeys": []
   },

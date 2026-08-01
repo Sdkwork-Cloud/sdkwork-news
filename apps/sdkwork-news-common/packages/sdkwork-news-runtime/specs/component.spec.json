@@ -6,65 +6,50 @@
     "displayName": "News Runtime",
     "version": "0.1.0",
     "type": "node-package",
-    "root": "sdkwork-news/packages/common/news/sdkwork-news-runtime",
+    "root": "sdkwork-news/apps/sdkwork-news-common/packages/sdkwork-news-runtime",
     "domain": "content",
     "capability": "news-runtime",
-    "languages": [
-      "typescript"
-    ],
+    "languages": ["typescript"],
     "generated": false,
-    "manifests": [
-      "package.json"
-    ]
+    "manifests": ["package.json"]
   },
   "canonicalSpecs": [
-    {
-      "file": "COMPONENT_SPEC.md",
-      "path": "../../../../../sdkwork-specs/COMPONENT_SPEC.md",
-      "purpose": "Component-local contract and discovery rules."
-    },
-    {
-      "file": "CODE_STYLE_SPEC.md",
-      "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md",
-      "purpose": "Authored source structure and generated code boundaries."
-    },
-    {
-      "file": "NAMING_SPEC.md",
-      "path": "../../../../../sdkwork-specs/NAMING_SPEC.md",
-      "purpose": "Canonical SDKWork naming rules."
-    },
-    {
-      "file": "MODULE_SPEC.md",
-      "path": "../../../../../sdkwork-specs/MODULE_SPEC.md",
-      "purpose": "Reusable module and package boundary rules."
-    },
-    {
-      "file": "TEST_SPEC.md",
-      "path": "../../../../../sdkwork-specs/TEST_SPEC.md",
-      "purpose": "Verification and contract testing expectations."
-    },
-    {
-      "file": "TYPESCRIPT_CODE_SPEC.md",
-      "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md",
-      "purpose": "TypeScript and Node package rules."
-    }
+    { "file": "COMPONENT_SPEC.md", "path": "../../../../../sdkwork-specs/COMPONENT_SPEC.md", "purpose": "Component-local contracts." },
+    { "file": "CODE_STYLE_SPEC.md", "path": "../../../../../sdkwork-specs/CODE_STYLE_SPEC.md", "purpose": "Authored source boundaries." },
+    { "file": "NAMING_SPEC.md", "path": "../../../../../sdkwork-specs/NAMING_SPEC.md", "purpose": "Canonical SDKWork naming." },
+    { "file": "TYPESCRIPT_CODE_SPEC.md", "path": "../../../../../sdkwork-specs/TYPESCRIPT_CODE_SPEC.md", "purpose": "TypeScript package rules." },
+    { "file": "APP_SDK_INTEGRATION_SPEC.md", "path": "../../../../../sdkwork-specs/APP_SDK_INTEGRATION_SPEC.md", "purpose": "App SDK and token composition." }
   ],
   "contracts": {
-    "publicExports": [
-      "."
+    "layerRole": "runtime-composition",
+    "publicExports": [".", "./config", "./feed-runtime"],
+    "providedPorts": [
+      { "name": "sdkworkNewsRuntime", "export": "." },
+      { "name": "newsFeedRuntime", "export": "./feed-runtime" }
     ],
-    "runtimeEntrypoints": [
-      "package.json#scripts.typecheck",
-      "package.json#scripts.test"
+    "requiredPorts": [
+      { "name": "authTokenManager", "export": ".", "provider": "@sdkwork/sdk-common" },
+      { "name": "newsFeedPort", "export": ".", "provider": "@sdkwork/news-feed-sdk-adapter" },
+      { "name": "newsFeedService", "export": ".", "provider": "@sdkwork/news-feed-service" }
     ],
+    "runtimeEntrypoints": ["package.json#scripts.typecheck", "package.json#scripts.test"],
     "routeManifest": null,
     "sdkClients": [],
+    "sdkDependencies": [
+      { "workspace": "sdkwork-news-app-sdk", "surface": "app-api", "credentialMode": "global-token-manager", "packageName": "@sdkwork/news-app-sdk", "status": "active" }
+    ],
     "events": [],
-    "configKeys": []
+    "configKeys": [
+      "VITE_SDKWORK_NEWS_APPLICATION_PUBLIC_HTTP_URL",
+      "VITE_SDKWORK_NEWS_PLATFORM_API_GATEWAY_HTTP_URL",
+      "VITE_SDKWORK_NEWS_DEMO_MODE",
+      "VITE_SDKWORK_NEWS_ENVIRONMENT"
+    ]
   },
   "verification": {
     "commands": [
-      "pnpm typecheck"
+      "pnpm --filter @sdkwork/news-runtime typecheck",
+      "pnpm --filter @sdkwork/news-runtime test"
     ]
   }
 }
