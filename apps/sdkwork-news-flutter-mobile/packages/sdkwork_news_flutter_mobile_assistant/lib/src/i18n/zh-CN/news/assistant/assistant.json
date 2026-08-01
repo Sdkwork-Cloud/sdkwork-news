@@ -59,5 +59,13 @@
   "assistant.empty": "还没有消息",
   "assistant.retry": "重试",
   "assistant.cronCount.one": "共 {count} 个执行时点",
-  "assistant.cronCount.many": "共 {count} 个执行时点"
+  "assistant.cronCount.many": "共 {count} 个执行时点",
+  "assistant.collapseAnalysis": "收起分析",
+  "assistant.analysisBody": "进一步观察显示，资金面改善主要来自短期操作，尚需结合公开市场到期量、信用扩张和政策表述交叉验证。",
+  "assistant.followUpPrompt": "请继续解释这项变化的影响，并列出需要验证的证据。",
+  "assistant.trackActionPrompt": "请把建议动作加入跟踪，并在条件变化时提醒我。",
+  "assistant.attachNews": "引用一条新闻",
+  "assistant.attachNewsPrompt": "请结合这条新闻进行分析：",
+  "assistant.attachLink": "添加网页链接",
+  "assistant.attachLinkPrompt": "请阅读并分析这个链接："
 }

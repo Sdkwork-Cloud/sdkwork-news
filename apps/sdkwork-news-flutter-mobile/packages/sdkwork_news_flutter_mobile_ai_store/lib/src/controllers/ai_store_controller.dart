@@ -12,6 +12,7 @@ class AiStoreController extends ChangeNotifier {
   Set<String> installedIds = const {};
   Set<String> busyIds = const {};
   String? nextCursor;
+  String? query;
   bool hasMore = false;
   bool isLoading = false;
   bool isLoadingMore = false;
@@ -35,6 +36,18 @@ class AiStoreController extends ChangeNotifier {
 
   Future<void> loadMore() => _load(reset: false);
 
+  Future<void> search(String? value) async {
+    final normalized = value?.trim();
+    final next = normalized == null || normalized.isEmpty ? null : normalized;
+    if (query == next) return;
+    query = next;
+    entries = const [];
+    nextCursor = null;
+    hasMore = false;
+    notifyListeners();
+    await _load(reset: true);
+  }
+
   Future<void> _load({required bool reset}) async {
     if (isLoading || isLoadingMore || (!reset && !hasMore)) {
       return;
@@ -51,6 +64,7 @@ class AiStoreController extends ChangeNotifier {
         kind: kind,
         cursor: reset ? null : nextCursor,
         pageSize: 20,
+        query: query,
       );
       final byId = <String, AiStoreEntry>{
         if (!reset)

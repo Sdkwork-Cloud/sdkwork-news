@@ -59,5 +59,13 @@
   "assistant.empty": "No messages yet",
   "assistant.retry": "Retry",
   "assistant.cronCount.one": "{count} execution time",
-  "assistant.cronCount.many": "{count} execution times"
+  "assistant.cronCount.many": "{count} execution times",
+  "assistant.collapseAnalysis": "Collapse analysis",
+  "assistant.analysisBody": "Further evidence suggests the liquidity improvement is driven by short-term operations. Validate it against maturities, credit expansion, and policy language.",
+  "assistant.followUpPrompt": "Explain the impact of this change and list the evidence that still needs verification.",
+  "assistant.trackActionPrompt": "Track this suggested action and notify me when its conditions change.",
+  "assistant.attachNews": "Reference a news story",
+  "assistant.attachNewsPrompt": "Analyze this news story in context: ",
+  "assistant.attachLink": "Add a web link",
+  "assistant.attachLinkPrompt": "Read and analyze this link: "
 }

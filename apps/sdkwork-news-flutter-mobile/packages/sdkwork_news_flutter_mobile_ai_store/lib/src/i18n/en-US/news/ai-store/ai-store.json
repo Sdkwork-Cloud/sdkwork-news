@@ -11,5 +11,17 @@
   "store.install": "Install",
   "store.installed": "Installed",
   "store.uninstall": "Uninstall",
-  "store.loadFailed": "This catalog is temporarily unavailable"
+  "store.loadFailed": "This catalog is temporarily unavailable",
+  "store.detail": "Capability details",
+  "store.search": "Search AI Store",
+  "store.searchHint": "Search products, Skills, or connectors",
+  "store.searchAction": "Search",
+  "store.clearSearch": "Clear search",
+  "store.empty": "No matching capabilities",
+  "store.capabilities": "Capabilities",
+  "store.kind.product": "AI product",
+  "store.kind.skill": "Skill",
+  "store.kind.mcp": "MCP connector",
+  "store.actionFailed": "The action failed. Try again later.",
+  "store.installUnavailable": "This capability is view-only until installation is connected"
 }

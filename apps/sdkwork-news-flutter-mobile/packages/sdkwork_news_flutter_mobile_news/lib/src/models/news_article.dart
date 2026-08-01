@@ -8,6 +8,7 @@ class NewsArticle {
     required this.imageAsset,
     required this.commentCount,
     this.summary = '',
+    this.body = const <String>[],
   });
 
   final String id;
@@ -18,6 +19,7 @@ class NewsArticle {
   final String imageAsset;
   final int commentCount;
   final String summary;
+  final List<String> body;
 }
 
 class NewsArticlePage {

@@ -48,4 +48,62 @@ describe("createSdkworkNewsFeedPort", () => {
       nextCursor: "next-1",
     });
   });
+
+  it("maps detail capabilities through the composed app SDK", async () => {
+    const retrieve = vi.fn(async () => ({
+      body: "First paragraph.\n\nSecond paragraph.",
+      categoryId: "technology",
+      featured: false,
+      id: "article-1",
+      priority: 1,
+      slug: "article-1",
+      status: "published" as const,
+      summary: "Summary",
+      tags: ["Agent"],
+      tenantId: "tenant-1",
+      title: "Agentic news",
+      updatedAt: "2026-08-01T00:00:00.000Z",
+    }));
+    const related = vi.fn(async () => ({
+      items: [],
+      pageInfo: { hasMore: false, mode: "cursor" },
+    }));
+    const createFeedback = vi.fn(async () => ({}));
+    const createEvent = vi.fn(async () => ({}));
+    const client = {
+      news: {
+        events: { create: createEvent },
+        feedback: { create: createFeedback },
+        items: { related: { list: related }, retrieve },
+      },
+    } as unknown as SdkworkAppClient;
+    const port = createSdkworkNewsFeedPort(client);
+
+    await expect(port.retrieveArticle("article-1")).resolves.toMatchObject({
+      body: "First paragraph.\n\nSecond paragraph.",
+      id: "article-1",
+      slug: "article-1",
+      updatedAt: "2026-08-01T00:00:00.000Z",
+    });
+    await port.listRelated("article-1", 6);
+    await port.createFeedback("article-1", "more_like_this", "useful");
+    await port.createEvent({
+      eventType: "click",
+      itemId: "article-1",
+      occurredAt: "2026-08-01T00:00:00.000Z",
+    });
+
+    expect(related).toHaveBeenCalledWith("article-1", { limit: "6" });
+    expect(createFeedback).toHaveBeenCalledWith({
+      feedbackType: "more_like_this",
+      reason: "useful",
+      targetId: "article-1",
+      targetType: "item",
+    });
+    expect(createEvent).toHaveBeenCalledWith({
+      eventType: "click",
+      itemId: "article-1",
+      occurredAt: "2026-08-01T00:00:00.000Z",
+    });
+  });
 });

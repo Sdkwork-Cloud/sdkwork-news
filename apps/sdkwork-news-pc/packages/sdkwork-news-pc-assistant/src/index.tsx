@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   BellRing,
   BookOpenCheck,
@@ -44,6 +44,7 @@ interface NewsAgentProfileInput {
 
 type AssistantLoadState = "demo" | "loading" | "live" | "offline";
 type ConversationLoadState = "idle" | "loading" | "live" | "offline";
+type AgentFilter = "all" | "paused" | "updated";
 
 const showcaseAgents: NewsReadingAgent[] = [
   createShowcaseAgent({
@@ -121,14 +122,23 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
   const [sendError, setSendError] = useState("");
   const [mutationError, setMutationError] = useState("");
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [agentFilter, setAgentFilter] = useState<AgentFilter>("all");
+  const [digestExpanded, setDigestExpanded] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<string>();
+  const [trackingAdded, setTrackingAdded] = useState(false);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
 
   const activeAgent = agents.find((agent) => agent.id === activeAgentId) ?? agents[0];
   const filteredAgents = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
-    return normalized
-      ? agents.filter((agent) => `${agent.name} ${agent.description}`.toLocaleLowerCase().includes(normalized))
-      : agents;
-  }, [agents, query]);
+    return agents.filter((agent) => {
+      const matchesQuery = !normalized || `${agent.name} ${agent.description}`.toLocaleLowerCase().includes(normalized);
+      const matchesFilter = agentFilter === "all"
+        || (agentFilter === "updated" && agent.unreadCount > 0)
+        || (agentFilter === "paused" && agent.status === "paused");
+      return matchesQuery && matchesFilter;
+    });
+  }, [agentFilter, agents, query]);
 
   useEffect(() => {
     if (demoMode) {
@@ -307,6 +317,11 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
     }
   };
 
+  const preparePrompt = (value: string) => {
+    setDraft(value);
+    window.setTimeout(() => composerRef.current?.focus(), 0);
+  };
+
   return (
     <div className="news-pc-assistant">
       <aside className="news-pc-assistant__list-panel">
@@ -324,9 +339,9 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索助手" />
         </label>
         <div className="news-pc-assistant__filter-row">
-          <button type="button" className="is-active">全部</button>
-          <button type="button">有更新</button>
-          <button type="button">已暂停</button>
+          <button className={agentFilter === "all" ? "is-active" : ""} onClick={() => setAgentFilter("all")} type="button">全部</button>
+          <button className={agentFilter === "updated" ? "is-active" : ""} onClick={() => setAgentFilter("updated")} type="button">有更新</button>
+          <button className={agentFilter === "paused" ? "is-active" : ""} onClick={() => setAgentFilter("paused")} type="button">已暂停</button>
         </div>
         <div className="news-pc-assistant__agents">
           {filteredAgents.map((agent) => (
@@ -352,7 +367,7 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
           {filteredAgents.length === 0 && (
             <AssistantListState
               loadState={loadState}
-              queryActive={Boolean(query.trim())}
+              queryActive={Boolean(query.trim()) || agentFilter !== "all"}
               onRetry={() => setReloadKey((current) => current + 1)}
             />
           )}
@@ -406,25 +421,27 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
               <h2>公开市场操作节奏出现边际变化</h2>
             </div>
             <p>连续三日净投放规模上升，短端资金价格回落。变化尚未构成政策转向，但对高杠杆与利率敏感行业形成短期窗口。</p>
+            {digestExpanded && <div className="news-digest-card__analysis"><p>过去三个交易日净投放逐日增加，隔夜与七天资金价格同步回落，但中长期资金成本尚未形成一致趋势。</p><p>当前更适合视为流动性维护信号。银行、地产和高估值成长板块对后续量价变化更敏感，需要结合收盘成交量继续验证。</p></div>}
             <div className="news-digest-card__metrics">
               <span><BookOpenCheck size={15} /> 7 个来源</span>
               <span><ShieldCheck size={15} /> 可信度 91%</span>
               <span><Clock3 size={15} /> 3 分钟阅读</span>
             </div>
             <div className="news-digest-card__sources">
-              <button type="button"><FileText size={15} /><span>央行公开市场业务交易公告</span><ExternalLink size={14} /></button>
-              <button type="button"><FileText size={15} /><span>银行间市场资金面日报</span><ExternalLink size={14} /></button>
+              <button onClick={() => setSelectedSource("央行公开市场业务交易公告 · 2026-07-31 09:20 · 官方发布")} type="button"><FileText size={15} /><span>央行公开市场业务交易公告</span><ExternalLink size={14} /></button>
+              <button onClick={() => setSelectedSource("银行间市场资金面日报 · 2026-07-31 08:10 · 市场数据")} type="button"><FileText size={15} /><span>银行间市场资金面日报</span><ExternalLink size={14} /></button>
             </div>
+            {selectedSource && <p className="news-digest-card__source-detail" role="status">{selectedSource}</p>}
             <footer>
-              <button type="button">查看完整分析</button>
-              <button type="button">继续追问</button>
+              <button aria-expanded={digestExpanded} onClick={() => setDigestExpanded((current) => !current)} type="button">{digestExpanded ? "收起完整分析" : "查看完整分析"}</button>
+              <button onClick={() => preparePrompt("请继续解释这次公开市场操作变化可能影响哪些行业，并列出证据。") } type="button">继续追问</button>
             </footer>
           </article>
 
           <article className="news-followup-card">
             <span><BellRing size={16} /> 建议动作</span>
             <p>今天收盘后复核成交量与北向资金变化；若两项同时转强，再提高判断等级。</p>
-            <button type="button"><Check size={15} /> 加入跟踪</button>
+            <button aria-pressed={trackingAdded} disabled={trackingAdded} onClick={() => setTrackingAdded(true)} type="button"><Check size={15} /> {trackingAdded ? "已加入跟踪" : "加入跟踪"}</button>
           </article>
           </>}
           {conversationState === "loading" && <ConversationState message="正在同步消息" />}
@@ -446,6 +463,7 @@ export function NewsPcAssistant({ demoMode, service }: NewsPcAssistantProps) {
           <div className="news-composer__input">
             <textarea
               aria-label="发送消息"
+              ref={composerRef}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && !event.shiftKey) {

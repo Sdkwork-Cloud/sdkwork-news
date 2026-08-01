@@ -57,9 +57,47 @@ void main() {
       expect(registry.resolveTab(NewsRoutes.conversation.id),
           NewsShellTab.assistant);
       expect(registry.resolveTab(NewsRoutes.news.id), NewsShellTab.news);
+      expect(registry.resolveTab(NewsRoutes.article.id), NewsShellTab.news);
       expect(registry.resolveTab(NewsRoutes.store.id), NewsShellTab.store);
+      expect(registry.resolveTab(NewsRoutes.storeEntry.id), NewsShellTab.store);
       expect(registry.resolveTab(NewsRoutes.account.id), NewsShellTab.account);
+      expect(
+        registry.resolveTab(NewsRoutes.accountDetail.id),
+        NewsShellTab.account,
+      );
       expect(() => registry.resolveTab('unknown'), throwsArgumentError);
+    });
+
+    test('decodes typed feature detail links and rejects missing ids', () {
+      expect(
+        registry
+            .decodeArticle(Uri.parse('/news/article?articleId=story-1'))
+            .articleId,
+        'story-1',
+      );
+      final entry = registry.decodeStoreEntry(
+        Uri.parse('/store/entry?entryId=skill-1&kind=skill'),
+      );
+      expect(entry.entryId, 'skill-1');
+      expect(entry.kind, 'skill');
+      expect(
+        registry
+            .decodeAccountDetail(
+              Uri.parse('/account/detail?section=notifications'),
+            )
+            .section,
+        'notifications',
+      );
+      expect(
+        () => registry.decodeArticle(Uri.parse('/news/article')),
+        throwsFormatException,
+      );
+      expect(
+        () => registry.decodeStoreEntry(
+          Uri.parse('/store/entry?entryId=skill-1'),
+        ),
+        throwsFormatException,
+      );
     });
 
     test('requires a non-empty agent id on conversation deep links', () {

@@ -13,6 +13,8 @@ class IamCurrentUser {
 
 abstract interface class IamCurrentUserGateway {
   Future<IamCurrentUser> retrieve();
+
+  Future<void> updateDisplayName(String displayName);
 }
 
 class SdkworkIamCurrentUserGateway implements IamCurrentUserGateway {
@@ -56,6 +58,16 @@ class SdkworkIamCurrentUserGateway implements IamCurrentUserGateway {
     }
     return IamCurrentUser(displayName: resolvedName, email: email);
   }
+
+  @override
+  Future<void> updateDisplayName(String displayName) async {
+    final response = await _client.iam.usersCurrentUpdate({
+      'displayName': displayName,
+    });
+    if (response == null || response.code != 0) {
+      throw const FormatException('IAM SDK response is missing success data');
+    }
+  }
 }
 
 class IamAccountRepository implements AccountRepository {
@@ -71,6 +83,16 @@ class IamAccountRepository implements AccountRepository {
       email: user.email,
       initial: _initial(user.displayName),
     );
+  }
+
+  @override
+  Future<AccountProfile> updateDisplayName(String displayName) async {
+    final normalized = displayName.trim();
+    if (normalized.isEmpty) {
+      throw const FormatException('displayName is required');
+    }
+    await _gateway.updateDisplayName(normalized);
+    return currentProfile();
   }
 }
 

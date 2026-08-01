@@ -2,6 +2,7 @@
   "app.name": "Signal",
   "auth.required": "Sign in to your SDKWork account to continue",
   "auth.login": "Sign in",
+  "auth.loginUnavailable": "Sign-in is temporarily unavailable",
   "nav.assistant": "Assistant",
   "nav.news": "News",
   "nav.store": "AI Store",

@@ -40,6 +40,7 @@ abstract interface class McpCatalogGateway {
   Future<McpCatalogPage> listServers({
     String? cursor,
     int pageSize = 20,
+    String? query,
   });
 }
 
@@ -52,12 +53,13 @@ class SdkworkMcpCatalogGateway implements McpCatalogGateway {
   Future<McpCatalogPage> listServers({
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async {
     final response = await _client.mcp.listServers(
       null,
       pageSize.clamp(1, 200),
       cursor,
-      null,
+      query,
     );
     if (response == null || response.code != 0) {
       throw const FormatException('MCP SDK response is missing success data');
@@ -102,6 +104,7 @@ class McpAiStoreRepository implements AiStoreRepository {
     required AiStoreKind kind,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async {
     if (kind != AiStoreKind.mcp) {
       throw AiStoreCapabilityUnavailable(kind, 'catalog listing');
@@ -109,6 +112,7 @@ class McpAiStoreRepository implements AiStoreRepository {
     final page = await _gateway.listServers(
       cursor: cursor,
       pageSize: pageSize,
+      query: query,
     );
     return AiStorePageResult(
       items: page.items.map(_toStoreEntry).toList(growable: false),

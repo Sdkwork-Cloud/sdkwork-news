@@ -7,7 +7,8 @@ import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_cor
 import '../controllers/assistant_controller.dart';
 
 class AssistantPage extends StatefulWidget {
-  const AssistantPage({super.key, required this.controller, this.onSecondaryPageChanged});
+  const AssistantPage(
+      {super.key, required this.controller, this.onSecondaryPageChanged});
 
   final AssistantController controller;
   final ValueChanged<bool>? onSecondaryPageChanged;
@@ -25,7 +26,8 @@ class _AssistantPageState extends State<AssistantPage> {
   }
 
   void _handleControllerChanged() {
-    widget.onSecondaryPageChanged?.call(widget.controller.selectedAgent != null);
+    widget.onSecondaryPageChanged
+        ?.call(widget.controller.selectedAgent != null);
   }
 
   void _openAgent(NewsAgent agent) {
@@ -437,10 +439,13 @@ class _AssistantConversation extends StatefulWidget {
 
 class _AssistantConversationState extends State<_AssistantConversation> {
   final _composer = TextEditingController();
+  final _composerFocus = FocusNode();
+  bool _showFullAnalysis = false;
 
   @override
   void dispose() {
     _composer.dispose();
+    _composerFocus.dispose();
     super.dispose();
   }
 
@@ -453,168 +458,232 @@ class _AssistantConversationState extends State<_AssistantConversation> {
     await widget.controller.send(value);
   }
 
+  void _preparePrompt(String value) {
+    _composer.text = value;
+    _composer.selection = TextSelection.collapsed(offset: value.length);
+    _composerFocus.requestFocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = NewsStrings.of(context);
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        children: [
-          Container(
-            height: 58,
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            color: NewsPalette.surface,
-            child: Row(
-              children: [
-                IconButton(
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  onPressed: widget.onClose,
-                  icon: const Icon(Icons.arrow_back_rounded),
-                ),
-                AgentAvatar(
-                  initial: widget.agent.initial,
-                  color: Color(widget.agent.colorValue),
-                  size: 36,
-                ),
-                const SizedBox(width: 9),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.agent.name,
-                          style: const TextStyle(fontWeight: FontWeight.w700)),
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: NewsPalette.primary,
-                              shape: BoxShape.circle,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) widget.onClose();
+      },
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Container(
+              height: 58,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              color: Theme.of(context).colorScheme.surface,
+              child: Row(
+                children: [
+                  IconButton(
+                    tooltip:
+                        MaterialLocalizations.of(context).backButtonTooltip,
+                    onPressed: widget.onClose,
+                    icon: const Icon(Icons.arrow_back_rounded),
+                  ),
+                  AgentAvatar(
+                    initial: widget.agent.initial,
+                    color: Color(widget.agent.colorValue),
+                    size: 36,
+                  ),
+                  const SizedBox(width: 9),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.agent.name,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w700)),
+                        Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: NewsPalette.primary,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            strings.text('assistant.working'),
+                            const SizedBox(width: 4),
+                            Text(
+                              strings.text('assistant.working'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: NewsPalette.muted),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: strings.text('assistant.settings'),
+                    onPressed: () => _showProfileSheet(
+                      context,
+                      widget.controller,
+                      widget.agent,
+                    ),
+                    icon: const Icon(Icons.tune_rounded),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Expanded(
+              child: widget.controller.isLoading
+                  ? Center(child: Text(strings.text('assistant.loading')))
+                  : ListView(
+                      key: PageStorageKey(
+                        'assistant-conversation-${widget.agent.id}',
+                      ),
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 24),
+                      children: [
+                        Center(
+                          child: Text(
+                            strings.text('assistant.today'),
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
                                 ?.copyWith(color: NewsPalette.muted),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: strings.text('assistant.settings'),
-                  onPressed: () => _showProfileSheet(
-                    context,
-                    widget.controller,
-                    widget.agent,
-                  ),
-                  icon: const Icon(Icons.tune_rounded),
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
-          Expanded(
-            child: widget.controller.isLoading
-                ? Center(child: Text(strings.text('assistant.loading')))
-                : ListView(
-                    key: PageStorageKey(
-                      'assistant-conversation-${widget.agent.id}',
-                    ),
-                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 24),
-                    children: [
-                      Center(
-                        child: Text(
-                          strings.text('assistant.today'),
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(color: NewsPalette.muted),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      for (final message in widget.controller.messages)
-                        _MessageBubble(
-                          message: message,
-                          agent: widget.agent,
-                        ),
-                      if (widget.controller.messages.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        _DigestCard(strings: strings),
-                        const SizedBox(height: 10),
-                        _ActionCard(strings: strings),
-                      ],
-                      if (widget.controller.errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(
-                            widget.controller.errorMessage!,
-                            style: const TextStyle(
-                              color: NewsPalette.danger,
-                              fontSize: 12,
+                        const SizedBox(height: 12),
+                        for (final message in widget.controller.messages)
+                          _MessageBubble(
+                            message: message,
+                            agent: widget.agent,
+                          ),
+                        if (widget.controller.messages.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          _DigestCard(
+                            strings: strings,
+                            expanded: _showFullAnalysis,
+                            onFollowUp: () => _preparePrompt(
+                              strings.text('assistant.followUpPrompt'),
+                            ),
+                            onToggleAnalysis: () => setState(
+                              () => _showFullAnalysis = !_showFullAnalysis,
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
-            decoration: const BoxDecoration(
-              color: NewsPalette.surface,
-              border: Border(top: BorderSide(color: NewsPalette.line)),
+                          const SizedBox(height: 10),
+                          _ActionCard(
+                            strings: strings,
+                            onTap: () => _preparePrompt(
+                              strings.text('assistant.trackActionPrompt'),
+                            ),
+                          ),
+                        ],
+                        if (widget.controller.errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              widget.controller.errorMessage!,
+                              style: const TextStyle(
+                                color: NewsPalette.danger,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
             ),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IconButton(
-                    tooltip:
-                        MaterialLocalizations.of(context).openAppDrawerTooltip,
-                    onPressed: () {},
-                    icon: const Icon(Icons.add_circle_outline_rounded),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _composer,
-                      minLines: 1,
-                      maxLines: 4,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _send(),
-                      decoration: InputDecoration(
-                        hintText: strings.text('assistant.ask'),
-                        isDense: true,
+            Container(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                border: Border(
+                  top: BorderSide(color: Theme.of(context).colorScheme.outline),
+                ),
+              ),
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      tooltip: MaterialLocalizations.of(context)
+                          .openAppDrawerTooltip,
+                      onPressed: () => _showAttachmentSheet(context, strings),
+                      icon: const Icon(Icons.add_circle_outline_rounded),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: _composer,
+                        focusNode: _composerFocus,
+                        minLines: 1,
+                        maxLines: 4,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (_) => _send(),
+                        decoration: InputDecoration(
+                          hintText: strings.text('assistant.ask'),
+                          isDense: true,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 5),
-                  IconButton.filled(
-                    tooltip: strings.text('assistant.send'),
-                    onPressed: widget.controller.isSending ? null : _send,
-                    icon: widget.controller.isSending
-                        ? const SizedBox.square(
-                            dimension: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(Icons.arrow_upward_rounded),
-                  ),
-                ],
+                    const SizedBox(width: 5),
+                    IconButton.filled(
+                      tooltip: strings.text('assistant.send'),
+                      onPressed: widget.controller.isSending ? null : _send,
+                      icon: widget.controller.isSending
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.arrow_upward_rounded),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _showAttachmentSheet(
+    BuildContext context,
+    NewsStrings strings,
+  ) async {
+    final prompt = await showModalBottomSheet<String>(
+      context: context,
+      useSafeArea: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(10, 12, 10, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.newspaper_outlined),
+              title: Text(strings.text('assistant.attachNews')),
+              onTap: () => Navigator.of(context).pop(
+                strings.text('assistant.attachNewsPrompt'),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.link_rounded),
+              title: Text(strings.text('assistant.attachLink')),
+              onTap: () => Navigator.of(context).pop(
+                strings.text('assistant.attachLinkPrompt'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (prompt != null && mounted) _preparePrompt(prompt);
   }
 }
 
@@ -632,16 +701,28 @@ class _MessageBubble extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isUser ? const Color(0xFFDDF2E9) : NewsPalette.surface,
+        color: isUser
+            ? const Color(0xFFDDF2E9)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(6),
-        border: isUser ? null : Border.all(color: NewsPalette.line),
+        border: isUser
+            ? null
+            : Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Flexible(
-            child: Text(message.text, style: const TextStyle(height: 1.55)),
+            child: Text(
+              message.text,
+              style: TextStyle(
+                height: 1.55,
+                color: isUser
+                    ? NewsPalette.primaryDark
+                    : Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ),
           if (message.streaming) ...[
             const SizedBox(width: 7),
@@ -674,9 +755,17 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _DigestCard extends StatelessWidget {
-  const _DigestCard({required this.strings});
+  const _DigestCard({
+    required this.strings,
+    required this.expanded,
+    required this.onFollowUp,
+    required this.onToggleAnalysis,
+  });
 
   final NewsStrings strings;
+  final bool expanded;
+  final VoidCallback onFollowUp;
+  final VoidCallback onToggleAnalysis;
 
   @override
   Widget build(BuildContext context) {
@@ -729,6 +818,13 @@ class _DigestCard extends StatelessWidget {
                   '连续三日净投放规模上升，短端资金价格回落。变化尚未构成政策转向。',
                   style: TextStyle(height: 1.5, fontSize: 12),
                 ),
+                if (expanded) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    strings.text('assistant.analysisBody'),
+                    style: const TextStyle(height: 1.6, fontSize: 12),
+                  ),
+                ],
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 12,
@@ -755,13 +851,17 @@ class _DigestCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: onFollowUp,
                   child: Text(strings.text('assistant.followUp')),
                 ),
                 const SizedBox(width: 4),
                 FilledButton(
-                  onPressed: () {},
-                  child: Text(strings.text('assistant.fullAnalysis')),
+                  onPressed: onToggleAnalysis,
+                  child: Text(strings.text(
+                    expanded
+                        ? 'assistant.collapseAnalysis'
+                        : 'assistant.fullAnalysis',
+                  )),
                 ),
               ],
             ),
@@ -793,14 +893,16 @@ class _Evidence extends StatelessWidget {
 }
 
 class _ActionCard extends StatelessWidget {
-  const _ActionCard({required this.strings});
+  const _ActionCard({required this.strings, required this.onTap});
 
   final NewsStrings strings;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: onTap,
         dense: true,
         leading: const Icon(Icons.notifications_active_outlined,
             color: NewsPalette.warning),
@@ -1152,8 +1254,7 @@ class _ProfileSheetState extends State<_ProfileSheet> {
                         name: _name.text.trim(),
                         description: _description.text.trim(),
                         scopes: _parseProfileList(_scopes.text),
-                        trustedSources:
-                            _parseProfileList(_trustedSources.text),
+                        trustedSources: _parseProfileList(_trustedSources.text),
                         outputStyle: _outputStyle,
                         schedule: schedule,
                         trustedSourcesOnly: _trustedOnly,
@@ -1241,9 +1342,7 @@ class _ProfileSheetState extends State<_ProfileSheet> {
           spacing: 6,
           runSpacing: 6,
           children: [
-            for (var day = DateTime.monday;
-                day <= DateTime.sunday;
-                day += 1)
+            for (var day = DateTime.monday; day <= DateTime.sunday; day += 1)
               FilterChip(
                 label: Text(
                   day == DateTime.sunday
@@ -1331,8 +1430,8 @@ class _ProfileSheetState extends State<_ProfileSheet> {
       initialTime: TimeOfDay(hour: _weekly.hour, minute: _weekly.minute),
     );
     if (value != null) {
-      setState(() => _weekly =
-          _weekly.copyWith(hour: value.hour, minute: value.minute));
+      setState(() =>
+          _weekly = _weekly.copyWith(hour: value.hour, minute: value.minute));
     }
   }
 
@@ -1342,8 +1441,8 @@ class _ProfileSheetState extends State<_ProfileSheet> {
       initialTime: TimeOfDay(hour: _monthly.hour, minute: _monthly.minute),
     );
     if (value != null) {
-      setState(() => _monthly =
-          _monthly.copyWith(hour: value.hour, minute: value.minute));
+      setState(() =>
+          _monthly = _monthly.copyWith(hour: value.hour, minute: value.minute));
     }
   }
 }

@@ -181,6 +181,17 @@
   border-bottom: 1px solid #dde2de;
 }
 
+.news-feed-list article.is-clickable,
+.news-feed-lead.is-clickable {
+  cursor: pointer;
+}
+
+.news-feed-list article.is-clickable:focus-visible,
+.news-feed-lead.is-clickable:focus-visible {
+  outline: 2px solid #08775a;
+  outline-offset: 3px;
+}
+
 .news-feed-list article.has-image > img {
   width: 210px;
   height: 132px;
@@ -448,6 +459,225 @@
   margin-top: 15px;
   color: #c6ceca;
   font-size: 10px;
+}
+
+.news-pc-detail-page {
+  height: 100%;
+  overflow: auto;
+  background: #fff;
+  color: #252c28;
+}
+
+.news-pc-detail-page__header {
+  min-height: 58px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e1e5e2;
+  background: #fff;
+}
+
+.news-pc-detail-page__header button {
+  min-height: 34px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #506058;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.news-pc-detail-page__header button:hover {
+  background: #edf3ef;
+}
+
+.news-pc-detail-page__header button.is-saved {
+  color: #08775a;
+}
+
+.news-pc-detail-page__header > div {
+  display: flex;
+  gap: 6px;
+}
+
+.news-pc-detail-page > main {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 35px 28px 64px;
+}
+
+.news-pc-detail-page__cover {
+  width: 100%;
+  max-height: 320px;
+  display: block;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.news-pc-detail-page__meta {
+  margin-top: 23px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #7a857d;
+  font-size: 11px;
+}
+
+.news-pc-detail-page__meta span:first-child {
+  color: #08775a;
+  font-weight: 700;
+}
+
+.news-pc-detail-page h1 {
+  margin: 12px 0 13px;
+  color: #1f2823;
+  font-size: 30px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.news-pc-detail-page__reading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #08775a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.news-pc-detail-page__reading span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #7a857d;
+  font-weight: 400;
+}
+
+.news-pc-detail-page__summary {
+  margin: 22px 0 0;
+  padding: 17px 18px;
+  border-left: 3px solid #08775a;
+  background: #f1f6f3;
+  color: #385047;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.news-pc-detail-page__body {
+  margin-top: 27px;
+}
+
+.news-pc-detail-page__body p {
+  margin: 0 0 19px;
+  color: #3d4841;
+  font-size: 15px;
+  line-height: 1.95;
+}
+
+.news-pc-detail-page__unavailable {
+  margin-top: 26px;
+  padding: 17px;
+  border: 1px solid #e1e7e3;
+  border-radius: 5px;
+  background: #fafcfb;
+}
+
+.news-pc-detail-page__unavailable h2 {
+  margin: 0 0 7px;
+  font-size: 14px;
+}
+
+.news-pc-detail-page__unavailable p {
+  margin: 0;
+  color: #748078;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.news-pc-detail-page__tags {
+  margin-top: 29px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.news-pc-detail-page__tags span {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #eaf1ed;
+  color: #4e665a;
+  font-size: 10px;
+}
+
+.news-pc-detail-page__feedback,
+.news-pc-detail-page__related {
+  border-top: 1px solid #e1e5e2;
+  margin-top: 30px;
+  padding-top: 24px;
+}
+
+.news-pc-detail-page__feedback h2,
+.news-pc-detail-page__related h2 {
+  font-size: 17px;
+  margin: 0 0 15px;
+}
+
+.news-pc-detail-page__feedback > div {
+  display: flex;
+  gap: 10px;
+}
+
+.news-pc-detail-page__feedback button {
+  align-items: center;
+  background: #f5f7f5;
+  border: 1px solid #dfe5e1;
+  border-radius: 5px;
+  color: #35443c;
+  display: inline-flex;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 15px;
+}
+
+.news-pc-detail-page__feedback p,
+.news-pc-detail-page__command-error {
+  color: #6b756e;
+  font-size: 12px;
+  margin: 12px 0 0;
+}
+
+.news-pc-detail-page__related > div {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.news-pc-detail-page__related button {
+  background: #f8faf8;
+  border: 1px solid #e1e6e3;
+  border-radius: 6px;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px;
+  text-align: left;
+}
+
+.news-pc-detail-page__related span,
+.news-pc-detail-page__related small {
+  color: #758078;
+  font-size: 11px;
+}
+
+.news-pc-detail-page__related strong {
+  color: #243029;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .is-spinning {

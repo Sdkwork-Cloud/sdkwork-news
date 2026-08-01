@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { NewsPcAccount } from "@sdkwork/news-pc-account";
+import {
+  NewsPcAccount,
+  type NewsPcAccountStorage,
+} from "@sdkwork/news-pc-account";
 import { NewsPcAiStore } from "@sdkwork/news-pc-ai-store";
 import { NewsPcAssistant } from "@sdkwork/news-pc-assistant";
-import { NewsPcNews } from "@sdkwork/news-pc-news";
+import {
+  NewsPcNews,
+  type NewsPcShareInput,
+} from "@sdkwork/news-pc-news";
 import {
   NewsPcWorkspaceShell,
   type NewsPcWorkspaceTab,
@@ -28,6 +34,7 @@ function resolveInitialTab(): NewsPcWorkspaceTab {
 export interface NewsPcAppProps {
   accountDemoMode: boolean;
   accountService?: NewsAccountService;
+  accountStorage?: NewsPcAccountStorage;
   agentService?: NewsAgentService;
   aiStoreDemoMode: boolean;
   aiStoreService?: AiStoreService;
@@ -39,6 +46,7 @@ export interface NewsPcAppProps {
 export default function App({
   accountDemoMode,
   accountService,
+  accountStorage,
   agentService,
   aiStoreDemoMode,
   aiStoreService,
@@ -58,14 +66,39 @@ export default function App({
         <NewsPcAssistant demoMode={assistantDemoMode} service={agentService} />
       )}
       {activeTab === "news" && (
-        <NewsPcNews demoMode={newsDemoMode} service={newsService} />
+        <NewsPcNews
+          demoMode={newsDemoMode}
+          service={newsService}
+          shareArticle={shareNewsArticle}
+        />
       )}
       {activeTab === "store" && (
         <NewsPcAiStore demoMode={aiStoreDemoMode} service={aiStoreService} />
       )}
       {activeTab === "account" && (
-        <NewsPcAccount demoMode={accountDemoMode} service={accountService} />
+        <NewsPcAccount
+          demoMode={accountDemoMode}
+          service={accountService}
+          storage={accountStorage}
+        />
       )}
     </NewsPcWorkspaceShell>
   );
+}
+
+async function shareNewsArticle(input: NewsPcShareInput): Promise<void> {
+  const shareText = `${input.title}\n${input.text}\n${window.location.href}`;
+  if (navigator.share) {
+    await navigator.share({
+      text: input.text,
+      title: input.title,
+      url: window.location.href,
+    });
+    return;
+  }
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(shareText);
+    return;
+  }
+  throw new Error("News sharing is unavailable in this browser.");
 }

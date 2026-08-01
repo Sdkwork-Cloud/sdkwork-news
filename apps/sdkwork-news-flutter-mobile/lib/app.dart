@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sdkwork_news_flutter_mobile_account/sdkwork_news_flutter_mobile_account.dart';
@@ -30,6 +32,26 @@ class NewsApp extends StatefulWidget {
 class _NewsAppState extends State<NewsApp> {
   Locale _locale = const Locale('zh', 'CN');
 
+  AccountController? get _accountController => widget.runtime.accountController;
+
+  @override
+  void initState() {
+    super.initState();
+    _accountController?.addListener(_syncAccountPreferences);
+    unawaited(_accountController?.initialize());
+  }
+
+  void _syncAccountPreferences() {
+    final localeTag = _accountController?.preferences.localeTag;
+    if (localeTag == null) return;
+    final next = localeTag == 'en-US'
+        ? const Locale('en', 'US')
+        : const Locale('zh', 'CN');
+    if (_locale != next && mounted) {
+      setState(() => _locale = next);
+    }
+  }
+
   void _selectLocale(Locale locale) {
     if (_locale == locale) {
       return;
@@ -39,43 +61,76 @@ class _NewsAppState extends State<NewsApp> {
 
   @override
   void dispose() {
+    _accountController?.removeListener(_syncAccountPreferences);
     widget.runtime.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SDKWork News',
-      theme: NewsTheme.light(),
-      locale: _locale,
-      supportedLocales: NewsStrings.supportedLocales,
-      localizationsDelegates: const [
-        NewsStringsDelegate(_newsLocaleFragments),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: widget.runtime.requiresSignIn
-          ? const NewsAuthRequiredPage()
-          : NewsMobileShell(
-              controller: widget.runtime.shellController!,
-              assistant: AssistantPage(
-                controller: widget.runtime.assistantController!,
-                onSecondaryPageChanged:
-                    widget.runtime.shellController!.setSecondaryPage,
+    return AnimatedBuilder(
+      animation: _accountController ?? const _NoopListenable(),
+      builder: (context, _) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'SDKWork News',
+        theme: NewsTheme.light(),
+        darkTheme: NewsTheme.dark(),
+        themeMode: _themeMode(_accountController?.preferences.appearance),
+        locale: _locale,
+        supportedLocales: NewsStrings.supportedLocales,
+        localizationsDelegates: const [
+          NewsStringsDelegate(_newsLocaleFragments),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: widget.runtime.requiresSignIn
+            ? const NewsAuthRequiredPage()
+            : NewsMobileShell(
+                controller: widget.runtime.shellController!,
+                assistant: AssistantPage(
+                  controller: widget.runtime.assistantController!,
+                  onSecondaryPageChanged:
+                      widget.runtime.shellController!.setSecondaryPage,
+                ),
+                news: NewsFeedPage(
+                  controller: widget.runtime.newsController!,
+                  onSecondaryPageChanged:
+                      widget.runtime.shellController!.setSecondaryPage,
+                ),
+                store: AiStorePage(
+                  controller: widget.runtime.storeController!,
+                  onSecondaryPageChanged:
+                      widget.runtime.shellController!.setSecondaryPage,
+                ),
+                account: AccountPage(
+                  controller: widget.runtime.accountController!,
+                  locale: _locale,
+                  onLocaleChanged: _selectLocale,
+                  onSecondaryPageChanged:
+                      widget.runtime.shellController!.setSecondaryPage,
+                  demoMode: widget.runtime.demoMode,
+                ),
               ),
-              news: NewsFeedPage(controller: widget.runtime.newsController!),
-              store: AiStorePage(controller: widget.runtime.storeController!),
-              account: AccountPage(
-                controller: widget.runtime.accountController!,
-                locale: _locale,
-                onLocaleChanged: _selectLocale,
-              ),
-            ),
+      ),
     );
   }
+}
+
+ThemeMode _themeMode(AccountAppearance? appearance) => switch (appearance) {
+      AccountAppearance.light => ThemeMode.light,
+      AccountAppearance.dark => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
+
+class _NoopListenable implements Listenable {
+  const _NoopListenable();
+
+  @override
+  void addListener(VoidCallback listener) {}
+
+  @override
+  void removeListener(VoidCallback listener) {}
 }
 
 class NewsAuthRequiredPage extends StatelessWidget {
@@ -118,7 +173,13 @@ class NewsAuthRequiredPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 FilledButton.icon(
-                  onPressed: null,
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        NewsStrings.of(context).text('auth.loginUnavailable'),
+                      ),
+                    ),
+                  ),
                   icon: const Icon(Icons.login_rounded),
                   label: Text(NewsStrings.of(context).text('auth.login')),
                 ),

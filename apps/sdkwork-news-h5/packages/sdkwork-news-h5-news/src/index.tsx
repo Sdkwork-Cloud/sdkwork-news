@@ -7,10 +7,17 @@ import {
   LoaderCircle,
   RefreshCw,
   Search,
+  Share2,
+  ThumbsDown,
+  ThumbsUp,
   X,
 } from "lucide-react";
-import { useNewsFeedController } from "@sdkwork/news-feed-react";
+import {
+  useNewsArticleController,
+  useNewsFeedController,
+} from "@sdkwork/news-feed-react";
 import type {
+  NewsArticle,
   NewsFeedItem,
   NewsFeedService,
 } from "@sdkwork/news-feed-service";
@@ -24,32 +31,70 @@ import "./styles.css";
 export interface NewsH5NewsProps {
   demoMode?: boolean;
   onSecondaryPageChange?: (value: boolean) => void;
+  shareArticle?: (input: NewsShareInput) => Promise<void>;
   service?: NewsFeedService;
+}
+
+export interface NewsShareInput {
+  text: string;
+  title: string;
 }
 
 export function NewsH5News({
   demoMode = false,
   onSecondaryPageChange,
+  shareArticle,
   service,
 }: NewsH5NewsProps) {
   const controller = useNewsFeedController(service);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [selectedItem, setSelectedItem] = useState<NewsFeedItem | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string>();
+  const articleController = useNewsArticleController(service, selectedItemId);
 
   if (demoMode) {
-    return <NewsH5NewsDemo onSecondaryPageChange={onSecondaryPageChange} />;
+    return <NewsH5NewsDemo
+      onSecondaryPageChange={onSecondaryPageChange}
+      shareArticle={shareArticle}
+    />;
   }
 
-  if (selectedItem) {
+  if (selectedItemId) {
+    if (articleController.status !== "ready" || !articleController.article) {
+      return <NewsH5DetailState
+        onBack={() => {
+          setSelectedItemId(undefined);
+          onSecondaryPageChange?.(false);
+        }}
+        onRetry={articleController.retry}
+        status={articleController.status}
+      />;
+    }
     return <NewsH5Detail
-      favorite={controller.favoriteItemIds.has(selectedItem.id)}
-      item={toNewsDetailModel(selectedItem)}
+      favorite={controller.favoriteItemIds.has(selectedItemId)}
+      favoritePending={controller.favoritePendingItemIds.has(selectedItemId)}
+      feedbackError={articleController.feedbackError}
+      feedbackMessage={articleController.feedbackMessage}
+      feedbackPending={articleController.feedbackPending}
+      item={toNewsDetailModel(articleController.article)}
       onBack={() => {
-        setSelectedItem(null);
+        setSelectedItemId(undefined);
         onSecondaryPageChange?.(false);
       }}
-      onToggleFavorite={() => void controller.toggleFavorite(selectedItem.id)}
+      onOpenRelated={(itemId) => setSelectedItemId(itemId)}
+      onShare={shareArticle
+        ? async () => {
+            await shareArticle({
+              text: articleController.article?.summary ?? "",
+              title: articleController.article?.title ?? "",
+            });
+            await articleController.recordShare();
+          }
+        : undefined}
+      onSubmitFeedback={articleController.submitFeedback}
+      onToggleFavorite={() => void controller.toggleFavorite(selectedItemId)}
+      relatedError={articleController.relatedError}
+      relatedItems={articleController.relatedItems}
     />;
   }
 
@@ -109,13 +154,13 @@ export function NewsH5News({
         {controller.items.map((item) => <NewsH5FeedArticle
           favorite={controller.favoriteItemIds.has(item.id)}
           favoritePending={controller.favoritePendingItemIds.has(item.id)}
-           item={item}
-           key={item.id}
-           onOpen={() => {
-             setSelectedItem(item);
-             onSecondaryPageChange?.(true);
-           }}
-           onToggleFavorite={() => void controller.toggleFavorite(item.id)}
+          item={item}
+          key={item.id}
+          onOpen={() => {
+            setSelectedItemId(item.id);
+            onSecondaryPageChange?.(true);
+          }}
+          onToggleFavorite={() => void controller.toggleFavorite(item.id)}
         />)}
       </section>}
 
@@ -204,16 +249,16 @@ interface NewsDetailModel {
   summary: string;
   tags: readonly string[];
   title: string;
-  source: string;
+  source?: string;
 }
 
-function toNewsDetailModel(item: NewsFeedItem): NewsDetailModel {
+function toNewsDetailModel(item: NewsArticle): NewsDetailModel {
   return {
     author: item.authorName,
+    body: toBodyParagraphs(item.body),
     category: item.categoryId,
     estimatedReadMinutes: item.estimatedReadMinutes,
     publishedLabel: item.publishedAt ? formatPublishedAt(item.publishedAt) : undefined,
-    source: item.authorName ?? "SDKWork News",
     summary: item.summary,
     tags: item.tags,
     title: item.title,
@@ -222,33 +267,75 @@ function toNewsDetailModel(item: NewsFeedItem): NewsDetailModel {
 
 function NewsH5Detail({
   favorite,
+  favoritePending,
+  feedbackError,
+  feedbackMessage,
+  feedbackPending,
   item,
   onBack,
+  onOpenRelated,
+  onShare,
+  onSubmitFeedback,
   onToggleFavorite,
+  relatedError,
+  relatedItems,
 }: {
   favorite: boolean;
+  favoritePending?: boolean;
+  feedbackError?: string;
+  feedbackMessage?: string;
+  feedbackPending?: boolean;
   item: NewsDetailModel;
   onBack(): void;
+  onOpenRelated?(itemId: string): void;
+  onShare?(): Promise<void>;
+  onSubmitFeedback?(type: "less_like_this" | "more_like_this"): Promise<void>;
   onToggleFavorite(): void;
+  relatedError?: string;
+  relatedItems?: readonly NewsFeedItem[];
 }) {
+  const [sharePending, setSharePending] = useState(false);
+  const [shareError, setShareError] = useState<string>();
+  const submitShare = async () => {
+    if (!onShare || sharePending) {
+      return;
+    }
+    setSharePending(true);
+    setShareError(undefined);
+    try {
+      await onShare();
+    } catch {
+      setShareError("分享失败，请重试");
+    } finally {
+      setSharePending(false);
+    }
+  };
   return <div className="news-h5-detail-page">
     <header className="news-h5-detail-page__header">
       <button aria-label="返回新闻列表" onClick={onBack} type="button"><ArrowLeft size={20} /></button>
       <strong>新闻详情</strong>
-      <button
-        aria-label={favorite ? "取消收藏" : "收藏新闻"}
-        aria-pressed={favorite}
-        className={favorite ? "is-saved" : ""}
-        onClick={onToggleFavorite}
-        type="button"
-      ><Bookmark fill={favorite ? "currentColor" : "none"} size={18} /></button>
+      <div>
+        {onShare && <button aria-label="分享新闻" disabled={sharePending} onClick={() => void submitShare()} type="button">
+          {sharePending ? <LoaderCircle className="is-spinning" size={18} /> : <Share2 size={18} />}
+        </button>}
+        <button
+          aria-label={favorite ? "取消收藏" : "收藏新闻"}
+          aria-pressed={favorite}
+          className={favorite ? "is-saved" : ""}
+          disabled={favoritePending}
+          onClick={onToggleFavorite}
+          type="button"
+        >{favoritePending
+          ? <LoaderCircle className="is-spinning" size={18} />
+          : <Bookmark fill={favorite ? "currentColor" : "none"} size={18} />}</button>
+      </div>
     </header>
     <main>
       {item.image && <img className="news-h5-detail-page__cover" src={item.image} alt="" />}
       <div className="news-h5-detail-page__meta">
         <span>{item.category}</span>
-        <span>{item.source}</span>
-        {item.author && item.author !== item.source && <span>{item.author}</span>}
+        {item.source && <span>{item.source}</span>}
+        {item.author && <span>{item.author}</span>}
         {item.publishedLabel && <span>{item.publishedLabel}</span>}
       </div>
       <h1>{item.title}</h1>
@@ -264,8 +351,53 @@ function NewsH5Detail({
           <p>当前来源只提供摘要，原文将在来源同步后继续呈现。</p>
         </section>}
       {item.tags.length > 0 && <div className="news-h5-detail-page__tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>}
+      {onSubmitFeedback && <section className="news-h5-detail-page__feedback">
+        <h2>这篇内容对你有帮助吗？</h2>
+        <div>
+          <button disabled={feedbackPending} onClick={() => void onSubmitFeedback("more_like_this")} type="button"><ThumbsUp size={16} />更多此类</button>
+          <button disabled={feedbackPending} onClick={() => void onSubmitFeedback("less_like_this")} type="button"><ThumbsDown size={16} />减少此类</button>
+        </div>
+        {(feedbackMessage || feedbackError || shareError) && <p role={feedbackError || shareError ? "alert" : "status"}>{feedbackError ?? shareError ?? feedbackMessage}</p>}
+      </section>}
+      {(relatedItems?.length ?? 0) > 0 && <section className="news-h5-detail-page__related">
+        <h2>相关新闻</h2>
+        {relatedItems?.map((related) => <button key={related.id} onClick={() => onOpenRelated?.(related.id)} type="button">
+          <span>{related.categoryId}</span><strong>{related.title}</strong><small>{related.summary}</small>
+        </button>)}
+      </section>}
+      {relatedError && <p className="news-h5-detail-page__command-error" role="status">{relatedError}</p>}
     </main>
   </div>;
+}
+
+function NewsH5DetailState({
+  onBack,
+  onRetry,
+  status,
+}: {
+  onBack(): void;
+  onRetry(): void;
+  status: ReturnType<typeof useNewsArticleController>["status"];
+}) {
+  return <div className="news-h5-detail-page">
+    <header className="news-h5-detail-page__header">
+      <button aria-label="返回新闻列表" onClick={onBack} type="button"><ArrowLeft size={20} /></button>
+      <strong>新闻详情</strong><span />
+    </header>
+    <main><section className="news-h5-state" role={status === "error" ? "alert" : "status"}>
+      {status === "loading" && <LoaderCircle className="is-spinning" size={22} />}
+      <h2>{status === "error" ? "新闻详情加载失败" : "正在加载新闻详情"}</h2>
+      {status === "error" && <button onClick={onRetry} type="button"><RefreshCw size={14} />重试</button>}
+    </section></main>
+  </div>;
+}
+
+function toBodyParagraphs(body?: string): readonly string[] | undefined {
+  const paragraphs = body
+    ?.split(/\r?\n\s*\r?\n/u)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  return paragraphs && paragraphs.length > 0 ? paragraphs : undefined;
 }
 
 function NewsH5FeedState({
@@ -337,8 +469,12 @@ const DEMO_ITEMS: readonly DemoNewsArticle[] = [
   { body: ["效率与韧性的权衡正在改变，企业开始重新评估供应商集中度。", "关键零部件的多源策略增加，也让库存和物流协同成为新的管理重点。"], id: "4", title: "全球供应链继续区域化，制造企业重新校准库存策略", source: "Reuters", time: "3 小时前", tag: "国际", image: logisticsImage, summary: "效率与韧性的权衡正在改变，关键零部件的多源策略明显增加。" },
 ] as const;
 
-function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSecondaryPageChange">) {
+function NewsH5NewsDemo({
+  onSecondaryPageChange,
+  shareArticle,
+}: Pick<NewsH5NewsProps, "onSecondaryPageChange" | "shareArticle">) {
   const [category, setCategory] = useState("推荐");
+  const [feedbackMessage, setFeedbackMessage] = useState<string>();
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<ReadonlySet<string>>(() => new Set());
   const [searchOpen, setSearchOpen] = useState(false);
@@ -353,8 +489,13 @@ function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSeco
   const showLead = !query && (category === "推荐" || category === "要闻");
 
   if (selectedItem) {
+    const relatedItems = [DEMO_LEAD, ...DEMO_ITEMS]
+      .filter((item) => item.id !== selectedItem.id)
+      .slice(0, 3)
+      .map(toDemoFeedItem);
     return <NewsH5Detail
       favorite={saved.has(selectedItem.id)}
+      feedbackMessage={feedbackMessage}
       item={{
         body: selectedItem.body,
         category: selectedItem.tag,
@@ -367,9 +508,24 @@ function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSeco
       }}
       onBack={() => {
         setSelectedItem(null);
+        setFeedbackMessage(undefined);
         onSecondaryPageChange?.(false);
       }}
+      onOpenRelated={(itemId) => {
+        const item = [DEMO_LEAD, ...DEMO_ITEMS].find((candidate) => candidate.id === itemId);
+        if (item) {
+          setSelectedItem(item);
+          setFeedbackMessage(undefined);
+        }
+      }}
+      onShare={shareArticle
+        ? () => shareArticle({ text: selectedItem.summary, title: selectedItem.title })
+        : undefined}
+      onSubmitFeedback={async (type) => {
+        setFeedbackMessage(type === "more_like_this" ? "已记录，将推荐更多此类内容" : "已记录，将减少此类内容");
+      }}
       onToggleFavorite={() => setSaved((current) => withDemoFavorite(current, selectedItem.id))}
+      relatedItems={relatedItems}
     />;
   }
 
@@ -395,12 +551,14 @@ function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSeco
         className="news-h5-lead is-clickable"
         onClick={() => {
           setSelectedItem(DEMO_LEAD);
+          setFeedbackMessage(undefined);
           onSecondaryPageChange?.(true);
         }}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             setSelectedItem(DEMO_LEAD);
+            setFeedbackMessage(undefined);
             onSecondaryPageChange?.(true);
           }
         }}
@@ -409,10 +567,40 @@ function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSeco
       ><img src={DEMO_LEAD.image} alt="新闻编辑室" /><div><span>今日要闻</span><h2>{DEMO_LEAD.title}</h2><p>{DEMO_LEAD.source} · {DEMO_LEAD.time}</p></div></section>}
       <div className="news-h5-feed__label"><h2>{query ? `“${query}”的结果` : category === "推荐" ? "最新动态" : `${category}频道`}</h2><span>{visibleItems.length > 0 ? `${visibleItems.length} 条` : "演示内容"}</span></div>
       {visibleItems.length > 0
-        ? <section className="news-h5-feed__items">{visibleItems.map((item) => <article className="has-image" key={item.id}><div><div className="news-h5-feed__article-meta"><span>{item.tag}</span></div><h3>{item.title}</h3><footer><div><span>{item.source}</span><span>{item.time}</span></div><button aria-label={`${saved.has(item.id) ? "取消收藏" : "收藏"} ${item.title}`} className={saved.has(item.id) ? "is-saved" : ""} onClick={() => setSaved((current) => withDemoFavorite(current, item.id))} type="button"><Bookmark fill={saved.has(item.id) ? "currentColor" : "none"} size={16} /></button></footer></div><img src={item.image} alt="" /></article>)}</section>
+        ? <section className="news-h5-feed__items">{visibleItems.map((item) => <article
+          aria-label={"阅读 " + item.title}
+          className="has-image is-clickable"
+          key={item.id}
+          onClick={() => {
+            setSelectedItem(item);
+            setFeedbackMessage(undefined);
+            onSecondaryPageChange?.(true);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setSelectedItem(item);
+              setFeedbackMessage(undefined);
+              onSecondaryPageChange?.(true);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+        ><div><div className="news-h5-feed__article-meta"><span>{item.tag}</span></div><h3>{item.title}</h3><footer><div><span>{item.source}</span><span>{item.time}</span></div><button aria-label={`${saved.has(item.id) ? "取消收藏" : "收藏"} ${item.title}`} className={saved.has(item.id) ? "is-saved" : ""} onClick={(event) => { event.stopPropagation(); setSaved((current) => withDemoFavorite(current, item.id)); }} type="button"><Bookmark fill={saved.has(item.id) ? "currentColor" : "none"} size={16} /></button></footer></div><img src={item.image} alt="" /></article>)}</section>
         : <section className="news-h5-state" role="status"><Search size={22} /><h2>暂无匹配新闻</h2><p>可以切换分类或调整搜索关键词。</p></section>}
     </main>
   </div>;
+}
+
+function toDemoFeedItem(item: DemoNewsArticle): NewsFeedItem {
+  return {
+    categoryId: item.tag,
+    featured: item.id === "lead",
+    id: item.id,
+    summary: item.summary,
+    tags: [item.tag],
+    title: item.title,
+  };
 }
 
 function withDemoFavorite(current: ReadonlySet<string>, itemId: string) {

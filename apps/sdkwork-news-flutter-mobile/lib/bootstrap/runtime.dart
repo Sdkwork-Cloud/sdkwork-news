@@ -24,6 +24,7 @@ class NewsRuntime {
     required this.storeController,
     required this.accountController,
     this.requiresSignIn = false,
+    this.demoMode = false,
   });
 
   NewsRuntime.signedOut()
@@ -32,7 +33,8 @@ class NewsRuntime {
         newsController = null,
         storeController = null,
         accountController = null,
-        requiresSignIn = true;
+        requiresSignIn = true,
+        demoMode = false;
 
   final NewsShellController? shellController;
   final AssistantController? assistantController;
@@ -40,6 +42,7 @@ class NewsRuntime {
   final AiStoreController? storeController;
   final AccountController? accountController;
   final bool requiresSignIn;
+  final bool demoMode;
 
   factory NewsRuntime.demo() => NewsRuntime(
         shellController: NewsShellController(),
@@ -49,7 +52,13 @@ class NewsRuntime {
         ),
         newsController: NewsFeedController(DemoNewsFeedRepository()),
         storeController: AiStoreController(DemoAiStoreRepository()),
-        accountController: AccountController(DemoAccountRepository()),
+        accountController: AccountController(
+          DemoAccountRepository(),
+          preferencesRepository: MemoryAccountPreferencesRepository(
+            const AccountPreferences.demo(),
+          ),
+        ),
+        demoMode: true,
       );
 
   void dispose() {
@@ -112,6 +121,7 @@ Future<NewsRuntime> bootstrapNewsRuntime({
     ),
     accountController: AccountController(
       IamAccountRepository(SdkworkIamCurrentUserGateway(iamClient)),
+      preferencesRepository: const SecureAccountPreferencesRepository(),
     ),
   );
 }

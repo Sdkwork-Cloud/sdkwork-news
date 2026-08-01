@@ -17,5 +17,9 @@
   "news.searchEmpty": "No matching stories",
   "news.clearSearch": "Clear search",
   "news.empty": "No stories in this category",
-  "news.loadFailed": "The news service is temporarily unavailable"
+  "news.loadFailed": "The news service is temporarily unavailable",
+  "news.detail": "News detail",
+  "news.save": "Save story",
+  "news.unsave": "Remove from saved",
+  "news.summaryOnly": "This source currently provides a summary only. The full story will appear after source synchronization."
 }

@@ -11,5 +11,17 @@
   "store.install": "安装",
   "store.installed": "已安装",
   "store.uninstall": "卸载",
-  "store.loadFailed": "此目录暂时不可用"
+  "store.loadFailed": "此目录暂时不可用",
+  "store.detail": "能力详情",
+  "store.search": "搜索 AI Store",
+  "store.searchHint": "搜索产品、Skill 或连接器",
+  "store.searchAction": "搜索",
+  "store.clearSearch": "清除搜索",
+  "store.empty": "没有匹配的能力",
+  "store.capabilities": "包含能力",
+  "store.kind.product": "AI 产品",
+  "store.kind.skill": "Skill",
+  "store.kind.mcp": "MCP 连接器",
+  "store.actionFailed": "操作失败，请稍后重试",
+  "store.installUnavailable": "此能力当前仅支持查看，安装服务尚未接通"
 }

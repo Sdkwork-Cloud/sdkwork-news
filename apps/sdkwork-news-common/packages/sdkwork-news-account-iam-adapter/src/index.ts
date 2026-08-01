@@ -3,6 +3,7 @@ import {
   NewsAccountAuthenticationRequiredError,
   type NewsAccountPort,
   type NewsAccountProfile,
+  type NewsAccountSession,
 } from "@sdkwork/news-account-service";
 
 export interface NewsIamSessionTokens {
@@ -22,6 +23,16 @@ export function createIamNewsAccountPort(
   options: IamNewsAccountPortOptions,
 ): NewsAccountPort {
   return {
+    async changePassword(input) {
+      await client.iam.users.current.password.update({
+        confirmPassword: input.confirmPassword,
+        currentPassword: input.currentPassword,
+        newPassword: input.newPassword,
+      });
+    },
+    async getCurrentSession() {
+      return mapSession(await client.auth.sessions.current.retrieve());
+    },
     async getCurrentProfile() {
       try {
         return mapUser(await client.iam.users.current.retrieve());
@@ -43,6 +54,10 @@ export function createIamNewsAccountPort(
       } finally {
         await options.clearSession();
       }
+    },
+    async updateProfile(input) {
+      await client.iam.users.current.update({ displayName: input.displayName });
+      return mapUser(await client.iam.users.current.retrieve());
     },
   };
 }
@@ -86,6 +101,24 @@ function mapUser(value: unknown): NewsAccountProfile {
     ...(id ? { id } : {}),
     ...(username ? { username } : {}),
   };
+}
+
+function mapSession(value: unknown): NewsAccountSession {
+  const session = toRecord(value);
+  return compactSession({
+    createdAt: readString(session.createdAt) ?? readString(session.created_at),
+    expiresAt: readString(session.expiresAt) ?? readString(session.expires_at),
+    id: readString(session.sessionId) ?? readString(session.id),
+    ipAddress: readString(session.ipAddress) ?? readString(session.ip_address),
+    lastActiveAt: readString(session.lastActiveAt) ?? readString(session.last_active_at),
+    userAgent: readString(session.userAgent) ?? readString(session.user_agent),
+  });
+}
+
+function compactSession(value: NewsAccountSession): NewsAccountSession {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entry]) => entry !== undefined),
+  ) as NewsAccountSession;
 }
 
 function isAuthenticationError(error: unknown): boolean {

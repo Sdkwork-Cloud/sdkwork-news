@@ -16,4 +16,26 @@ describe("createNewsAccountService", () => {
     expect(port.login).toHaveBeenCalledWith({ password: "secret", username: "user" });
     expect(() => service.login({ password: "", username: "user" })).toThrow("password");
   });
+
+  it("validates profile and password mutations before delegating", async () => {
+    const port: NewsAccountPort = {
+      changePassword: vi.fn(async () => undefined),
+      getCurrentProfile: vi.fn(),
+      login: vi.fn(),
+      logout: vi.fn(),
+      updateProfile: vi.fn(async ({ displayName }) => ({ displayName })),
+    };
+    const service = createNewsAccountService(port);
+    await expect(service.updateProfile?.({ displayName: " Lin Ran " })).resolves.toEqual({ displayName: "Lin Ran" });
+    await expect(service.changePassword?.({
+      confirmPassword: "new-secret",
+      currentPassword: "old-secret",
+      newPassword: "new-secret",
+    })).resolves.toBeUndefined();
+    expect(() => service.changePassword?.({
+      confirmPassword: "different",
+      currentPassword: "old-secret",
+      newPassword: "new-secret",
+    })).toThrow("confirmPassword");
+  });
 });

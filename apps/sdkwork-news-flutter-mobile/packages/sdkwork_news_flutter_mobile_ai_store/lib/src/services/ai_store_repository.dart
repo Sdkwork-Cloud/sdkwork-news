@@ -5,6 +5,7 @@ abstract interface class AiStoreRepository {
     required AiStoreKind kind,
     String? cursor,
     int pageSize = 20,
+    String? query,
   });
 
   Future<void> install(String entryId);
@@ -31,6 +32,7 @@ class UnavailableAiStoreRepository implements AiStoreRepository {
     required AiStoreKind kind,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) =>
       Future.error(AiStoreCapabilityUnavailable(kind, 'catalog listing'));
 
@@ -57,12 +59,18 @@ class DemoAiStoreRepository implements AiStoreRepository {
     required AiStoreKind kind,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async {
     final offset = int.tryParse(cursor ?? '') ?? 0;
     final size = pageSize.clamp(1, 200);
-    final filtered = demoAiStoreEntries
-        .where((entry) => entry.kind == kind)
-        .toList(growable: false);
+    final filtered =
+        demoAiStoreEntries.where((entry) => entry.kind == kind).where((entry) {
+      final normalized = query?.trim().toLowerCase();
+      if (normalized == null || normalized.isEmpty) return true;
+      return entry.name.toLowerCase().contains(normalized) ||
+          entry.publisher.toLowerCase().contains(normalized) ||
+          entry.description.toLowerCase().contains(normalized);
+    }).toList(growable: false);
     final end = (offset + size).clamp(0, filtered.length);
     return AiStorePageResult(
       items:
@@ -90,6 +98,7 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF15634F,
     rating: 4.9,
     userCount: '12.4k',
+    capabilities: ['跨来源检索', '证据链报告', '定时研究'],
   ),
   AiStoreEntry(
     id: 'data-brief',
@@ -101,6 +110,7 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF75558F,
     rating: 4.7,
     userCount: '3.1k',
+    capabilities: ['数据摘要', '管理简报', '趋势提醒'],
   ),
   AiStoreEntry(
     id: 'financial-reader',
@@ -112,6 +122,7 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF2F638E,
     rating: 4.8,
     userCount: '8.7k',
+    capabilities: ['财报阅读', '公告解析', '电话会摘要'],
   ),
   AiStoreEntry(
     id: 'policy-tracker',
@@ -123,6 +134,7 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF83553E,
     rating: 4.7,
     userCount: '5.2k',
+    capabilities: ['政策跟踪', '生效时间线', '影响分析'],
   ),
   AiStoreEntry(
     id: 'notion-mcp',
@@ -134,6 +146,7 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF252525,
     rating: 4.9,
     userCount: '24.8k',
+    capabilities: ['授权页面检索', '知识库引用', '团队空间'],
   ),
   AiStoreEntry(
     id: 'github-mcp',
@@ -145,5 +158,6 @@ const demoAiStoreEntries = <AiStoreEntry>[
     colorValue: 0xFF3B4248,
     rating: 4.9,
     userCount: '31.6k',
+    capabilities: ['仓库检索', 'Issue 跟踪', '发布记录'],
   ),
 ];

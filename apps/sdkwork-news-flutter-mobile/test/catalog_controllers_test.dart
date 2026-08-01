@@ -58,6 +58,19 @@ void main() {
     expect(controller.installedIds, contains('deep-research'));
     expect(controller.errorMessage, contains('uninstall failed'));
   });
+
+  test('AI Store sends search terms through the paginated repository',
+      () async {
+    final repository = _StoreRepository();
+    final controller = AiStoreController(repository);
+
+    await controller.initialize();
+    await controller.search('  research  ');
+
+    expect(controller.query, 'research');
+    expect(repository.queries, [null, 'research']);
+    expect(controller.entries.single.id, 'deep-research');
+  });
 }
 
 NewsArticle _article(String id) => NewsArticle(
@@ -99,27 +112,34 @@ class _StoreRepository implements AiStoreRepository {
   final Completer<void> installCompleter = Completer<void>();
   int installCalls = 0;
   bool failUninstall = false;
+  final List<String?> queries = [];
 
   @override
   Future<AiStorePageResult> list({
     required AiStoreKind kind,
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async =>
-      const AiStorePageResult(
-        items: [
-          AiStoreEntry(
-            id: 'deep-research',
-            kind: AiStoreKind.product,
-            name: 'Deep Research',
-            publisher: 'SDKWork',
-            description: 'Research assistant',
-            monogram: 'DR',
-            colorValue: 0xFF15634F,
-          ),
-        ],
-        hasMore: false,
-      );
+      _page(query);
+
+  AiStorePageResult _page(String? query) {
+    queries.add(query);
+    return const AiStorePageResult(
+      items: [
+        AiStoreEntry(
+          id: 'deep-research',
+          kind: AiStoreKind.product,
+          name: 'Deep Research',
+          publisher: 'SDKWork',
+          description: 'Research assistant',
+          monogram: 'DR',
+          colorValue: 0xFF15634F,
+        ),
+      ],
+      hasMore: false,
+    );
+  }
 
   @override
   Future<void> install(String entryId) {

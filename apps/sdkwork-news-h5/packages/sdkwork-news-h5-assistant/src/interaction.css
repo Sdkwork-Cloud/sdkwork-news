@@ -5,3 +5,30 @@
 
 .news-h5-sheet{max-width:430px;margin:0 auto}
 .news-h5-profile-fields{display:grid;gap:12px;padding:14px 0 16px;border-bottom:1px solid #e7eae7}.news-h5-profile-fields label{display:grid;gap:6px;color:#47514b;font-size:10px;font-weight:700}.news-h5-profile-fields input,.news-h5-profile-fields textarea,.news-h5-profile-fields select{width:100%;box-sizing:border-box;border:1px solid #dfe4df;border-radius:5px;background:#f9faf9;padding:9px 10px;color:#323b36;font:11px/1.5 inherit;outline:none}.news-h5-profile-fields textarea{resize:vertical;min-height:62px}.news-h5-profile-fields input:focus,.news-h5-profile-fields textarea:focus,.news-h5-profile-fields select:focus{border-color:#0b7e5e;box-shadow:0 0 0 2px #0b7e5e12}
+.news-h5-digest__analysis {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #edf0ed;
+}
+
+.news-h5-digest__analysis p + p {
+  margin-top: 8px;
+}
+
+.news-h5-action {
+  width: calc(100% - 38px);
+  font: inherit;
+  text-align: left;
+}
+
+.news-h5-action > span {
+  min-width: 0;
+  flex: 1;
+}
+
+.news-h5-action small {
+  display: block;
+  margin-top: 3px;
+  color: #767e78;
+  font-size: 9px;
+}

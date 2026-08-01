@@ -1,4 +1,5 @@
 {
   "common.retry": "重试",
-  "common.unavailable": "暂不可用"
+  "common.unavailable": "暂不可用",
+  "common.remove": "移除"
 }

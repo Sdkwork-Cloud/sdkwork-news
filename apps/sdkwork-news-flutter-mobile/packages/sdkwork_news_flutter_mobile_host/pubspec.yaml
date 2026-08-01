@@ -13,6 +13,8 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   sdkwork_im_flutter_mobile_core:
     path: ../../../../../sdkwork-im/apps/sdkwork-im-flutter-mobile/packages/sdkwork_im_flutter_mobile_core
+  sdkwork_news_flutter_mobile_account:
+    path: ../sdkwork_news_flutter_mobile_account
 
 dependency_overrides:
   sdkwork_common_flutter:
@@ -21,4 +23,3 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-

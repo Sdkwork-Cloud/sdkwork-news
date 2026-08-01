@@ -3,6 +3,7 @@ import 'package:sdkwork_news_flutter_mobile_commons/sdkwork_news_flutter_mobile_
 
 import '../controllers/account_controller.dart';
 import '../models/account_profile.dart';
+import 'account_detail_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({
@@ -10,21 +11,43 @@ class AccountPage extends StatefulWidget {
     required this.controller,
     this.locale = const Locale('zh', 'CN'),
     this.onLocaleChanged,
+    this.onSecondaryPageChanged,
+    this.demoMode = false,
   });
 
   final AccountController controller;
   final Locale locale;
   final ValueChanged<Locale>? onLocaleChanged;
+  final ValueChanged<bool>? onSecondaryPageChanged;
+  final bool demoMode;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
+  AccountDetailKind? _selectedDetail;
+
   @override
   void initState() {
     super.initState();
     widget.controller.initialize();
+  }
+
+  void _openDetail(AccountDetailKind kind) {
+    setState(() => _selectedDetail = kind);
+    widget.onSecondaryPageChanged?.call(true);
+  }
+
+  void _closeDetail() {
+    setState(() => _selectedDetail = null);
+    widget.onSecondaryPageChanged?.call(false);
+  }
+
+  @override
+  void dispose() {
+    widget.onSecondaryPageChanged?.call(false);
+    super.dispose();
   }
 
   @override
@@ -34,6 +57,17 @@ class _AccountPageState extends State<AccountPage> {
       builder: (context, _) {
         final strings = NewsStrings.of(context);
         final profile = widget.controller.profile;
+        if (_selectedDetail != null && profile != null) {
+          return AccountDetailPage(
+            controller: widget.controller,
+            kind: _selectedDetail!,
+            profile: profile,
+            locale: widget.locale,
+            onBack: _closeDetail,
+            onLocaleChanged: widget.onLocaleChanged,
+            demoMode: widget.demoMode,
+          );
+        }
         return SafeArea(
           bottom: false,
           child: Column(
@@ -41,7 +75,7 @@ class _AccountPageState extends State<AccountPage> {
               Container(
                 height: 58,
                 padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-                color: NewsPalette.surface,
+                color: Theme.of(context).colorScheme.surface,
                 child: Row(
                   children: [
                     Expanded(
@@ -56,9 +90,9 @@ class _AccountPageState extends State<AccountPage> {
                     IconButton(
                       key: const ValueKey('account.settings.open'),
                       tooltip: strings.text('account.settings'),
-                      onPressed: widget.onLocaleChanged == null
-                          ? null
-                          : () => _showLanguagePicker(context, strings),
+                      onPressed: () => _openDetail(
+                        AccountDetailKind.appearance,
+                      ),
                       icon: const Icon(Icons.tune_rounded),
                     ),
                   ],
@@ -77,10 +111,19 @@ class _AccountPageState extends State<AccountPage> {
                         key: const PageStorageKey('account'),
                         padding: const EdgeInsets.fromLTRB(12, 12, 12, 30),
                         children: [
-                          _ProfileCard(profile: profile, strings: strings),
+                          _ProfileCard(
+                            profile: profile,
+                            strings: strings,
+                            onTap: () => _openDetail(AccountDetailKind.profile),
+                          ),
                           const SizedBox(height: 10),
                           if (profile.planProgress != null) ...[
-                            _PlanCard(profile: profile, strings: strings),
+                            _PlanCard(
+                              profile: profile,
+                              strings: strings,
+                              onManage: () =>
+                                  _openDetail(AccountDetailKind.subscription),
+                            ),
                             const SizedBox(height: 10),
                             _SavedTimeCard(strings: strings),
                             const SizedBox(height: 10),
@@ -95,6 +138,8 @@ class _AccountPageState extends State<AccountPage> {
                                   profile.favoriteCount,
                                   strings,
                                 ),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.saved),
                               ),
                               _SettingsRowData(
                                 icon: Icons.history_rounded,
@@ -103,6 +148,8 @@ class _AccountPageState extends State<AccountPage> {
                                   profile.historyCount,
                                   strings,
                                 ),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.history),
                               ),
                               _SettingsRowData(
                                 icon: Icons.download_outlined,
@@ -111,6 +158,14 @@ class _AccountPageState extends State<AccountPage> {
                                   profile.offlineCount,
                                   strings,
                                 ),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.offline),
+                              ),
+                              _SettingsRowData(
+                                icon: Icons.bar_chart_rounded,
+                                label: strings.text('account.usage'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.usage),
                               ),
                             ],
                           ),
@@ -123,6 +178,9 @@ class _AccountPageState extends State<AccountPage> {
                                 label: strings.text('account.notifications'),
                                 value:
                                     strings.text('account.notificationsValue'),
+                                onTap: () => _openDetail(
+                                  AccountDetailKind.notifications,
+                                ),
                               ),
                               _SettingsRowData(
                                 icon: Icons.translate_rounded,
@@ -130,17 +188,15 @@ class _AccountPageState extends State<AccountPage> {
                                 value: widget.locale.languageCode == 'en'
                                     ? strings.text('account.language.enUS')
                                     : strings.text('account.language.zhCN'),
-                                onTap: widget.onLocaleChanged == null
-                                    ? null
-                                    : () => _showLanguagePicker(
-                                          context,
-                                          strings,
-                                        ),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.language),
                               ),
                               _SettingsRowData(
                                 icon: Icons.dark_mode_outlined,
                                 label: strings.text('account.appearance'),
                                 value: strings.text('account.appearanceValue'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.appearance),
                               ),
                             ],
                           ),
@@ -151,10 +207,38 @@ class _AccountPageState extends State<AccountPage> {
                               _SettingsRowData(
                                 icon: Icons.shield_outlined,
                                 label: strings.text('account.privacy'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.privacy),
+                              ),
+                              _SettingsRowData(
+                                icon: Icons.key_rounded,
+                                label: strings.text('account.accountSecurity'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.security),
                               ),
                               _SettingsRowData(
                                 icon: Icons.devices_outlined,
                                 label: strings.text('account.devices'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.devices),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          _SettingsGroup(
+                            title: strings.text('account.support'),
+                            rows: [
+                              _SettingsRowData(
+                                icon: Icons.help_outline_rounded,
+                                label: strings.text('account.help'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.help),
+                              ),
+                              _SettingsRowData(
+                                icon: Icons.info_outline_rounded,
+                                label: strings.text('account.about'),
+                                onTap: () =>
+                                    _openDetail(AccountDetailKind.about),
                               ),
                             ],
                           ),
@@ -167,173 +251,102 @@ class _AccountPageState extends State<AccountPage> {
       },
     );
   }
-
-  Future<void> _showLanguagePicker(
-    BuildContext context,
-    NewsStrings strings,
-  ) async {
-    final selectedLocale = await showModalBottomSheet<Locale>(
-      context: context,
-      useSafeArea: true,
-      builder: (context) => _LanguagePicker(
-        selectedLocale: widget.locale,
-        strings: strings,
-      ),
-    );
-    if (selectedLocale != null && mounted) {
-      widget.onLocaleChanged?.call(selectedLocale);
-    }
-  }
-}
-
-class _LanguagePicker extends StatelessWidget {
-  const _LanguagePicker({
-    required this.selectedLocale,
-    required this.strings,
-  });
-
-  final Locale selectedLocale;
-  final NewsStrings strings;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            strings.text('account.language'),
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 8),
-          _LanguageOption(
-            key: const ValueKey('account.locale.zh-CN'),
-            locale: const Locale('zh', 'CN'),
-            label: strings.text('account.language.zhCN'),
-            selected: selectedLocale.languageCode == 'zh',
-          ),
-          _LanguageOption(
-            key: const ValueKey('account.locale.en-US'),
-            locale: const Locale('en', 'US'),
-            label: strings.text('account.language.enUS'),
-            selected: selectedLocale.languageCode == 'en',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LanguageOption extends StatelessWidget {
-  const _LanguageOption({
-    super.key,
-    required this.locale,
-    required this.label,
-    required this.selected,
-  });
-
-  final Locale locale;
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-      title: Text(label),
-      trailing: selected
-          ? const Icon(Icons.check_circle_rounded, color: NewsPalette.primary)
-          : null,
-      onTap: () => Navigator.of(context).pop(locale),
-    );
-  }
 }
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({required this.profile, required this.strings});
+  const _ProfileCard({
+    required this.profile,
+    required this.strings,
+    required this.onTap,
+  });
 
   final AccountProfile profile;
   final NewsStrings strings;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: NewsPalette.surface,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 54,
-            height: 54,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: NewsPalette.primary,
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: Text(
-              profile.initial,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(7),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 54,
+              height: 54,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: NewsPalette.primary,
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: Text(
+                profile.initial,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(profile.displayName,
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w800)),
-                if (profile.email?.isNotEmpty == true)
-                  Text(
-                    profile.email!,
-                    style: const TextStyle(
-                      color: NewsPalette.muted,
-                      fontSize: 10,
-                    ),
-                  ),
-                if (profile.planProgress != null) ...[
-                  const SizedBox(height: 5),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                    color: NewsPalette.primarySoft,
-                    child: Text(
-                      strings.text('account.enterprise'),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(profile.displayName,
                       style: const TextStyle(
-                        color: NewsPalette.primary,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
+                          fontSize: 17, fontWeight: FontWeight.w800)),
+                  if (profile.email?.isNotEmpty == true)
+                    Text(
+                      profile.email!,
+                      style: const TextStyle(
+                        color: NewsPalette.muted,
+                        fontSize: 10,
                       ),
                     ),
-                  ),
+                  if (profile.planProgress != null) ...[
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
+                      color: NewsPalette.primarySoft,
+                      child: Text(
+                        strings.text('account.enterprise'),
+                        style: const TextStyle(
+                          color: NewsPalette.primary,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const Icon(Icons.chevron_right_rounded, color: NewsPalette.muted),
-        ],
+            const Icon(Icons.chevron_right_rounded, color: NewsPalette.muted),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _PlanCard extends StatelessWidget {
-  const _PlanCard({required this.profile, required this.strings});
+  const _PlanCard({
+    required this.profile,
+    required this.strings,
+    required this.onManage,
+  });
 
   final AccountProfile profile;
   final NewsStrings strings;
+  final VoidCallback onManage;
 
   @override
   Widget build(BuildContext context) {
@@ -386,7 +399,7 @@ class _PlanCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
-              onPressed: null,
+              onPressed: onManage,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: Colors.white30),
@@ -450,7 +463,7 @@ class _SavedTimeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: NewsPalette.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(7),
       ),
       child: Row(
@@ -499,7 +512,7 @@ class _SettingsGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: NewsPalette.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(7),
       ),
       child: Column(

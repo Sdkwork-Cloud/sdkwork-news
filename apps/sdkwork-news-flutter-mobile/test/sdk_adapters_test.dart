@@ -42,14 +42,13 @@ void main() {
 
   test('IAM adapter exposes identity without inventing account metrics',
       () async {
-    final repository = IamAccountRepository(
-      const _IamGateway(
-        IamCurrentUser(
-          displayName: '林然',
-          email: 'linran@example.test',
-        ),
+    final gateway = _IamGateway(
+      const IamCurrentUser(
+        displayName: '林然',
+        email: 'linran@example.test',
       ),
     );
+    final repository = IamAccountRepository(gateway);
 
     final profile = await repository.currentProfile();
 
@@ -58,6 +57,10 @@ void main() {
     expect(profile.email, 'linran@example.test');
     expect(profile.planProgress, isNull);
     expect(profile.favoriteCount, isNull);
+
+    final updated = await repository.updateDisplayName('林然 Pro');
+    expect(gateway.updatedName, '林然 Pro');
+    expect(updated.displayName, '林然 Pro');
   });
 }
 
@@ -70,15 +73,23 @@ class _McpGateway implements McpCatalogGateway {
   Future<McpCatalogPage> listServers({
     String? cursor,
     int pageSize = 20,
+    String? query,
   }) async =>
       page;
 }
 
 class _IamGateway implements IamCurrentUserGateway {
-  const _IamGateway(this.user);
+  _IamGateway(this.user);
 
-  final IamCurrentUser user;
+  IamCurrentUser user;
+  String? updatedName;
 
   @override
   Future<IamCurrentUser> retrieve() async => user;
+
+  @override
+  Future<void> updateDisplayName(String displayName) async {
+    updatedName = displayName;
+    user = IamCurrentUser(displayName: displayName, email: user.email);
+  }
 }

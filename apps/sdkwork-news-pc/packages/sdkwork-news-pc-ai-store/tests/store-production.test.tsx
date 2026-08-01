@@ -35,8 +35,46 @@ describe("NewsPcAiStore production state", () => {
     await waitFor(() => expect(service.installProduct).toHaveBeenCalledWith("product-1"));
   });
 
+  it("opens and closes a production entry detail", async () => {
+    const service = createService();
+    render(<NewsPcAiStore service={service} />);
+    await screen.findByText("Deep Research");
+
+    fireEvent.click(screen.getByRole("button", { name: "查看 Deep Research" }));
+    expect(screen.getByRole("heading", { level: 1, name: "Deep Research" })).toBeInTheDocument();
+    expect(screen.getByText("真实产品")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "返回 AI Store" }));
+    expect(screen.getByRole("button", { name: "查看 Deep Research" })).toBeInTheDocument();
+  });
+
   it("keeps showcase entries behind demo mode", () => {
     render(<NewsPcAiStore demoMode />);
     expect(screen.getByText("Deep Research")).toBeInTheDocument();
+  });
+
+  it("searches showcase entries and installs a selected Skill version", () => {
+    render(<NewsPcAiStore demoMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Skills" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "搜索 AI Store" }), {
+      target: { value: "Financial" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "提交搜索" }));
+
+    expect(screen.getByText("“Financial”的搜索结果")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "选择 Financial Reader 版本" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "安装 1.4.0" }));
+    expect(screen.getByRole("button", { name: "已安装" })).toBeDisabled();
+  });
+
+  it("renders complete showcase metadata in entry details", () => {
+    render(<NewsPcAiStore demoMode />);
+    fireEvent.click(screen.getByRole("button", { name: "查看 Deep Research" }));
+    expect(screen.getByText("免费试用")).toBeInTheDocument();
+    expect(screen.getByText("4.9")).toBeInTheDocument();
+    expect(screen.getByText("12.4k")).toBeInTheDocument();
+    expect(screen.getByText("证据链")).toBeInTheDocument();
   });
 });

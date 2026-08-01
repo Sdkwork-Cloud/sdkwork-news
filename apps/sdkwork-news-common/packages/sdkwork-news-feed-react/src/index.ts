@@ -5,6 +5,8 @@ import type {
   NewsFeedService,
 } from "@sdkwork/news-feed-service";
 
+export * from "./article-controller.js";
+
 export type NewsFeedStatus =
   | "empty"
   | "error"

@@ -18,7 +18,8 @@ describe("NewsPcAccount production state", () => {
     const service = createService({ displayName: "Lin Ran", email: "lin@example.test" });
     render(<NewsPcAccount service={service} />);
     expect(await screen.findByText("Lin Ran")).toBeInTheDocument();
-    expect(screen.getAllByText("暂不可用").length).toBeGreaterThan(2);
+    fireEvent.click(screen.getByRole("button", { name: /订阅账户中心/u }));
+    expect(screen.getByText("订阅服务尚未连接")).toBeInTheDocument();
     expect(screen.queryByText("1,284")).not.toBeInTheDocument();
   });
 
@@ -40,6 +41,40 @@ describe("NewsPcAccount production state", () => {
     expect(screen.getByText("语言与地区")).toBeInTheDocument();
     expect(screen.getByText("隐私控制")).toBeInTheDocument();
     expect(screen.getByText("帮助与支持")).toBeInTheDocument();
+  });
+
+  it("supports account detail navigation and local preference updates", () => {
+    render(<NewsPcAccount demoMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: /语言与地区简体中文/u }));
+    fireEvent.click(screen.getByRole("radio", { name: /English/u }));
+    fireEvent.click(screen.getByRole("button", { name: "返回我的" }));
+    expect(screen.getByRole("button", { name: /语言与地区English/u })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /我的收藏3/u }));
+    expect(screen.getByText("AI Agent 开始进入企业核心工作流，评估标准正在改变")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /取消收藏 AI Agent/u }));
+    expect(screen.queryByText("AI Agent 开始进入企业核心工作流，评估标准正在改变")).not.toBeInTheDocument();
+  });
+
+  it("supports leaving and re-entering the demo account", () => {
+    render(<NewsPcAccount demoMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: "退出演示账户" }));
+    expect(screen.getByRole("heading", { name: "演示账户已退出" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "重新进入演示账户" }));
+    expect(screen.getByRole("heading", { level: 2, name: "林然" })).toBeInTheDocument();
+  });
+
+  it("never reveals an injected production profile after leaving demo mode", async () => {
+    const service = createService({ displayName: "Production User" });
+    render(<NewsPcAccount demoMode service={service} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "退出演示账户" }));
+    expect(screen.queryByText("Production User")).not.toBeInTheDocument();
+    await waitFor(() => expect(service.getCurrentProfile).toHaveBeenCalled());
+    expect(screen.getByRole("heading", { name: "演示账户已退出" })).toBeInTheDocument();
   });
 });
 

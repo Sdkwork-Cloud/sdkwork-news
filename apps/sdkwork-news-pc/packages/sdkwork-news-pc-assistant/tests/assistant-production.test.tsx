@@ -39,6 +39,29 @@ describe("NewsPcAssistant production state", () => {
     expect(screen.getByText("早间增量简报")).toBeInTheDocument();
   });
 
+  it("connects filters, sources, analysis, follow-up, and tracking actions", async () => {
+    render(<NewsPcAssistant demoMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: "有更新" }));
+    expect(screen.getAllByText("市场雷达")).toHaveLength(2);
+    expect(screen.queryByText("竞品观察")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "全部" }));
+
+    fireEvent.click(screen.getByRole("button", { name: /央行公开市场业务交易公告/u }));
+    expect(screen.getByText(/官方发布/u)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "查看完整分析" }));
+    expect(screen.getByText(/过去三个交易日净投放逐日增加/u)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "继续追问" }));
+    expect(screen.getByRole("textbox", { name: "发送消息" })).toHaveValue(
+      "请继续解释这次公开市场操作变化可能影响哪些行业，并列出证据。",
+    );
+    await waitFor(() => expect(screen.getByRole("textbox", { name: "发送消息" })).toHaveFocus());
+
+    fireEvent.click(screen.getByRole("button", { name: "加入跟踪" }));
+    expect(screen.getByRole("button", { name: "已加入跟踪" })).toBeDisabled();
+  });
+
   it("updates the complete reading-agent profile through the service port", async () => {
     const update = vi.fn(async (_agentId: string, input: UpdateNewsReadingAgentInput): Promise<NewsReadingAgent> => ({
       ...input,

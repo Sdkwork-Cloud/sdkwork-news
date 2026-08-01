@@ -136,14 +136,29 @@ void main() {
 
     await tester.tap(find.text('我的'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('account.settings.open')));
+    final language = find.text('语言与地区');
+    await tester.scrollUntilVisible(
+      language,
+      180,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.drag(
+      find.byType(ListView),
+      const Offset(0, -120),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(language);
     await tester.pumpAndSettle();
 
     expect(find.text('English (US)'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('account.locale.en-US')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Account'), findsNWidgets(2));
+    expect(find.text('Language and region'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('account.detail.back')));
+    await tester.pumpAndSettle();
+
     expect(find.text('Assistant'), findsOneWidget);
     expect(find.text('News'), findsOneWidget);
     expect(find.byTooltip('Settings'), findsOneWidget);
@@ -170,6 +185,138 @@ void main() {
     expect(find.text('全球供应链继续区域化，制造企业重新校准库存策略'), findsOneWidget);
     expect(find.text('AI Agent 开始进入企业核心工作流，评估标准正在改变'), findsNothing);
     expect(find.byKey(const ValueKey('news.search.clear')), findsOneWidget);
+  });
+
+  testWidgets('opens a news detail and hides the mobile tab bar',
+      (tester) async {
+    final runtime = NewsRuntime.demo();
+    await tester.pumpWidget(NewsApp(runtime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('新闻'));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byType(CustomScrollView),
+      const Offset(0, -220),
+    );
+    await tester.pumpAndSettle();
+    final lead = find.text(
+      'AI Agent 开始进入企业核心工作流，评估标准正在改变',
+    );
+    await tester.ensureVisible(lead);
+    await tester.tap(lead);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('news.detail.back')), findsOneWidget);
+    expect(find.text('新闻详情'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('news.detail.back')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('searches AI Store and completes its detail lifecycle',
+      (tester) async {
+    final runtime = NewsRuntime.demo();
+    await tester.pumpWidget(NewsApp(runtime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.storefront_outlined));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('store.search.open')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('store.search.input')),
+      'Data',
+    );
+    await tester.tap(find.byKey(const ValueKey('store.search.submit')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Data Brief'), findsOneWidget);
+    expect(find.text('Deep Research'), findsNothing);
+    await tester.tap(find.text('Data Brief'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('store.detail.back')), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('store.detail.install')));
+    await tester.pumpAndSettle();
+    expect(
+      runtime.storeController!.installedIds,
+      contains('data-brief'),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('store.detail.back')));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('opens account settings, persists a toggle, and hides tabs',
+      (tester) async {
+    final runtime = NewsRuntime.demo();
+    await tester.pumpWidget(NewsApp(runtime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.person_outline_rounded));
+    await tester.pumpAndSettle();
+    final notifications = find.text('通知与提醒');
+    await tester.scrollUntilVisible(
+      notifications,
+      180,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(notifications);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NavigationBar), findsNothing);
+    final toggle = find.byKey(
+      const ValueKey('account.notifications.enabled'),
+    );
+    final switchTile = find.descendant(
+      of: toggle,
+      matching: find.byType(SwitchListTile),
+    );
+    expect(tester.widget<SwitchListTile>(switchTile).value, isTrue);
+    await tester.tap(switchTile);
+    await tester.pumpAndSettle();
+    expect(runtime.accountController!.preferences.notificationsEnabled, false);
+
+    await tester.tap(find.byKey(const ValueKey('account.detail.back')));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('assistant digest actions update the conversation composer',
+      (tester) async {
+    final runtime = NewsRuntime.demo();
+    await tester.pumpWidget(NewsApp(runtime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('市场雷达'));
+    await tester.pumpAndSettle();
+    final followUp = find.text('继续追问');
+    await tester.scrollUntilVisible(
+      followUp,
+      160,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.tap(followUp);
+    await tester.pump();
+    expect(
+      find.text('请继续解释这项变化的影响，并列出需要验证的证据。'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('完整分析'));
+    await tester.pumpAndSettle();
+    expect(find.text('收起分析'), findsOneWidget);
+    expect(
+      find.textContaining('进一步观察显示'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('edits an assistant profile with simultaneous cron rules',
@@ -231,6 +378,10 @@ class _TestApp extends StatelessWidget {
 class _UnavailableAccountRepository implements AccountRepository {
   @override
   Future<AccountProfile> currentProfile() =>
+      Future.error(StateError('IAM unavailable'));
+
+  @override
+  Future<AccountProfile> updateDisplayName(String displayName) =>
       Future.error(StateError('IAM unavailable'));
 }
 

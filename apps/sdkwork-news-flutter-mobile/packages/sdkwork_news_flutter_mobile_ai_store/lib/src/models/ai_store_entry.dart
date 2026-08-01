@@ -13,6 +13,8 @@ class AiStoreEntry {
     this.userCount,
     this.verified = true,
     this.installable = true,
+    this.version = '1.0.0',
+    this.capabilities = const <String>[],
   });
 
   final String id;
@@ -26,6 +28,8 @@ class AiStoreEntry {
   final String? userCount;
   final bool verified;
   final bool installable;
+  final String version;
+  final List<String> capabilities;
 }
 
 class AiStorePageResult {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, BellRing, Bot, CalendarClock, ChevronRight, Clock3, FileText, Plus, RefreshCw, Search, Send, Settings2, ShieldCheck, Sparkles, X } from "lucide-react";
 import { createDefaultNewsReadingSchedule, type CreateNewsReadingAgentInput, type NewsConversationMessage, type NewsReadingAgent } from "@sdkwork/news-agent-contracts";
 import type { NewsAgentService } from "@sdkwork/news-agent-service";
@@ -37,6 +37,8 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
   const [reloadKey, setReloadKey] = useState(0);
   const [conversationReloadKey, setConversationReloadKey] = useState(0);
   const [sendError, setSendError] = useState("");
+  const [digestExpanded, setDigestExpanded] = useState(false);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const activeAgent = agents.find((agent) => agent.id === activeAgentId) ?? null;
   const canMutate = demoMode || Boolean(service);
   const unreadCount = agents.reduce((total, agent) => total + agent.unreadCount, 0);
@@ -172,19 +174,29 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
     setProfileOpen(false);
   };
 
+  const preparePrompt = (value: string) => {
+    setDraft(value);
+    window.setTimeout(() => composerRef.current?.focus(), 0);
+  };
+
   if (activeAgent) {
     return <div className="news-h5-chat">
       <header><button onClick={closeConversation} type="button" title="返回"><ArrowLeft size={21} /></button><span style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span><div><h1>{activeAgent.name}</h1><p><i />{activeAgent.status === "active" ? "工作中" : "已暂停"}</p></div><button onClick={() => setProfileOpen(true)} type="button" title="助手设置"><Settings2 size={20} /></button></header>
       <main>
         {messages.length > 0 && <div className="news-h5-chat__day">今天</div>}
         {messages.map((message) => <article className={`news-h5-chat__message news-h5-chat__message--${message.role}`} key={message.id}>{message.role === "agent" && <span style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span>}<p>{message.text}{message.status === "streaming" && <i className="news-h5-stream-caret" />}</p></article>)}
-        {demoMode && <DigestCard />}
+        {demoMode && <DigestCard
+          expanded={digestExpanded}
+          onAction={() => preparePrompt("请把收盘后需要复核的成交量和资金变化整理成检查清单。")}
+          onFollowup={() => preparePrompt("请继续解释这次公开市场操作变化可能影响哪些行业，并列出证据。")}
+          onToggleAnalysis={() => setDigestExpanded((current) => !current)}
+        />}
         {conversationState === "loading" && <H5ConversationState message="正在同步消息" />}
         {conversationState === "offline" && <H5ConversationState message="消息暂不可用" onRetry={() => setConversationReloadKey((current) => current + 1)} tone="error" />}
         {conversationState === "live" && messages.length === 0 && !demoMode && <H5ConversationState message="暂无消息" />}
         {sendError && <p className="news-h5-chat__send-error" role="alert">{sendError}</p>}
       </main>
-      <footer><label><textarea rows={1} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="问问助手" /></label><button disabled={!draft.trim() || isSending || conversationState === "offline"} onClick={() => void send()} type="button" title="发送"><Send size={18} /></button></footer>
+      <footer><label><textarea ref={composerRef} rows={1} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="问问助手" /></label><button disabled={!draft.trim() || isSending || conversationState === "offline"} onClick={() => void send()} type="button" title="发送"><Send size={18} /></button></footer>
       {profileOpen && <NewsH5ScheduleSheet agent={activeAgent} key={activeAgent.id} onClose={() => setProfileOpen(false)} onSave={saveAgentProfile} />}
     </div>;
   }
@@ -192,7 +204,7 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
   return <div className="news-h5-assistant">
     <header><div><h1>阅读助手</h1><p>{formatAssistantSummary(loadState, unreadCount)}</p></div><button disabled={!canMutate} onClick={() => setCreateOpen(true)} type="button" title="创建智能体"><Plus size={20} /></button></header>
     <label className="news-h5-assistant__search"><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索助手" /></label>
-    {demoMode && <section className="news-h5-summary"><div><span><Sparkles size={15} />今日代读</span><strong>246</strong><small>篇内容</small></div><div><span><Clock3 size={15} />节省时间</span><strong>1.7</strong><small>小时</small></div><button type="button"><CalendarClock size={16} />下一轮 18:00<ChevronRight size={16} /></button></section>}
+    {demoMode && <section className="news-h5-summary"><div><span><Sparkles size={15} />今日代读</span><strong>246</strong><small>篇内容</small></div><div><span><Clock3 size={15} />节省时间</span><strong>1.7</strong><small>小时</small></div><button onClick={() => { const nextAgent = agents[0]; if (nextAgent) { openConversation(nextAgent.id); setProfileOpen(true); } }} type="button"><CalendarClock size={16} />下一轮 18:00<ChevronRight size={16} /></button></section>}
     <div className="news-h5-assistant__heading"><h2>会话</h2>{demoMode && <button onClick={() => setAgents((current) => current.map((agent) => ({ ...agent, unreadCount: 0 })))} type="button">全部已读</button>}</div>
     <main>
       {filteredAgents.map((agent) => <button className="news-h5-agent-row" onClick={() => openConversation(agent.id)} key={agent.id} type="button"><span style={{ background: agent.accent }}>{agent.name.slice(0, 1)}</span><div><div><strong>{agent.name}</strong><time>{formatClock(agent.lastDigestAt)}</time></div><p>{agent.lastDigestSummary}</p><small>{agent.description}</small></div>{agent.unreadCount > 0 && <b>{agent.unreadCount}</b>}</button>)}
@@ -221,8 +233,18 @@ function formatAssistantSummary(loadState: AssistantLoadState, unreadCount: numb
   return unreadCount > 0 ? `${unreadCount} 条未读更新` : "会话已同步";
 }
 
-function DigestCard() {
-  return <><section className="news-h5-digest"><header><span><Sparkles size={15} />早间增量简报</span><time>08:31</time></header><div><small>高影响</small><h2>公开市场操作节奏出现边际变化</h2><p>连续三日净投放规模上升，短端资金价格回落。变化尚未构成政策转向。</p><ul><li><FileText size={14} />7 个来源</li><li><ShieldCheck size={14} />可信度 91%</li><li><Clock3 size={14} />3 分钟</li></ul></div><footer><button type="button">完整分析</button><button type="button">继续追问</button></footer></section><section className="news-h5-action"><BellRing size={16} /><div><strong>建议动作</strong><p>收盘后复核成交量与资金变化</p></div><ChevronRight size={17} /></section></>;
+function DigestCard({
+  expanded,
+  onAction,
+  onFollowup,
+  onToggleAnalysis,
+}: {
+  expanded: boolean;
+  onAction(): void;
+  onFollowup(): void;
+  onToggleAnalysis(): void;
+}) {
+  return <><section className="news-h5-digest"><header><span><Sparkles size={15} />早间增量简报</span><time>08:31</time></header><div><small>高影响</small><h2>公开市场操作节奏出现边际变化</h2><p>连续三日净投放规模上升，短端资金价格回落。变化尚未构成政策转向。</p>{expanded && <div className="news-h5-digest__analysis"><p>过去三个交易日净投放逐日增加，隔夜与七天资金价格同步回落，但中长期资金成本尚未形成一致趋势。</p><p>当前更适合视为流动性维护信号。银行、地产和高估值成长板块对后续量价变化更敏感，需要结合收盘成交量继续验证。</p></div>}<ul><li><FileText size={14} />7 个来源</li><li><ShieldCheck size={14} />可信度 91%</li><li><Clock3 size={14} />3 分钟</li></ul></div><footer><button aria-expanded={expanded} onClick={onToggleAnalysis} type="button">{expanded ? "收起分析" : "完整分析"}</button><button onClick={onFollowup} type="button">继续追问</button></footer></section><button className="news-h5-action" onClick={onAction} type="button"><BellRing size={16} /><span><strong>建议动作</strong><small>收盘后复核成交量与资金变化</small></span><ChevronRight size={17} /></button></>;
 }
 
 function CreateAgentSheet({ onClose, onCreate }: { onClose: () => void; onCreate: (input: CreateNewsReadingAgentInput) => Promise<void> }) {

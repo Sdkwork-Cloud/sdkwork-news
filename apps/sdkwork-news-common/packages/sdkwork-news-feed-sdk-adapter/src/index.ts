@@ -5,6 +5,7 @@ import type {
   SdkworkAppClient,
 } from "@sdkwork/news-app-sdk";
 import type {
+  NewsArticle,
   NewsFeedChannel,
   NewsFeedItem,
   NewsFeedPage,
@@ -13,6 +14,17 @@ import type {
 
 export function createSdkworkNewsFeedPort(client: SdkworkAppClient): NewsFeedPort {
   return {
+    async createEvent(input) {
+      await client.news.events.create(input);
+    },
+    async createFeedback(itemId, feedbackType, reason) {
+      await client.news.feedback.create({
+        feedbackType,
+        ...(reason ? { reason } : {}),
+        targetId: itemId,
+        targetType: "item",
+      });
+    },
     async createFavorite(itemId) {
       await client.news.favorites.create(itemId);
     },
@@ -49,12 +61,37 @@ export function createSdkworkNewsFeedPort(client: SdkworkAppClient): NewsFeedPor
             });
       return mapFeedPage(response, "news feed");
     },
+    async listRelated(itemId, pageSize) {
+      return mapFeedPage(
+        await client.news.items.related.list(itemId, { limit: String(pageSize) }),
+        "news.items.related.list",
+      );
+    },
     async listTrending(pageSize) {
       return mapFeedPage(
         await client.news.trending.list({ limit: String(pageSize) }),
         "news.trending.list",
       );
     },
+    async retrieveArticle(itemId) {
+      return mapArticle(
+        await client.news.items.retrieve(itemId),
+        "news.items.retrieve",
+      );
+    },
+  };
+}
+
+function mapArticle(item: SdkNewsItem, operation: string): NewsArticle {
+  const mapped = mapFeedItem(item, operation);
+  if (typeof item.slug !== "string" || !item.slug.trim()) {
+    throw new Error(`${operation} returned an article without a slug.`);
+  }
+  return {
+    ...mapped,
+    ...(optionalString(item.body) ? { body: optionalString(item.body) } : {}),
+    slug: item.slug,
+    ...(optionalString(item.updatedAt) ? { updatedAt: optionalString(item.updatedAt) } : {}),
   };
 }
 

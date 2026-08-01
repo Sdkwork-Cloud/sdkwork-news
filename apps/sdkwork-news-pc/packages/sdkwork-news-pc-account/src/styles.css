@@ -157,12 +157,17 @@
 }
 
 .news-account-profile {
+  width: 100%;
   min-height: 116px;
   padding: 18px 0;
   display: flex;
   align-items: center;
   gap: 16px;
+  border: 0;
   border-bottom: 1px solid #dfe3e0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
 }
 
 .news-account-profile > span {
@@ -202,6 +207,11 @@
   font-size: 9px;
 }
 
+.news-account-profile > svg {
+  margin-left: auto;
+  color: #879089;
+}
+
 .news-account-availability {
   margin: 18px 0 22px;
   display: grid;
@@ -209,7 +219,7 @@
   gap: 10px;
 }
 
-.news-account-availability article {
+.news-account-availability button {
   min-height: 72px;
   padding: 13px;
   display: flex;
@@ -219,9 +229,12 @@
   border-radius: 6px;
   background: #fff;
   color: #52625a;
+  text-align: left;
 }
 
-.news-account-availability article > div {
+.news-account-availability button > span {
+  min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -248,13 +261,17 @@
 }
 
 .news-account-row {
+  width: 100%;
   min-height: 48px;
   padding: 0 12px;
   display: flex;
   align-items: center;
   gap: 10px;
+  border: 0;
   border-bottom: 1px solid #e1e5e2;
   background: #fff;
+  color: inherit;
+  text-align: left;
 }
 
 .news-account-row:first-of-type {
@@ -288,6 +305,10 @@
   font-size: 9px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.news-account-row > svg {
+  color: #929a94;
 }
 
 .news-account-command-error {
@@ -329,6 +350,285 @@
 
 @keyframes news-account-spin {
   to { transform: rotate(360deg); }
+}
+
+.news-pc-account-detail {
+  height: 100%;
+  overflow: auto;
+  background: #f6f7f5;
+  color: #222925;
+}
+
+.news-pc-account-detail > header {
+  min-height: 64px;
+  padding: 0 28px;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 100px 1fr 100px;
+  border-bottom: 1px solid #e1e5e2;
+  background: #fff;
+}
+
+.news-pc-account-detail > header button {
+  min-height: 34px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #536159;
+}
+
+.news-pc-account-detail > header h1 {
+  margin: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+.news-pc-account-detail > main {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 30px 28px 56px;
+}
+
+.news-pc-account-panel,
+.news-pc-plan-card,
+.news-pc-account-content-list {
+  border: 1px solid #dfe4e0;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.news-pc-account-panel {
+  padding: 20px;
+}
+
+.news-pc-account-panel > h2 {
+  margin: 0 0 15px;
+  font-size: 15px;
+}
+
+.news-pc-account-detail__heading {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #08775a;
+}
+
+.news-pc-account-detail__heading h2 {
+  margin: 0 0 3px;
+  color: #28312c;
+  font-size: 15px;
+}
+
+.news-pc-account-detail__heading p {
+  margin: 0;
+  color: #7b847e;
+  font-size: 10px;
+}
+
+.news-pc-account-form {
+  display: grid;
+  gap: 14px;
+}
+
+.news-pc-account-form label {
+  display: grid;
+  gap: 6px;
+  color: #58625c;
+  font-size: 11px;
+}
+
+.news-pc-account-form input {
+  height: 39px;
+  padding: 0 10px;
+  border: 1px solid #d5dbd7;
+  border-radius: 5px;
+  background: #fff;
+  color: #28312c;
+  font: inherit;
+}
+
+.news-pc-account-form input:disabled {
+  background: #f3f5f3;
+  color: #7c847f;
+}
+
+.news-pc-account-form > button,
+.news-pc-account-danger {
+  min-height: 38px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  justify-self: start;
+  border: 0;
+  border-radius: 5px;
+  background: #08775a;
+  color: #fff;
+}
+
+.news-pc-plan-card {
+  margin-bottom: 16px;
+  padding: 24px;
+  background: #173d32;
+  color: #fff;
+}
+
+.news-pc-plan-card > span { color: #8fd1ba; font-size: 11px; font-weight: 700; }
+.news-pc-plan-card h2 { margin: 7px 0 6px; font-size: 22px; }
+.news-pc-plan-card p { margin: 0; color: #c6d8d1; font-size: 12px; }
+.news-pc-plan-card dl { margin: 20px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.news-pc-plan-card dl div { display: grid; gap: 4px; }
+.news-pc-plan-card dt { color: #9eb9af; font-size: 10px; }
+.news-pc-plan-card dd { margin: 0; font-size: 12px; }
+
+.news-pc-account-panels {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.news-pc-usage-summary {
+  margin: 4px 0 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.news-pc-usage-summary strong { color: #08775a; font-size: 30px; }
+.news-pc-usage-summary span { color: #707a73; font-size: 11px; }
+
+.news-pc-account-metric,
+.news-pc-account-toggle,
+.news-pc-device {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid #e8ebe9;
+}
+
+.news-pc-account-metric span { flex: 1; color: #657069; font-size: 11px; }
+.news-pc-account-metric strong { font-size: 11px; }
+
+.news-pc-account-toggle > span,
+.news-pc-device > span {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: #edf2ef;
+  color: #52645b;
+}
+
+.news-pc-account-toggle strong { flex: 1; font-size: 11px; }
+.news-pc-account-toggle > button { width: 38px; height: 22px; padding: 2px; border: 0; border-radius: 11px; background: #cbd2cd; }
+.news-pc-account-toggle > button i { width: 18px; height: 18px; display: block; border-radius: 50%; background: #fff; transition: transform .16s ease; }
+.news-pc-account-toggle > button.is-checked { background: #08775a; }
+.news-pc-account-toggle > button.is-checked i { transform: translateX(16px); }
+
+.news-pc-account-choice {
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-bottom: 1px solid #e7ebe8;
+  background: transparent;
+  color: #08775a;
+  text-align: left;
+}
+
+.news-pc-account-choice > span { display: grid; gap: 4px; }
+.news-pc-account-choice strong { color: #29322d; font-size: 12px; }
+.news-pc-account-choice small { color: #7c857f; font-size: 10px; }
+
+.news-pc-account-note,
+.news-pc-account-message {
+  margin: 15px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6d7770;
+  font-size: 10px;
+}
+
+.news-pc-account-message.is-error { color: #a33e36; }
+
+.news-pc-account-content-list article,
+.news-pc-device {
+  min-height: 66px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid #e6eae7;
+}
+
+.news-pc-account-content-list article:last-child { border-bottom: 0; }
+.news-pc-account-content-list article > span { color: #587067; }
+.news-pc-account-content-list article > div,
+.news-pc-device > div { min-width: 0; flex: 1; }
+.news-pc-account-content-list h2,
+.news-pc-device h2 { margin: 0 0 5px; font-size: 12px; }
+.news-pc-account-content-list p,
+.news-pc-device p { margin: 0; color: #7b847e; font-size: 10px; }
+.news-pc-account-content-list button,
+.news-pc-device button { width: 32px; height: 32px; display: grid; place-items: center; border: 0; background: transparent; color: #9a4b43; }
+.news-pc-device small { color: #08775a; font-size: 10px; }
+
+.news-pc-account-danger {
+  margin-top: 16px;
+  background: #fff;
+  color: #a33e36;
+  border: 1px solid #e4cbc7;
+}
+
+.news-pc-account-detail__state {
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #7b857e;
+}
+
+.news-pc-account-detail__state p { margin: 0; font-size: 11px; }
+
+.news-pc-faq details { padding: 13px 0; border-bottom: 1px solid #e7ebe8; }
+.news-pc-faq summary { color: #29322d; font-size: 12px; cursor: pointer; }
+.news-pc-faq details p { margin: 9px 0 0; color: #6f7972; font-size: 11px; line-height: 1.7; }
+.news-pc-account-link { min-height: 44px; margin-top: 14px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #dfe4e0; border-radius: 6px; background: #fff; color: #08775a; font-size: 11px; text-decoration: none; }
+
+.news-pc-about { text-align: center; }
+.news-pc-about > div:first-child { width: 54px; height: 54px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 7px; background: #12634f; color: #fff; font-size: 22px; font-weight: 700; }
+.news-pc-about > h2 { margin: 0 0 5px; }
+.news-pc-about > p { margin: 0 0 20px; color: #7a847d; font-size: 10px; }
+.news-pc-about dl { margin: 0; border-top: 1px solid #e7ebe8; }
+.news-pc-about dl div { min-height: 44px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e7ebe8; font-size: 11px; }
+.news-pc-about dd { margin: 0; color: #747e77; }
+
+.news-pc-account.is-dark,
+.news-pc-account-detail.is-dark {
+  background: #202522;
+  color: #e7ece9;
+}
+
+.news-pc-account-detail.is-dark > header,
+.news-pc-account-detail.is-dark .news-pc-account-panel,
+.news-pc-account-detail.is-dark .news-pc-account-content-list {
+  background: #2a302c;
+  border-color: #3d4540;
 }
 
 @media (max-width: 680px) {

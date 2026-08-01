@@ -63,6 +63,7 @@ async function bootstrap(): Promise<void> {
         <App
           accountDemoMode={accountBootstrap.mode === "demo"}
           accountService={accountService}
+          accountStorage={window.localStorage}
           agentService={agentService}
           aiStoreDemoMode={aiStoreBootstrap.mode === "demo"}
           aiStoreService={aiStoreService}

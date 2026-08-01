@@ -142,13 +142,25 @@
   box-shadow: 0 7px 20px #1b2d240d;
 }
 
-.news-store-grid article > header {
+.news-store-entry-open {
+  min-height: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.news-store-entry-open > header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
 
-.news-store-grid article > header > span {
+.news-store-entry-open > header > span {
   width: 43px;
   height: 43px;
   display: grid;
@@ -158,17 +170,17 @@
   color: #fff;
 }
 
-.news-store-grid article > header > span.is-product { background: #12634f; }
-.news-store-grid article > header > span.is-skill { background: #315f85; }
-.news-store-grid article > header > span.is-mcp { background: #4c514e; }
+.news-store-entry-open > header > span.is-product { background: #12634f; }
+.news-store-entry-open > header > span.is-skill { background: #315f85; }
+.news-store-entry-open > header > span.is-mcp { background: #4c514e; }
 
-.news-store-grid article > header img {
+.news-store-entry-open > header img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.news-store-grid article > header small {
+.news-store-entry-open > header small {
   padding: 3px 6px;
   border-radius: 3px;
   background: #eef1ef;
@@ -183,7 +195,7 @@
   letter-spacing: 0;
 }
 
-.news-store-grid article > p {
+.news-store-entry-open > p {
   margin: 4px 0 12px;
   flex: 1;
   color: #68716b;
@@ -244,6 +256,117 @@
   gap: 5px;
   color: #5d6861;
   font-size: 10px;
+}
+
+.news-pc-store-detail {
+  height: 100%;
+  overflow: auto;
+  background: #f6f7f5;
+  color: #222824;
+}
+
+.news-pc-store-detail > header {
+  min-height: 64px;
+  padding: 0 30px;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 130px 1fr 130px;
+  border-bottom: 1px solid #e1e5e2;
+  background: #fff;
+}
+
+.news-pc-store-detail > header > button {
+  min-height: 34px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  justify-self: start;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #536159;
+}
+
+.news-pc-store-detail > header > strong {
+  font-size: 15px;
+  text-align: center;
+}
+
+.news-pc-store-detail > main {
+  width: min(940px, 100%);
+  margin: 0 auto;
+  padding: 36px 30px 60px;
+}
+
+.news-pc-store-detail__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.news-pc-store-detail__hero > span {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.news-pc-store-detail__hero > span.is-product { background: #12634f; }
+.news-pc-store-detail__hero > span.is-skill { background: #315f85; }
+.news-pc-store-detail__hero > span.is-mcp { background: #4c514e; }
+.news-pc-store-detail__hero img { width: 100%; height: 100%; object-fit: cover; }
+.news-pc-store-detail__hero small { color: #08775a; font-size: 10px; font-weight: 700; }
+.news-pc-store-detail__hero h1 { margin: 5px 0 8px; font-size: 28px; line-height: 1.3; }
+.news-pc-store-detail__hero p { margin: 0; color: #69736c; font-size: 12px; line-height: 1.7; }
+
+.news-pc-store-detail__content {
+  margin-top: 30px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 240px;
+}
+
+.news-pc-store-detail__content > div,
+.news-pc-store-detail__content > aside {
+  padding: 20px;
+  border: 1px solid #dce1dd;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.news-pc-store-detail__content h2 { margin: 0 0 14px; font-size: 14px; }
+.news-pc-store-detail__content dl { margin: 0; }
+.news-pc-store-detail__content dl div { min-height: 44px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e7ebe8; font-size: 11px; }
+.news-pc-store-detail__content dt { color: #778179; }
+.news-pc-store-detail__content dd { margin: 0; font-weight: 600; }
+
+.news-pc-store-detail__tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 7px; }
+.news-pc-store-detail__tags span { padding: 5px 8px; border-radius: 4px; background: #edf3ef; color: #456255; font-size: 10px; }
+
+.news-pc-store-detail__content aside > button,
+.news-pc-store-detail__content aside > span {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 5px;
+  background: #08775a;
+  color: #fff;
+  font-size: 11px;
+}
+
+.news-pc-store-detail__content aside > button.is-installed,
+.news-pc-store-detail__content aside > span {
+  background: #e6efeb;
+  color: #0b7257;
 }
 
 .news-store-state {

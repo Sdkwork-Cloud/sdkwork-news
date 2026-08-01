@@ -17,5 +17,9 @@
   "news.searchEmpty": "暂无匹配新闻",
   "news.clearSearch": "清除搜索",
   "news.empty": "当前分类暂无内容",
-  "news.loadFailed": "新闻服务暂时不可用"
+  "news.loadFailed": "新闻服务暂时不可用",
+  "news.detail": "新闻详情",
+  "news.save": "收藏新闻",
+  "news.unsave": "取消收藏",
+  "news.summaryOnly": "当前来源只提供摘要，原文将在来源同步后继续呈现。"
 }

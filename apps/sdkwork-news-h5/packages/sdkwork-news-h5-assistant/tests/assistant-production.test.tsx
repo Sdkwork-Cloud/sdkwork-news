@@ -40,6 +40,28 @@ describe("NewsH5Assistant production state", () => {
     expect(screen.getByText("今日代读")).toBeInTheDocument();
   });
 
+  it("connects showcase schedule, analysis, follow-up, and suggested actions", async () => {
+    render(<NewsH5Assistant demoMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: /下一轮 18:00/u }));
+    expect(screen.getByText("助手设置")).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle("关闭"));
+
+    fireEvent.click(screen.getByRole("button", { name: "完整分析" }));
+    expect(screen.getByText(/过去三个交易日净投放逐日增加/u)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "继续追问" }));
+    expect(screen.getByPlaceholderText("问问助手")).toHaveValue(
+      "请继续解释这次公开市场操作变化可能影响哪些行业，并列出证据。",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /建议动作/u }));
+    expect(screen.getByPlaceholderText("问问助手")).toHaveValue(
+      "请把收盘后需要复核的成交量和资金变化整理成检查清单。",
+    );
+    await waitFor(() => expect(screen.getByPlaceholderText("问问助手")).toHaveFocus());
+  });
+
   it("updates the complete reading-agent profile through the service port", async () => {
     const update = vi.fn(async (_agentId: string, input: UpdateNewsReadingAgentInput): Promise<NewsReadingAgent> => ({
       ...input,
