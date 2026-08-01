@@ -20,6 +20,16 @@ const _testLocaleFragments = <NewsLocaleFragment>[
 ];
 
 void main() {
+  test('clears a secondary page when switching primary tabs', () {
+    final controller = NewsShellController();
+    controller.setSecondaryPage(true);
+
+    controller.select(NewsShellTab.news);
+
+    expect(controller.activeTab, NewsShellTab.news);
+    expect(controller.isSecondaryPage, isFalse);
+  });
+
   testWidgets('renders the four-tab assistant-first shell', (tester) async {
     final runtime = NewsRuntime.demo();
     await tester.pumpWidget(NewsApp(runtime: runtime));

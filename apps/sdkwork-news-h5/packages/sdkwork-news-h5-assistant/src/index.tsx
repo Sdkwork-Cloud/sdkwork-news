@@ -49,6 +49,16 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
     onSecondaryPageChange?.(activeAgentId !== null);
   }, [activeAgentId, onSecondaryPageChange]);
 
+  const openConversation = (agentId: string) => {
+    onSecondaryPageChange?.(true);
+    setActiveAgentId(agentId);
+  };
+
+  const closeConversation = () => {
+    onSecondaryPageChange?.(false);
+    setActiveAgentId(null);
+  };
+
   useEffect(() => {
     if (demoMode) {
       setAgents(showcaseAgents);
@@ -164,7 +174,7 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
 
   if (activeAgent) {
     return <div className="news-h5-chat">
-      <header><button onClick={() => setActiveAgentId(null)} type="button" title="返回"><ArrowLeft size={21} /></button><span style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span><div><h1>{activeAgent.name}</h1><p><i />{activeAgent.status === "active" ? "工作中" : "已暂停"}</p></div><button onClick={() => setProfileOpen(true)} type="button" title="助手设置"><Settings2 size={20} /></button></header>
+      <header><button onClick={closeConversation} type="button" title="返回"><ArrowLeft size={21} /></button><span style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span><div><h1>{activeAgent.name}</h1><p><i />{activeAgent.status === "active" ? "工作中" : "已暂停"}</p></div><button onClick={() => setProfileOpen(true)} type="button" title="助手设置"><Settings2 size={20} /></button></header>
       <main>
         {messages.length > 0 && <div className="news-h5-chat__day">今天</div>}
         {messages.map((message) => <article className={`news-h5-chat__message news-h5-chat__message--${message.role}`} key={message.id}>{message.role === "agent" && <span style={{ background: activeAgent.accent }}>{activeAgent.name.slice(0, 1)}</span>}<p>{message.text}{message.status === "streaming" && <i className="news-h5-stream-caret" />}</p></article>)}
@@ -185,7 +195,7 @@ export function NewsH5Assistant({ demoMode, service, onSecondaryPageChange }: Ne
     {demoMode && <section className="news-h5-summary"><div><span><Sparkles size={15} />今日代读</span><strong>246</strong><small>篇内容</small></div><div><span><Clock3 size={15} />节省时间</span><strong>1.7</strong><small>小时</small></div><button type="button"><CalendarClock size={16} />下一轮 18:00<ChevronRight size={16} /></button></section>}
     <div className="news-h5-assistant__heading"><h2>会话</h2>{demoMode && <button onClick={() => setAgents((current) => current.map((agent) => ({ ...agent, unreadCount: 0 })))} type="button">全部已读</button>}</div>
     <main>
-      {filteredAgents.map((agent) => <button className="news-h5-agent-row" onClick={() => setActiveAgentId(agent.id)} key={agent.id} type="button"><span style={{ background: agent.accent }}>{agent.name.slice(0, 1)}</span><div><div><strong>{agent.name}</strong><time>{formatClock(agent.lastDigestAt)}</time></div><p>{agent.lastDigestSummary}</p><small>{agent.description}</small></div>{agent.unreadCount > 0 && <b>{agent.unreadCount}</b>}</button>)}
+      {filteredAgents.map((agent) => <button className="news-h5-agent-row" onClick={() => openConversation(agent.id)} key={agent.id} type="button"><span style={{ background: agent.accent }}>{agent.name.slice(0, 1)}</span><div><div><strong>{agent.name}</strong><time>{formatClock(agent.lastDigestAt)}</time></div><p>{agent.lastDigestSummary}</p><small>{agent.description}</small></div>{agent.unreadCount > 0 && <b>{agent.unreadCount}</b>}</button>)}
       {filteredAgents.length === 0 && <H5AssistantListState loadState={loadState} queryActive={Boolean(query.trim())} onRetry={() => setReloadKey((current) => current + 1)} />}
     </main>
     <button className="news-h5-new-agent" disabled={!canMutate} onClick={() => setCreateOpen(true)} type="button"><Bot size={21} /><div><strong>创建阅读智能体</strong><p>配置一个独立的阅读主题</p></div><ChevronRight size={18} /></button>

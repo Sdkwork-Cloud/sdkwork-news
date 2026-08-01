@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from "react";
 import {
+  ArrowLeft,
   Bookmark,
   Clock3,
   Flame,
@@ -22,19 +23,34 @@ import "./styles.css";
 
 export interface NewsH5NewsProps {
   demoMode?: boolean;
+  onSecondaryPageChange?: (value: boolean) => void;
   service?: NewsFeedService;
 }
 
 export function NewsH5News({
   demoMode = false,
+  onSecondaryPageChange,
   service,
 }: NewsH5NewsProps) {
   const controller = useNewsFeedController(service);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [selectedItem, setSelectedItem] = useState<NewsFeedItem | null>(null);
 
   if (demoMode) {
-    return <NewsH5NewsDemo />;
+    return <NewsH5NewsDemo onSecondaryPageChange={onSecondaryPageChange} />;
+  }
+
+  if (selectedItem) {
+    return <NewsH5Detail
+      favorite={controller.favoriteItemIds.has(selectedItem.id)}
+      item={toNewsDetailModel(selectedItem)}
+      onBack={() => {
+        setSelectedItem(null);
+        onSecondaryPageChange?.(false);
+      }}
+      onToggleFavorite={() => void controller.toggleFavorite(selectedItem.id)}
+    />;
   }
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
@@ -93,9 +109,13 @@ export function NewsH5News({
         {controller.items.map((item) => <NewsH5FeedArticle
           favorite={controller.favoriteItemIds.has(item.id)}
           favoritePending={controller.favoritePendingItemIds.has(item.id)}
-          item={item}
-          key={item.id}
-          onToggleFavorite={() => void controller.toggleFavorite(item.id)}
+           item={item}
+           key={item.id}
+           onOpen={() => {
+             setSelectedItem(item);
+             onSecondaryPageChange?.(true);
+           }}
+           onToggleFavorite={() => void controller.toggleFavorite(item.id)}
         />)}
       </section>}
 
@@ -120,14 +140,28 @@ function NewsH5FeedArticle({
   favorite,
   favoritePending,
   item,
+  onOpen,
   onToggleFavorite,
 }: {
   favorite: boolean;
   favoritePending: boolean;
   item: NewsFeedItem;
+  onOpen(): void;
   onToggleFavorite(): void;
 }) {
-  return <article>
+  return <article
+    aria-label={"阅读 " + item.title}
+    className="is-clickable"
+    onClick={onOpen}
+    onKeyDown={(event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onOpen();
+      }
+    }}
+    role="button"
+    tabIndex={0}
+  >
     <div className="news-h5-feed__article-meta">
       <span>{item.categoryId}</span>
       {item.featured && <b><Flame size={11} />精选</b>}
@@ -146,7 +180,10 @@ function NewsH5FeedArticle({
         aria-pressed={favorite}
         className={favorite ? "is-saved" : ""}
         disabled={favoritePending}
-        onClick={onToggleFavorite}
+        onClick={(event) => {
+          event.stopPropagation();
+          onToggleFavorite();
+        }}
         type="button"
       >
         {favoritePending
@@ -155,6 +192,80 @@ function NewsH5FeedArticle({
       </button>
     </footer>
   </article>;
+}
+
+interface NewsDetailModel {
+  author?: string;
+  body?: readonly string[];
+  category: string;
+  estimatedReadMinutes?: number;
+  image?: string;
+  publishedLabel?: string;
+  summary: string;
+  tags: readonly string[];
+  title: string;
+  source: string;
+}
+
+function toNewsDetailModel(item: NewsFeedItem): NewsDetailModel {
+  return {
+    author: item.authorName,
+    category: item.categoryId,
+    estimatedReadMinutes: item.estimatedReadMinutes,
+    publishedLabel: item.publishedAt ? formatPublishedAt(item.publishedAt) : undefined,
+    source: item.authorName ?? "SDKWork News",
+    summary: item.summary,
+    tags: item.tags,
+    title: item.title,
+  };
+}
+
+function NewsH5Detail({
+  favorite,
+  item,
+  onBack,
+  onToggleFavorite,
+}: {
+  favorite: boolean;
+  item: NewsDetailModel;
+  onBack(): void;
+  onToggleFavorite(): void;
+}) {
+  return <div className="news-h5-detail-page">
+    <header className="news-h5-detail-page__header">
+      <button aria-label="返回新闻列表" onClick={onBack} type="button"><ArrowLeft size={20} /></button>
+      <strong>新闻详情</strong>
+      <button
+        aria-label={favorite ? "取消收藏" : "收藏新闻"}
+        aria-pressed={favorite}
+        className={favorite ? "is-saved" : ""}
+        onClick={onToggleFavorite}
+        type="button"
+      ><Bookmark fill={favorite ? "currentColor" : "none"} size={18} /></button>
+    </header>
+    <main>
+      {item.image && <img className="news-h5-detail-page__cover" src={item.image} alt="" />}
+      <div className="news-h5-detail-page__meta">
+        <span>{item.category}</span>
+        <span>{item.source}</span>
+        {item.author && item.author !== item.source && <span>{item.author}</span>}
+        {item.publishedLabel && <span>{item.publishedLabel}</span>}
+      </div>
+      <h1>{item.title}</h1>
+      <div className="news-h5-detail-page__reading">
+        <span>智能摘要</span>
+        {item.estimatedReadMinutes && <span><Clock3 size={12} />约 {item.estimatedReadMinutes} 分钟</span>}
+      </div>
+      <p className="news-h5-detail-page__summary">{item.summary}</p>
+      {item.body && item.body.length > 0
+        ? <div className="news-h5-detail-page__body">{item.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+        : <section className="news-h5-detail-page__unavailable">
+          <h2>原文内容</h2>
+          <p>当前来源只提供摘要，原文将在来源同步后继续呈现。</p>
+        </section>}
+      {item.tags.length > 0 && <div className="news-h5-detail-page__tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>}
+    </main>
+  </div>;
 }
 
 function NewsH5FeedState({
@@ -194,19 +305,45 @@ function NewsH5FeedState({
 }
 
 const DEMO_CATEGORIES = ["推荐", "要闻", "科技", "财经", "商业", "国际", "政策"];
-const DEMO_ITEMS = [
-  { id: "1", title: "AI Agent 开始进入企业核心工作流，评估标准正在改变", source: "MIT Technology Review", time: "42 分钟前", tag: "科技", image: aiChipsImage },
-  { id: "2", title: "资金面延续宽松，市场关注下一阶段政策信号", source: "第一财经", time: "1 小时前", tag: "财经", image: marketsImage },
-  { id: "3", title: "企业软件定价从席位转向结果，新的商业模型浮出水面", source: "Bloomberg", time: "2 小时前", tag: "商业", image: workspaceImage },
-  { id: "4", title: "全球供应链继续区域化，制造企业重新校准库存策略", source: "Reuters", time: "3 小时前", tag: "国际", image: logisticsImage },
+type DemoNewsArticle = {
+  readonly body: readonly string[];
+  readonly id: string;
+  readonly image: string;
+  readonly source: string;
+  readonly summary: string;
+  readonly tag: string;
+  readonly time: string;
+  readonly title: string;
+};
+
+const DEMO_LEAD: DemoNewsArticle = {
+  body: [
+    "过去的新闻产品依赖推荐算法，把用户留在一条不断刷新的信息流里。AI 时代的阅读方式开始转向长期协作：用户定义目标，智能体持续追踪变化并解释它们为什么重要。",
+    "这意味着新闻产品需要同时处理来源筛选、事实核验和上下文整理。高质量的阅读体验不再是更多内容，而是在合适的时间交付更少但更有用的判断依据。",
+  ],
+  id: "lead",
+  image: newsroomImage,
+  source: "SDKWork 研究院",
+  summary: "用户不再需要消费所有内容，而是让不同角色的智能体持续阅读、验证并呈现真正影响决策的变化。",
+  tag: "要闻",
+  time: "12 分钟前",
+  title: "从信息流到智能体：新闻阅读正在发生结构性变化",
+};
+
+const DEMO_ITEMS: readonly DemoNewsArticle[] = [
+  { body: ["企业正在把智能体从单次问答工具放进销售、客服和研发流程。", "随着任务持续执行，可靠性、权限边界和可观察性成为采购决策的核心。"], id: "1", title: "AI Agent 开始进入企业核心工作流，评估标准正在改变", source: "MIT Technology Review", time: "42 分钟前", tag: "科技", image: aiChipsImage, summary: "从单次回答走向长期执行后，可靠性、权限边界和可观察性成为采购决策的核心。" },
+  { body: ["公开市场操作规模连续上升，短端利率回落。", "机构仍在观察政策传导到实体经济的速度，趋势判断保持谨慎。"], id: "2", title: "资金面延续宽松，市场关注下一阶段政策信号", source: "第一财经", time: "1 小时前", tag: "财经", image: marketsImage, summary: "公开市场操作规模连续上升，短端利率回落，但机构对趋势判断仍保持谨慎。" },
+  { body: ["越来越多 AI 产品尝试按任务、调用或业务结果计费。", "当价值从席位转向结果，传统 SaaS 的增长和留存指标也需要重新解释。"], id: "3", title: "企业软件定价从席位转向结果，新的商业模型浮出水面", source: "Bloomberg", time: "2 小时前", tag: "商业", image: workspaceImage, summary: "越来越多 AI 产品尝试按任务、调用或业务结果计费，传统 SaaS 指标面临重估。" },
+  { body: ["效率与韧性的权衡正在改变，企业开始重新评估供应商集中度。", "关键零部件的多源策略增加，也让库存和物流协同成为新的管理重点。"], id: "4", title: "全球供应链继续区域化，制造企业重新校准库存策略", source: "Reuters", time: "3 小时前", tag: "国际", image: logisticsImage, summary: "效率与韧性的权衡正在改变，关键零部件的多源策略明显增加。" },
 ] as const;
 
-function NewsH5NewsDemo() {
+function NewsH5NewsDemo({ onSecondaryPageChange }: Pick<NewsH5NewsProps, "onSecondaryPageChange">) {
   const [category, setCategory] = useState("推荐");
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<ReadonlySet<string>>(() => new Set());
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [selectedItem, setSelectedItem] = useState<DemoNewsArticle | null>(null);
   const normalizedQuery = query.toLocaleLowerCase("zh-CN");
   const visibleItems = DEMO_ITEMS.filter((item) =>
     (category === "推荐" || item.tag === category)
@@ -214,6 +351,27 @@ function NewsH5NewsDemo() {
       .some((value) => value.toLocaleLowerCase("zh-CN").includes(normalizedQuery))),
   );
   const showLead = !query && (category === "推荐" || category === "要闻");
+
+  if (selectedItem) {
+    return <NewsH5Detail
+      favorite={saved.has(selectedItem.id)}
+      item={{
+        body: selectedItem.body,
+        category: selectedItem.tag,
+        image: selectedItem.image,
+        publishedLabel: selectedItem.time,
+        source: selectedItem.source,
+        summary: selectedItem.summary,
+        tags: [selectedItem.tag],
+        title: selectedItem.title,
+      }}
+      onBack={() => {
+        setSelectedItem(null);
+        onSecondaryPageChange?.(false);
+      }}
+      onToggleFavorite={() => setSaved((current) => withDemoFavorite(current, selectedItem.id))}
+    />;
+  }
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -31,14 +31,14 @@ export default function App({
   newsService,
 }: NewsH5AppProps) {
   const [tab, setTab] = useState<NewsH5Tab>("assistant");
-  const [assistantSecondaryPage, setAssistantSecondaryPage] = useState(false);
+  const [secondaryPage, setSecondaryPage] = useState(false);
   const changeTab = (nextTab: NewsH5Tab) => {
     setTab(nextTab);
-    setAssistantSecondaryPage(false);
+    setSecondaryPage(false);
   };
-  return <NewsH5Shell activeTab={tab} onTabChange={changeTab} showTabBar={!assistantSecondaryPage}>
+  return <NewsH5Shell activeTab={tab} onTabChange={changeTab} showTabBar={!secondaryPage}>
     {tab === "assistant" && (
-      <NewsH5Assistant demoMode={assistantDemoMode} service={agentService} onSecondaryPageChange={setAssistantSecondaryPage} />
+      <NewsH5Assistant demoMode={assistantDemoMode} service={agentService} onSecondaryPageChange={setSecondaryPage} />
     )}
     {tab === "news" && (
       <NewsH5News demoMode={newsDemoMode} service={newsService} />

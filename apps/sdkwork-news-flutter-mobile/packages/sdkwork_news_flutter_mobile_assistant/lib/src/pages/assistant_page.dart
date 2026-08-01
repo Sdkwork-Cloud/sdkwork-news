@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sdkwork_news_flutter_mobile_commons/sdkwork_news_flutter_mobile_commons.dart';
 import 'package:sdkwork_news_flutter_mobile_core/sdkwork_news_flutter_mobile_core.dart';
@@ -24,6 +26,16 @@ class _AssistantPageState extends State<AssistantPage> {
 
   void _handleControllerChanged() {
     widget.onSecondaryPageChanged?.call(widget.controller.selectedAgent != null);
+  }
+
+  void _openAgent(NewsAgent agent) {
+    widget.onSecondaryPageChanged?.call(true);
+    unawaited(widget.controller.selectAgent(agent));
+  }
+
+  void _closeConversation() {
+    widget.onSecondaryPageChanged?.call(false);
+    widget.controller.closeConversation();
   }
 
   @override
@@ -53,10 +65,14 @@ class _AssistantPageState extends State<AssistantPage> {
       builder: (context, _) {
         final agent = widget.controller.selectedAgent;
         return agent == null
-            ? _AssistantInbox(controller: widget.controller)
+            ? _AssistantInbox(
+                controller: widget.controller,
+                onAgentSelected: _openAgent,
+              )
             : _AssistantConversation(
                 controller: widget.controller,
                 agent: agent,
+                onClose: _closeConversation,
               );
       },
     );
@@ -64,9 +80,13 @@ class _AssistantPageState extends State<AssistantPage> {
 }
 
 class _AssistantInbox extends StatelessWidget {
-  const _AssistantInbox({required this.controller});
+  const _AssistantInbox({
+    required this.controller,
+    required this.onAgentSelected,
+  });
 
   final AssistantController controller;
+  final ValueChanged<NewsAgent> onAgentSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +168,7 @@ class _AssistantInbox extends StatelessWidget {
                   final agent = controller.agents[index];
                   return _AgentRow(
                     agent: agent,
-                    onTap: () => controller.selectAgent(agent),
+                    onTap: () => onAgentSelected(agent),
                   );
                 },
               ),
@@ -404,10 +424,12 @@ class _AssistantConversation extends StatefulWidget {
   const _AssistantConversation({
     required this.controller,
     required this.agent,
+    required this.onClose,
   });
 
   final AssistantController controller;
   final NewsAgent agent;
+  final VoidCallback onClose;
 
   @override
   State<_AssistantConversation> createState() => _AssistantConversationState();
@@ -446,7 +468,7 @@ class _AssistantConversationState extends State<_AssistantConversation> {
               children: [
                 IconButton(
                   tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  onPressed: widget.controller.closeConversation,
+                  onPressed: widget.onClose,
                   icon: const Icon(Icons.arrow_back_rounded),
                 ),
                 AgentAvatar(

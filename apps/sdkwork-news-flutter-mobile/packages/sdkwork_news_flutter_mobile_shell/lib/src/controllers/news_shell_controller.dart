@@ -11,6 +11,9 @@ class NewsShellController extends ChangeNotifier {
       return;
     }
     activeTab = tab;
+    // A primary tab always starts at its own root page. Secondary pages are
+    // owned by the feature that opened them and must not leak across tabs.
+    isSecondaryPage = false;
     notifyListeners();
   }
 

@@ -37,6 +37,7 @@ const SOURCE_GROUPS = {
   rust: [
     'Cargo.toml',
     'Cargo.lock',
+    'tools/run-news-cargo.mjs',
   ],
 };
 
