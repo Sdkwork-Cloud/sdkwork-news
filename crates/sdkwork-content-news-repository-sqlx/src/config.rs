@@ -52,8 +52,8 @@ impl DatabaseConfig {
     pub const ENV_CONFIG_FILE: &'static str = "SDKWORK_NEWS_CONFIG_FILE";
     pub const SERVER_DEFAULT_POSTGRES_HOST: &'static str = "db.example.com";
     pub const SERVER_DEFAULT_POSTGRES_PORT: u16 = 5432;
-    pub const SERVER_DEFAULT_POSTGRES_DATABASE: &'static str = "sdkwork_news_prod";
-    pub const SERVER_DEFAULT_POSTGRES_USERNAME: &'static str = "sdkworknews@2026++";
+    pub const SERVER_DEFAULT_POSTGRES_DATABASE: &'static str = "sdkwork_ai_prod";
+    pub const SERVER_DEFAULT_POSTGRES_USERNAME: &'static str = "sdkwork_ai_prod";
     pub const SERVER_DEFAULT_POSTGRES_PASSWORD: &'static str = "change-me";
     pub const SERVER_DEFAULT_POSTGRES_SSL_MODE: &'static str = "require";
 

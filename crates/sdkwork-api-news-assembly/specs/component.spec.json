@@ -94,7 +94,8 @@
     "events": [],
     "configKeys": [
       "SDKWORK_NEWS_APP_ROOT",
-      "SDKWORK_NEWS_DATABASE_URL"
+      "SDKWORK_DATABASE_URL",
+      "SDKWORK_DATABASE_ENGINE"
     ]
   },
   "verification": {
