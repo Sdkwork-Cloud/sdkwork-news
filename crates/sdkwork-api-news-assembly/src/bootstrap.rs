@@ -3,6 +3,7 @@
 use std::sync::Arc;
 
 use axum::Router;
+use sdkwork_database_sqlx::DatabasePool;
 use sdkwork_routes_news_open_api::state::NewsHttpState;
 use sdkwork_web_bootstrap::{ApiAssemblyContribution, PgPoolReadinessCheck, ReadinessCheck};
 use sdkwork_web_core::HttpRouteManifest;
@@ -22,6 +23,24 @@ fn assemble_business_routes(state: Arc<NewsHttpState>) -> Router {
 /// the lifecycle host and creates the HTTP state.
 pub async fn assemble_api_router() -> Result<ApiAssembly, String> {
     let host = sdkwork_news_database_host::bootstrap_news_database_from_env().await?;
+    let postgres_pool = host
+        .pool()
+        .as_postgres()
+        .ok_or_else(|| "News authoritative server requires PostgreSQL".to_string())?
+        .clone();
+    let state = Arc::new(NewsHttpState {
+        pool: postgres_pool.clone(),
+    });
+    build_api_contribution(
+        assemble_business_routes(state),
+        Arc::new(PgPoolReadinessCheck::new(postgres_pool)),
+    )
+}
+
+/// Assemble the news application router against a caller-provided database pool
+/// so the platform cloud gateway can share its process-wide PostgreSQL pool.
+pub async fn assemble_api_router_with_pool(pool: DatabasePool) -> Result<ApiAssembly, String> {
+    let host = sdkwork_news_database_host::bootstrap_news_database(pool).await?;
     let postgres_pool = host
         .pool()
         .as_postgres()
