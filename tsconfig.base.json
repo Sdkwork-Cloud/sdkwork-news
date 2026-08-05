@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "baseUrl": ".",
     "declaration": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "ignoreDeprecations": "6.0",
     "lib": [
       "ES2023",
       "DOM",
@@ -21,35 +19,6 @@
     "types": [
       "node",
       "vitest/globals"
-    ],
-    "paths": {
-      "@sdkwork/news-contracts": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-contracts/src/index.ts"
-      ],
-      "@sdkwork/news-sdk-ports": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-sdk-ports/src/index.ts"
-      ],
-      "@sdkwork/news-service": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-service/src/index.ts"
-      ],
-      "@sdkwork/news-runtime": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-runtime/src/index.ts"
-      ],
-      "@sdkwork/news-agent-contracts": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-agent-contracts/src/index.ts"
-      ],
-      "@sdkwork/news-agent-service": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-agent-service/src/index.ts"
-      ],
-      "@sdkwork/news-agent-sdk-adapter": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-agent-sdk-adapter/src/index.ts"
-      ],
-      "@sdkwork/news-im-adapter": [
-        "apps/sdkwork-news-common/packages/sdkwork-news-im-adapter/src/index.ts"
-      ],
-      "@sdkwork/news-pc-react": [
-        "apps/sdkwork-news-pc/packages/news/sdkwork-news-pc-react/src/index.ts"
-      ]
-    }
+    ]
   }
 }
