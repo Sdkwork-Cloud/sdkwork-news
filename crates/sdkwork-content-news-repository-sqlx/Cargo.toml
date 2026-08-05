@@ -13,7 +13,7 @@ sdkwork-content-news-service.workspace = true
 sdkwork-news-database-host.workspace = true
 sdkwork-database-config.workspace = true
 sdkwork-database-sqlx.workspace = true
-sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite", "postgres"] }
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "derive"] }
 toml = "0.8"
 serde = { version = "1", features = ["derive"] }
 
