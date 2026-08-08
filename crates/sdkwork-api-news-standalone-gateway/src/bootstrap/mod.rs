@@ -23,10 +23,7 @@ pub async fn create_app() -> Result<Router, anyhow::Error> {
         .router
         .layer(sdkwork_web_bootstrap::application_cors_layer_from_env(
             &["SDKWORK_NEWS_ENVIRONMENT"],
-            &[
-                "SDKWORK_NEWS_CORS_ALLOWED_ORIGINS",
-                "SDKWORK_CORS_ALLOWED_ORIGINS",
-            ],
+            &["SDKWORK_CORS_ALLOWED_ORIGINS"],
         ))
         .layer(TraceLayer::new_for_http()))
 }
